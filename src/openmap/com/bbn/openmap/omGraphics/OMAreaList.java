@@ -94,7 +94,7 @@ public class OMAreaList extends OMGeometryList implements Serializable {
      */
     public synchronized boolean generate(Projection p, boolean forceProjectAll) {
         boolean isGenerated = super.generate(p, forceProjectAll);
-        if (shape != null) {
+        if ((shape != null) && (shape.getCurrentPoint() != null)) {
             shape.closePath();
         }
         return isGenerated;

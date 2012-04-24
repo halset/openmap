@@ -44,7 +44,7 @@ public class LatLonGCT implements GeoCoordTransformation {
     }
 
     public LatLonPoint inverse(double x, double y, LatLonPoint ret) {
-        ret.setLatLon((float) y, (float) x);
+        ret.setLatLon(y, x);
         return ret;
     }
 

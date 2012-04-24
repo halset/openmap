@@ -31,10 +31,14 @@ import java.util.ArrayList;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.MoreMath;
+import com.bbn.openmap.ext.jts.JTS;
 import com.bbn.openmap.proj.coords.GeoCoordTransformation;
 import com.bbn.openmap.proj.coords.LatLonGCT;
 import com.bbn.openmap.proj.coords.LatLonPoint;
 import com.bbn.openmap.util.Debug;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * GeoProj is the base class of all Projections that deal with coordinates on
@@ -1386,29 +1390,11 @@ public abstract class GeoProj
      */
     public ArrayList<float[]> forwardPoly(float[] rawllpts, int ltype, int nsegs, boolean isFilled) {
         ArrayList<float[]> stuff = _forwardPoly(rawllpts, ltype, nsegs, isFilled);
-        // @HACK: workaround XWindows bug. simple clip to a boundary.
-        // this is ugly.
+        // @HACK: workaround XWindows bug. clip to a boundary.
         if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
-            int i, j, size = stuff.size();
-            float[] xpts, ypts;
-            for (i = 0; i < size; i += 2) {
-                xpts = (float[]) stuff.get(i);
-                ypts = (float[]) stuff.get(i + 1);
-                for (j = 0; j < xpts.length; j++) {
-                    if (xpts[j] <= -XTHRESHOLD) {
-                        xpts[j] = -XTHRESHOLD;
-                    } else if (xpts[j] >= XTHRESHOLD) {
-                        xpts[j] = XTHRESHOLD;
-                    }
-                    if (ypts[j] <= -XTHRESHOLD) {
-                        ypts[j] = -XTHRESHOLD;
-                    } else if (ypts[j] >= XTHRESHOLD) {
-                        ypts[j] = XTHRESHOLD;
-                    }
-                }
-                stuff.set(i, xpts);
-                stuff.set(i + 1, ypts);
-            }
+            GeometryFactory gf = new GeometryFactory();
+            Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
+            JTS.clip(gf, clip, stuff);
         }
         return stuff;
     }
@@ -1432,33 +1418,15 @@ public abstract class GeoProj
      */
     public ArrayList<float[]> forwardPoly(double[] rawllpts, int ltype, int nsegs, boolean isFilled) {
         ArrayList<float[]> stuff = _forwardPoly(rawllpts, ltype, nsegs, isFilled);
-        // @HACK: workaround XWindows bug. simple clip to a boundary.
-        // this is ugly.
+        // @HACK: workaround XWindows bug. clip to a boundary.
         if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
-            int i, j, size = stuff.size();
-            float[] xpts, ypts;
-            for (i = 0; i < size; i += 2) {
-                xpts = stuff.get(i);
-                ypts = stuff.get(i + 1);
-                for (j = 0; j < xpts.length; j++) {
-                    if (xpts[j] <= -XTHRESHOLD) {
-                        xpts[j] = -XTHRESHOLD;
-                    } else if (xpts[j] >= XTHRESHOLD) {
-                        xpts[j] = XTHRESHOLD;
-                    }
-                    if (ypts[j] <= -XTHRESHOLD) {
-                        ypts[j] = -XTHRESHOLD;
-                    } else if (ypts[j] >= XTHRESHOLD) {
-                        ypts[j] = XTHRESHOLD;
-                    }
-                }
-                stuff.set(i, xpts);
-                stuff.set(i + 1, ypts);
-            }
+            GeometryFactory gf = new GeometryFactory();
+            Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
+            JTS.clip(gf, clip, stuff);
         }
         return stuff;
     }
-
+    
     /**
      * Forward project a lat/lon Poly defined as decimal degree lat/lons.
      * <p>
