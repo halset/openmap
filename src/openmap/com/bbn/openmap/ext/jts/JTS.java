@@ -86,7 +86,7 @@ public class JTS {
          Geometry original = null;
 
          // try to figure out if it is a line or a polygon
-         if (coords.getCoordinate(0).equals2D(coords.getCoordinate(coords.size() - 1))) {
+         if ((coords.size() >= 4) && coords.getCoordinate(0).equals2D(coords.getCoordinate(coords.size() - 1))) {
             LinearRing ring = gf.createLinearRing(coords);
             original = gf.createPolygon(ring, null);
          } else {
