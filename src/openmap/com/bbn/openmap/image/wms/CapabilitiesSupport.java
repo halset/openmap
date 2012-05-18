@@ -46,12 +46,6 @@ import com.bbn.openmap.proj.coords.CoordinateReferenceSystem;
 public class CapabilitiesSupport {
 
     public static final String WMSPrefix = ImageServer.OpenMapPrefix + "wms.";
-
-    public static final int FMT_GETMAP = 0;
-
-    public static final int FMT_GETFEATUREINFO = 1;
-
-    private Map<Integer, List<String>> formatsList = new HashMap<Integer, List<String>>();
     
     private String onlineResource;
 
@@ -68,6 +62,8 @@ public class CapabilitiesSupport {
     private String layersTitle;
 
     private Collection<String> crsCodes = CoordinateReferenceSystem.getCodes();
+    
+    private final WmsRequestHandler requestHandler;
 
     /**
      * Creates a new instance of CapabilitiesSupport
@@ -77,11 +73,13 @@ public class CapabilitiesSupport {
      * @param hostName
      * @param port
      * @param path
+     * @param request
      * @throws WMSException
      */
-    CapabilitiesSupport(Properties props, String scheme, String hostName, int port, String path)
+    CapabilitiesSupport(Properties props, String scheme, String hostName, int port, String path, WmsRequestHandler requestHandler)
             throws WMSException {
 
+        this.requestHandler = requestHandler;
         wmsTitle = props.getProperty(WMSPrefix + "Title", "Sample Title");
         wmsAbstract = props.getProperty(WMSPrefix + "Abstract", "Sample Abstract");
         layersTitle = props.getProperty(WMSPrefix + "LayersTitle", "Sample Layer List");
@@ -90,10 +88,6 @@ public class CapabilitiesSupport {
         setKeywords(keywords);
 
         setUrl(scheme, hostName, port, path);
-
-        List<String> al = new ArrayList<String>();
-        setFormats(FMT_GETMAP, al);
-        setFormats(FMT_GETFEATUREINFO, al);
     }
 
     /**
@@ -124,6 +118,10 @@ public class CapabilitiesSupport {
      */
     public void setUrl(String url) {
        this.onlineResource = url;
+    }
+    
+    private WmsRequestHandler getRequestHandler() {
+       return requestHandler;
     }
 
     /**
@@ -161,9 +159,9 @@ public class CapabilitiesSupport {
 
         request.appendChild(requestcap(doc, WMTConstants.GETCAPABILITIES, version.getCapabiltiesFormats(), "Get",
                                        onlineResource));
-        request.appendChild(requestcap(doc, WMTConstants.GETMAP, formatsList.get(FMT_GETMAP), "Get",
+        request.appendChild(requestcap(doc, WMTConstants.GETMAP, getRequestHandler().getFormats(), "Get",
                                        onlineResource));
-        request.appendChild(requestcap(doc, WMTConstants.GETFEATUREINFO, formatsList.get(FMT_GETFEATUREINFO), "Get",
+        request.appendChild(requestcap(doc, WMTConstants.GETFEATUREINFO, getRequestHandler().getInfoFormats(), "Get",
                                        onlineResource));
         capability.appendChild(request);
 
@@ -289,22 +287,6 @@ public class CapabilitiesSupport {
      */
     public void incUpdateSequence() {
         updateSequence++;
-    }
-
-    /**
-     * @param request
-     * @param formats
-     * @return true if request type handled
-     */
-    public boolean setFormats(int request, Collection<String> formats) {
-        switch (request) {
-            case FMT_GETMAP:
-            case FMT_GETFEATUREINFO:
-                formatsList.put(request, new ArrayList<String>(formats));
-                return true;
-            default:
-                return false;
-        }
     }
 
     /**

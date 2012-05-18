@@ -13,12 +13,14 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import com.bbn.openmap.Layer;
@@ -50,13 +52,11 @@ public class WmsRequestHandler
         extends ImageServer
         implements ImageServerConstants {
 
-    /**
-	 */
     private CapabilitiesSupport capabilities;
     private Map<String, IWmsLayer> wmsLayerByName = new HashMap<String, IWmsLayer>();
     private List<IWmsLayer> wmsLayers = new ArrayList<IWmsLayer>();
     private WmsLayerFactory wmsLayerFactory;
-    private Map<String, ImageFormatter> imageFormatterByContentType = new HashMap<String, ImageFormatter>();
+    private final Map<String, ImageFormatter> imageFormatterByContentType = new HashMap<String, ImageFormatter>();
     private FeatureInfoResponse featureInfoResponse;
     public static final String WMSPrefix = CapabilitiesSupport.WMSPrefix;
     private static final String FeatureInfoResponseClassNameProperty = "featureInfoResponse.class";
@@ -91,7 +91,7 @@ public class WmsRequestHandler
 
         // create a Map of all formatters by their contentType
         for (ImageFormatter formatter : getFormatters().values()) {
-            imageFormatterByContentType.put(formatter.getContentType(), formatter);
+            addFormatter(formatter);
         }
 
         // create FeatureInfoResponse from properties.
@@ -103,10 +103,34 @@ public class WmsRequestHandler
 
         // read from configuration fixed part of Capabilities Document returned
         // in getCapabilities method
-        capabilities = new CapabilitiesSupport(props, wmsScheme, wmsHostName, wmsPort, wmsUrlPath);
-        List<String> formatsList = new ArrayList<String>(imageFormatterByContentType.keySet());
-        capabilities.setFormats(CapabilitiesSupport.FMT_GETMAP, formatsList);
-        capabilities.setFormats(CapabilitiesSupport.FMT_GETFEATUREINFO, getFeatureInfoResponse().getInfoFormats());
+        capabilities = new CapabilitiesSupport(props, wmsScheme, wmsHostName, wmsPort, wmsUrlPath, this);
+    }
+
+   /**
+    * Add a {@link ImageFormatter} that will be used to handle requests for the
+    * given {@link ImageFormatter}s content type.
+    * <p>
+    * Default formatters from configuration are added by constructor, but this
+    * method can be used to add or change a formatter for the request.
+    * 
+    * @param formatter
+    */
+    public void addFormatter(ImageFormatter formatter) {
+       imageFormatterByContentType.put(formatter.getContentType(), formatter);
+    }
+    
+    /**
+     * @return a {@link Collection} of possible FORMAT values
+     */
+    Collection<String> getFormats() {
+       return new TreeSet<String>(imageFormatterByContentType.keySet());
+    }
+    
+    /**
+     * @return a {@link Collection} of possible INFO_FORMAT values
+     */
+    Collection<String> getInfoFormats() {
+       return getFeatureInfoResponse().getInfoFormats();
     }
 
     /**
@@ -262,7 +286,7 @@ public class WmsRequestHandler
         checkVersion(requestProperties, parameters);
         checkExceptions(requestProperties, parameters);
         checkFormat(requestProperties, parameters);
-        setFormatter(parameters.formatter);
+        setFormatter(parameters.getFormatter());
 
         checkBackground(requestProperties, parameters);
         Paint bgPaint = parameters.background;
@@ -408,7 +432,7 @@ public class WmsRequestHandler
         checkVersion(requestProperties, parameters);
         checkExceptions(requestProperties, parameters);
         checkFormat(requestProperties, parameters);
-        setFormatter(parameters.formatter);
+        setFormatter(parameters.getFormatter());
         checkBackground(requestProperties, parameters);
         checkProjectionType(requestProperties, parameters);
         checkWidthAndHeight(requestProperties, parameters);
