@@ -7,8 +7,11 @@ package com.bbn.openmap.ext.jts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.bbn.openmap.proj.Projection;
+import com.bbn.openmap.util.Debug;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
@@ -21,6 +24,8 @@ import com.vividsolutions.jts.geom.Polygon;
  * A collection of utility methods for using JTS in OpenMap
  */
 public class JTS {
+
+   private static final Logger logger = Logger.getLogger("com.bbn.openmap.ext.jts.JTS");
 
    private JTS() {
 
@@ -46,8 +51,7 @@ public class JTS {
       LinearRing ring = gf.createLinearRing(coords);
       return gf.createPolygon(ring, null);
    }
-   
-   
+
    public static Geometry createRectangle(GeometryFactory gf, double minx, double miny, double maxx, double maxy) {
       Coordinate[] coords = new Coordinate[5];
       coords[0] = new Coordinate(minx, maxy);
@@ -62,12 +66,15 @@ public class JTS {
    /**
     * Clip the given List of xypnts to match the given clipGeometry. The result
     * is manipulated in to the xypnts List.
+    * <p>
+    * If the clippling fail on some or all of the xypnts, the xypnts will stay
+    * unclipped rather than throwing an exception.
     * 
     * @param gf
     * @param clipGeometry
     * @param xypnts
     */
-   public static void clip(GeometryFactory gf, Geometry clipGeometry, List<float[]> xypnts) {
+   public static void clipUnsafe(GeometryFactory gf, Geometry clipGeometry, List<float[]> xypnts) {
       int size = xypnts.size();
       List<float[]> newxypnts = new ArrayList<float[]>(size);
 
@@ -81,7 +88,7 @@ public class JTS {
             newxypnts.add(ypts);
             continue;
          }
-         
+
          CoordinateSequence coords = new XYCoordinateSequence(xpts, ypts);
          Geometry original = null;
 
@@ -93,7 +100,14 @@ public class JTS {
             original = gf.createLineString(coords);
          }
 
-         Geometry intersection = original.intersection(clipGeometry);
+         Geometry intersection = null;
+         try {
+            intersection = original.intersection(clipGeometry);
+         } catch (RuntimeException e) {
+            // could not calculate intersection. log and use original.
+            logger.info("could not clip. using original coordinates instead. " + e.getMessage());
+            intersection = original;
+         }
 
          // the intersection might result in multiple geometries
          int numGeometries = intersection.getNumGeometries();
@@ -112,7 +126,7 @@ public class JTS {
          }
 
       }
-      
+
       xypnts.clear();
       xypnts.addAll(newxypnts);
    }

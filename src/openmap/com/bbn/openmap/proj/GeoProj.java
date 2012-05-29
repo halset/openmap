@@ -1394,7 +1394,7 @@ public abstract class GeoProj
         if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
             GeometryFactory gf = new GeometryFactory();
             Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
-            JTS.clip(gf, clip, stuff);
+            JTS.clipUnsafe(gf, clip, stuff);
         }
         return stuff;
     }
@@ -1422,7 +1422,7 @@ public abstract class GeoProj
         if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
             GeometryFactory gf = new GeometryFactory();
             Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
-            JTS.clip(gf, clip, stuff);
+            JTS.clipUnsafe(gf, clip, stuff);
         }
         return stuff;
     }
