@@ -17,6 +17,8 @@ package com.bbn.openmap.image;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
@@ -54,8 +56,8 @@ public class GIFImageIOFormatter extends ImageIOFormatter {
         return WMTConstants.IMAGEFORMAT_GIF;
     }
 
-    public String getContentType() {
-        return HttpConnection.CONTENT_GIF;
+    public Collection<String> getContentTypes() {
+        return Collections.singleton(HttpConnection.CONTENT_GIF);
     }
 
 	@Override

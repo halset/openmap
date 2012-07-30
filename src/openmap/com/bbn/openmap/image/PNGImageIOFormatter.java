@@ -15,6 +15,9 @@
 
 package com.bbn.openmap.image;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.bbn.openmap.util.http.HttpConnection;
 
 public class PNGImageIOFormatter extends ImageIOFormatter {
@@ -36,8 +39,8 @@ public class PNGImageIOFormatter extends ImageIOFormatter {
         return WMTConstants.IMAGEFORMAT_PNG;
     }
     
-    public String getContentType() {
-        return HttpConnection.CONTENT_PNG;
+    public Collection<String> getContentTypes() {
+        return Collections.singleton(HttpConnection.CONTENT_PNG);
     }
 
 	@Override

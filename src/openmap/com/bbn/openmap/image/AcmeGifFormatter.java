@@ -23,6 +23,8 @@
 package com.bbn.openmap.image;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import com.bbn.openmap.util.Debug;
@@ -80,8 +82,8 @@ public class AcmeGifFormatter extends AbstractImageFormatter {
         return getGraphics(width, height, BufferedImage.TYPE_INT_ARGB);
     }
     
-    public String getContentType() {
-        return HttpConnection.CONTENT_GIF;
+    public Collection<String> getContentTypes() {
+        return Collections.singleton(HttpConnection.CONTENT_GIF);
     }
 
 	@Override

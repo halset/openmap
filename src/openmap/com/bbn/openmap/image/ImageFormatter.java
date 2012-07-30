@@ -23,6 +23,7 @@
 package com.bbn.openmap.image;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -129,8 +130,13 @@ public interface ImageFormatter {
     public String getFormatLabel();
     
     /**
-     * Get the Mime Content Type created by the ImageFormatter.
+     * Get the main Mime Content Type created by the ImageFormatter.
      */
     public String getContentType();
+    
+    /**
+     * Get the Mime Content Types created by the ImageFormatter.
+     */
+    public Collection<String> getContentTypes();
     
 }

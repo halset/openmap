@@ -29,6 +29,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
 import java.util.Properties;
 
 import com.bbn.openmap.Layer;
@@ -438,4 +439,16 @@ public abstract class AbstractImageFormatter
             layers = (Layer[]) pce.getNewValue();
         }
     }
+
+    /**
+     * Return the main content type of {@link #getContentTypes()}
+     */
+   public String getContentType() {
+      Collection<String> contentTypes = getContentTypes();
+      if (contentTypes.isEmpty()) {
+         return null;
+      }
+      return contentTypes.iterator().next();
+   }
+   
 }

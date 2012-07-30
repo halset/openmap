@@ -108,7 +108,7 @@ public class WmsRequestHandler
 
    /**
     * Add a {@link ImageFormatter} that will be used to handle requests for the
-    * given {@link ImageFormatter}s content type.
+    * given {@link ImageFormatter}s content types.
     * <p>
     * Default formatters from configuration are added by constructor, but this
     * method can be used to add or change a formatter for the request.
@@ -116,7 +116,9 @@ public class WmsRequestHandler
     * @param formatter
     */
     public void addFormatter(ImageFormatter formatter) {
-       imageFormatterByContentType.put(formatter.getContentType(), formatter);
+       for (String contentType : formatter.getContentTypes()) {
+          imageFormatterByContentType.put(contentType, formatter);
+       }
     }
     
     /**

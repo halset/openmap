@@ -2,6 +2,8 @@ package com.bbn.openmap.image;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
@@ -39,8 +41,8 @@ public class PNG8ImageFormatter extends ImageIOFormatter {
         return new PNG8ImageFormatter();
     }
 
-    public String getContentType() {
-        return HttpConnection.CONTENT_PNG + "; mode=8bit";
+    public Collection<String> getContentTypes() {
+        return Arrays.asList(HttpConnection.CONTENT_PNG + "; mode=8bit", HttpConnection.CONTENT_PNG + "8", HttpConnection.CONTENT_PNG);
     }
 
     public String getFormatLabel() {

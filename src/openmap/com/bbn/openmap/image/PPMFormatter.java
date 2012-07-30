@@ -25,6 +25,8 @@ package com.bbn.openmap.image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import com.bbn.openmap.util.Debug;
@@ -149,8 +151,8 @@ public class PPMFormatter extends AbstractImageFormatter {
         return WMTConstants.IMAGEFORMAT_PPM;
     }
     
-    public String getContentType() {
-        return HttpConnection.CONTENT_PPM;
+    public Collection<String> getContentTypes() {
+        return Collections.singleton(HttpConnection.CONTENT_PPM);
     }
     
 	@Override

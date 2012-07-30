@@ -1,5 +1,8 @@
 package com.bbn.openmap.image;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.bbn.openmap.util.http.HttpConnection;
 
 public class PNG32ImageFormatter extends ImageIOFormatter {
@@ -12,8 +15,8 @@ public class PNG32ImageFormatter extends ImageIOFormatter {
         return new PNG32ImageFormatter();
     }
 
-    public String getContentType() {
-        return HttpConnection.CONTENT_PNG + "; mode=32bit";
+    public Collection<String> getContentTypes() {
+        return Arrays.asList(HttpConnection.CONTENT_PNG + "; mode=32bit", HttpConnection.CONTENT_PNG + "32");
     }
 
     public String getFormatLabel() {

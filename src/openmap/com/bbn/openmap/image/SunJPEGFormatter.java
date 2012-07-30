@@ -25,6 +25,8 @@
 package com.bbn.openmap.image;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import com.bbn.openmap.util.Debug;
@@ -81,8 +83,8 @@ public class SunJPEGFormatter extends AbstractImageFormatter {
         return WMTConstants.IMAGEFORMAT_JPEG;
     }
     
-    public String getContentType() {
-        return HttpConnection.CONTENT_JPEG;
+    public Collection<String> getContentTypes() {
+        return Collections.singleton(HttpConnection.CONTENT_JPEG);
     }
 
 	@Override
