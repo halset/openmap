@@ -6,6 +6,7 @@
 	<classpathentry kind="src" output="openmap/classes/mapTileServlet" path="src/maptileservlet/WEB-INF/src"/>
 	<classpathentry excluding="**/.DS_Store|**/.cvsignore|build.xml" kind="src" path="src/ext"/>
 	<classpathentry excluding="**/.DS_Store|**/.cvsignore|build.xml" kind="src" output="classes/j3d" path="src/j3d"/>
+	<classpathentry kind="src" path="src/svg"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry kind="lib" path="ext/batik-1.7/extensions/batik-rasterizer-ext.jar"/>

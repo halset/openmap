@@ -30,6 +30,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -221,6 +223,10 @@ public class SVGFormatter extends AbstractImageFormatter {
     public String getContentType() {
         return "image/svg+xml";
     }
+    
+   public Collection<String> getContentTypes() {
+      return Collections.singleton(getContentType());
+   }
 
     @Override
     protected boolean imageFormatSupportAlphaChannel() {
