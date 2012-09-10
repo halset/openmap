@@ -27,10 +27,11 @@ package com.bbn.openmap.proj.coords;
 import java.awt.geom.Point2D;
 import java.util.Properties;
 
+import com.bbn.openmap.MoreMath;
 import com.bbn.openmap.proj.Ellipsoid;
 import com.bbn.openmap.util.PropUtils;
 
-public class UTMGCT extends AbstractGCT implements GeoCoordTransformation {
+public class UTMGCT extends AbstractGCT {
 
     public final static String ZoneProperty = "zone";
     public final static String HemiProperty = "hemi";
@@ -119,5 +120,10 @@ public class UTMGCT extends AbstractGCT implements GeoCoordTransformation {
 
     public void setEllipsoid(Ellipsoid ellipsoid) {
         this.ellipsoid = ellipsoid;
+    }
+
+    @Override
+    protected double width() {
+       return getEllipsoid().radius * MoreMath.TWO_PI_D;
     }
 }

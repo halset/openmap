@@ -8,8 +8,7 @@ import java.awt.geom.Point2D;
  * the Mercator uv projection in both directions.
  */
 public abstract class MercatorUVGCT
-      extends AbstractGCT
-      implements GeoCoordTransformation {
+      extends AbstractGCT {
 
    int zoomLevel;
 

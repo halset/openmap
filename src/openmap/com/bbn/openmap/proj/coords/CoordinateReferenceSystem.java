@@ -279,6 +279,17 @@ public class CoordinateReferenceSystem {
         }
         return p;
     }
+    
+    public Point2D center(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY, boolean useAxisOrder) {
+       if (useAxisOrder && (getAxisOrder() == AxisOrder.northBeforeEast)) {
+          Point2D r = coordTransform.center(lowerLeftY, lowerLeftX, upperRightY, upperRightX);
+          double x = r.getX();
+          double y = r.getY();
+          r.setLocation(y, x);
+          return r;
+       }
+       return coordTransform.center(lowerLeftX, lowerLeftY, upperRightX, upperRightY);
+    }
 
     public int hashCode() {
         return getCode().hashCode();

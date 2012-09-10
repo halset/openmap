@@ -34,6 +34,7 @@ import java.awt.geom.Point2D;
  * @author dietrick
  */
 public interface GeoCoordTransformation {
+   
     Point2D forward(double lat, double lon);
 
     Point2D forward(double lat, double lon, Point2D ret);
@@ -41,4 +42,7 @@ public interface GeoCoordTransformation {
     LatLonPoint inverse(double x, double y);
 
     LatLonPoint inverse(double x, double y, LatLonPoint ret);
+    
+    Point2D center(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY);
+    
 }

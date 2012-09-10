@@ -51,7 +51,7 @@ import java.awt.geom.Point2D;
  * http://x11.dejanews.com/getdoc.xp?AN=223540739&CONTEXT=895858362.931528704&
  * hitnum=5
  */
-public class VHTransform implements GeoCoordTransformation {
+public class VHTransform extends AbstractGCT {
     /* Polynomial constants */
     public static final double K1 = .99435487;
     public static final double K2 = .00336523;

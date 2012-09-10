@@ -11,8 +11,7 @@ import com.bbn.openmap.proj.Planet;
  * http://johndeck.blogspot.com/2005_09_01_johndeck_archive.html
  * http://search.cpan.org/src/RRWO/GPS-Lowrance-0.31/lib/Geo/Coordinates/MercatorMeters.pm
  */
-public class MercatorMeterGCT extends AbstractGCT implements
-        GeoCoordTransformation {
+public class MercatorMeterGCT extends AbstractGCT {
     
     public final static MercatorMeterGCT INSTANCE = new MercatorMeterGCT();
     
@@ -62,5 +61,10 @@ public class MercatorMeterGCT extends AbstractGCT implements
 
         return ret;
     }
+
+   @Override
+   protected double width() {
+      return lonfac * MoreMath.TWO_PI_D;
+   }
 
 }

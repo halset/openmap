@@ -584,16 +584,16 @@ public class WmsRequestHandler
             double minY = Double.parseDouble(arrayBBox[1]);
             double maxX = Double.parseDouble(arrayBBox[2]);
             double maxY = Double.parseDouble(arrayBBox[3]);
-            double medX = ((maxX - minX) / 2d) + minX;
-            double medY = ((maxY - minY) / 2d) + minY;
 
             // use CRS to convert BBOX to latlon values
             CoordinateReferenceSystem crs = parameters.crs;
             parameters.bboxLatLonLowerLeft = crs.inverse(minX, minY, parameters.getVersion().usesAxisOrder());
             parameters.bboxLatLonUpperRight = crs.inverse(maxX, maxY, parameters.getVersion().usesAxisOrder());
-            parameters.bboxLatLonCenter = crs.inverse(medX, medY, parameters.getVersion().usesAxisOrder());
+            
+            // use CRS to find center
+            Point2D center = crs.center(minX, minY, maxX, maxY, parameters.getVersion().usesAxisOrder());
+            parameters.bboxLatLonCenter = crs.inverse(center.getX(), center.getY(), parameters.getVersion().usesAxisOrder());
 
-            // TODO: use CRS to check value validity?
         } catch (NumberFormatException e) {
             throw new WMSException("Invalid BBOX parameter. BBOX parameter must be in the form of minx, miny, maxx, maxy"
                     + " confirming to the selected SRS/CRS.", WMSException.INVALIDDIMENSIONVALUE);

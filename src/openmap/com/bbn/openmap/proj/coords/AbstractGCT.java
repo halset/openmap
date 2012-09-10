@@ -41,5 +41,32 @@ public abstract class AbstractGCT extends OMComponent implements GeoCoordTransfo
     }
 
     public abstract LatLonPoint inverse(double x, double y, LatLonPoint ret);
+    
+    public Point2D center(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY) {
+       double medy = med(lowerLeftY, upperRightY);
+       
+       double minx = lowerLeftX;
+       double maxx = upperRightX;
+       double width = width();
+       
+       while (width > 0 && minx > maxx) {
+          maxx = maxx + width;
+       }
+       
+       double medx = med(minx, maxx);
+       return new Point2D.Double(medx, medy);
+    }
+    
+    private static double med(double v1, double v2) {
+       return ((v2 - v1) / 2d) + v1;
+    }
+    
+   /**
+    * Width of the map in map units. Like 360d for latlon. A value less than
+    * zero means unknown.
+    */
+    protected double width() {
+       return -1d;
+    }
 
 }
