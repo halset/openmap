@@ -6,13 +6,17 @@
  */
 package com.bbn.openmap.image.wms;
 
+import java.io.Serializable;
+
 
 /**
  * @version $Header: /cvs/distapps/openmap/src/openmap/com/bbn/openmap/image/wms/DefaultWmsLayerStyle.java,v 1.2 2008/01/29 22:04:13 dietrick Exp $
  * @author pitek
  */
-public class DefaultWmsLayerStyle implements IWmsLayerStyle {
-
+public class DefaultWmsLayerStyle implements IWmsLayerStyle, Serializable {
+   
+   private static final long serialVersionUID = 1L;
+   
     private final String name;
     private final String title;
     private final String styleAbstract;
