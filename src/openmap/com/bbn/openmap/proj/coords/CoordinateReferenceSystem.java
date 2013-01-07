@@ -63,15 +63,16 @@ public class CoordinateReferenceSystem {
         // http://spatialreference.org/ref/epsg/3301/
         // bounding box values from a national WMS from Estonian
         addLcc("EPSG:3301", Ellipsoid.GRS_1980, 59.33333333333334, 58d, 57.51755393055556d, 24d, 500000, 6375000,
-               null, AxisOrder.northBeforeEast);
+               new BoundingBox(300000, 6.3e+06, 800000, 6.7e+06), AxisOrder.northBeforeEast);
 
         // SWEREF 99 TM (EPSG:3006)
         // http://spatialreference.org/ref/epsg/3006/
-        addUtm("EPSG:3006", 33, 'N', Ellipsoid.GRS_1980, null, AxisOrder.northBeforeEast);
+        addUtm("EPSG:3006", 33, 'N', Ellipsoid.GRS_1980,
+               new BoundingBox(218128.7031d, 6126002.9379d, 1083427.2970d, 7692850.9468d), AxisOrder.northBeforeEast);
 
         // ETRS89 / ETRS-TM35FIN
         // http://spatialreference.org/ref/epsg/3067/
-        addUtm("EPSG:3067", 35, 'N', Ellipsoid.GRS_1980, null);
+        addUtm("EPSG:3067", 35, 'N', Ellipsoid.GRS_1980, new BoundingBox(50199.4814d, 6582464.0358d, 761274.6247d, 7799839.8902d));
     }
 
     private static void addLcc(String code, Ellipsoid ellps, double sp1, double sp2, double refLat, double centMeri,
