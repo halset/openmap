@@ -71,7 +71,7 @@ public class CoordinateReferenceSystem {
 
         // ETRS89 / ETRS-TM35FIN
         // http://spatialreference.org/ref/epsg/3067/
-        addUtm("EPSG:3067", 35, 'N', Ellipsoid.GRS_1980, new BoundingBox(50199.4814d, 6582464.0358d, 761274.6247d, 7799839.8902d));
+        addUtm("EPSG:3067", 35, 'N', Ellipsoid.GRS_1980, null);
     }
 
     private static void addLcc(String code, Ellipsoid ellps, double sp1, double sp2, double refLat, double centMeri,
