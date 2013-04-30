@@ -47,13 +47,13 @@ public class DrawUtil {
      * @param n num segments
      * @param include_last include the last one?
      * @param ret_val the array to put them in
-     * @return int[] ret_val
+     * @return float[] ret_val
      */
-    public final static int[] lineSegments(int x1, int y1, int x2, int y2,
+    public final static float[] lineSegments(float x1, float y1, float x2, float y2,
                                            int n, boolean include_last,
-                                           int[] ret_val) {
+                                           float[] ret_val) {
         if (n <= 0) {
-            ret_val = new int[2];
+            ret_val = new float[2];
             ret_val[0] = x1;
             ret_val[1] = y1;
             return ret_val;
@@ -69,8 +69,8 @@ public class DrawUtil {
         ret_val[0] = x1;
         ret_val[1] = y1;
         for (int i = 2; i < end; i += 2, t += inc) {
-            ret_val[i] = x1 + (int) (dx * t);
-            ret_val[i + 1] = y1 + (int) (dy * t);
+            ret_val[i] = x1 + (dx * t);
+            ret_val[i + 1] = y1 + (dy * t);
         }
         return ret_val;
     }
@@ -85,19 +85,19 @@ public class DrawUtil {
      * @param include_last boolean
      * @return Point[]
      */
-    public final static Point[] lineSegments(Point pt1, Point pt2, int n,
+    public final static Point2D[] lineSegments(Point2D pt1, Point2D pt2, int n,
                                              boolean include_last) {
 
-        Point v = new Point(pt2.x - pt1.x, pt2.y - pt1.y);
+        Point2D v = new Point2D.Double(pt2.getX() - pt1.getX(), pt2.getY() - pt1.getY());
         int end = include_last ? n + 1 : n;
-        Point[] ret_val = new Point[end];
-        float inc = 1f / (float) n;
-        float t = inc;
+        Point2D[] ret_val = new Point2D[end];
+        double inc = 1f / (double) n;
+        double t = inc;
 
         ret_val[0] = pt1;
         for (int i = 1; i < end; i++, t += inc) {
-            ret_val[i] = new Point(pt1.x + (int) ((float) v.x * t), pt1.y
-                    + (int) ((float) v.y * t));
+            ret_val[i] = new Point2D.Double(pt1.getX() + (v.getX() * t), pt1.getY()
+                    + (v.getY() * t));
         }
         return ret_val;
     }

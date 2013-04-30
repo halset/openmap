@@ -261,10 +261,10 @@ public class Mercator extends Cylindrical {
         // ")invto=("+llp2.getLatitude()+","+llp2.getLongitude()+")");
         // Debug.output("nsegs="+nsegs);
         // calculate nsegs(+1) extra vertices between endpoints
-        int[] xypts = DrawUtil.lineSegments((int)from.getX(), (int)from.getY(), // coords
-                (int)to.getX(), (int)to.getY(), nsegs, // number of segs between
+        float[] xypts = DrawUtil.lineSegments((float)from.getX(), (float)from.getY(), // coords
+                (float)to.getX(), (float)to.getY(), nsegs, // number of segs between
                 include_last, // include last point
-                new int[nsegs << 1] // retval
+                new float[nsegs << 1] // retval
                 );
 
         float[] llpts = new float[xypts.length];
@@ -314,10 +314,10 @@ public class Mercator extends Cylindrical {
         // ")invto=("+llp2.getLatitude()+","+llp2.getLongitude()+")");
         // Debug.output("nsegs="+nsegs);
         // calculate nsegs(+1) extra vertices between endpoints
-        int[] xypts = DrawUtil.lineSegments((int)from.getX(), (int)from.getY(), // coords
-                (int)to.getX(), (int)to.getY(), nsegs, // number of segs between
+        float[] xypts = DrawUtil.lineSegments((float)from.getX(), (float)from.getY(), // coords
+                (float)to.getX(), (float)to.getY(), nsegs, // number of segs between
                 include_last, // include last point
-                new int[nsegs << 1] // retval
+                new float[nsegs << 1] // retval
                 );
 
         double[] llpts = new double[xypts.length];
