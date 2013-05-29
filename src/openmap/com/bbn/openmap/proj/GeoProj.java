@@ -412,9 +412,10 @@ public abstract class GeoProj
             return _forwardPoly(rawllpts, LineType.Straight, nsegs, isFilled);
         }
 
-        int i, n, xp, flag = 0, xadj = 0, totalpts = 0;
-        Point from = new Point(0, 0);
-        Point to = new Point(0, 0);
+        int i, n, flag = 0, totalpts = 0;
+        double xp, xadj = 0;
+        Point2D from = new Point2D.Float(0, 0);
+        Point2D to = new Point2D.Float(0, 0);
         int len = rawllpts.length;
 
         float[][] augllpts = new float[len >>> 1][0];
@@ -439,30 +440,29 @@ public abstract class GeoProj
         // building up lat/lon points along the original rhumb
         // line between vertices.
         mercator.forward(rawllpts[0], rawllpts[1], from, true);
-        xp = from.x;
+        xp = from.getX();
         for (i = 0, n = 2; n < len; i++, n += 2) {
             mercator.forward(rawllpts[n], rawllpts[n + 1], to, true);
             // segment crosses longitude along screen edge
-            if (Math.abs(xp - to.x) >= mercator.half_world) {
-                flag += (xp < to.x) ? -1 : 1;// inc/dec the wrap
+            if (Math.abs(xp - to.getX()) >= mercator.half_world) {
+                flag += (xp < to.getX()) ? -1 : 1;// inc/dec the wrap
                 // count
                 xadj = flag * mercator.world.x;// adjustment to x
                 // coordinates
                 // Debug.output("flag=" + flag + " xadj=" + xadj);
             }
-            xp = to.x;
+            xp = to.getX();
             if (flag != 0) {
-                to.x += xadj;// adjust x coordinate
+                to.setLocation(to.getX() + xadj, to.getY());// adjust x coordinate
             }
 
             augllpts[i] = mercator.rhumbProject(from, to, false, nsegs);
             totalpts += augllpts[i].length;
-            from.x = to.x;
-            from.y = to.y;
+            from.setLocation(to);
         }
 
         LatLonPoint llp = new LatLonPoint.Double();
-        mercator.inverse(from.x, from.y, llp);
+        mercator.inverse(from.getX(), from.getY(), llp);
         // }// end synchronized around mercator
 
         augllpts[i] = new float[2];
@@ -528,9 +528,10 @@ public abstract class GeoProj
             return _forwardPoly(rawllpts, LineType.Straight, nsegs, isFilled);
         }
 
-        int i, n, xp, flag = 0, xadj = 0, totalpts = 0;
-        Point from = new Point(0, 0);
-        Point to = new Point(0, 0);
+        int i, n, flag = 0, totalpts = 0;
+        double xp, xadj = 0;
+        Point2D from = new Point2D.Float(0, 0);
+        Point2D to = new Point2D.Float(0, 0);
         int len = rawllpts.length;
 
         double[][] augllpts = new double[len >>> 1][0];
@@ -555,26 +556,25 @@ public abstract class GeoProj
         // building up lat/lon points along the original rhumb
         // line between vertices.
         mercator.forward(rawllpts[0], rawllpts[1], from, true);
-        xp = from.x;
+        xp = from.getX();
         for (i = 0, n = 2; n < len; i++, n += 2) {
             mercator.forward(rawllpts[n], rawllpts[n + 1], to, true);
             // segment crosses longitude along screen edge
-            if (Math.abs(xp - to.x) >= mercator.half_world) {
-                flag += (xp < to.x) ? -1 : 1;// inc/dec the wrap
+            if (Math.abs(xp - to.getX()) >= mercator.half_world) {
+                flag += (xp < to.getX()) ? -1 : 1;// inc/dec the wrap
                 // count
                 xadj = flag * mercator.world.x;// adjustment to x
                 // coordinates
                 // Debug.output("flag=" + flag + " xadj=" + xadj);
             }
-            xp = to.x;
+            xp = to.getX();
             if (flag != 0) {
-                to.x += xadj;// adjust x coordinate
+                to.setLocation(to.getX() + xadj, to.getY());// adjust x coordinate
             }
 
             augllpts[i] = mercator.rhumbProjectDouble(from, to, false, nsegs);
             totalpts += augllpts[i].length;
-            from.x = to.x;
-            from.y = to.y;
+            from.setLocation(to);
         }
 
         LatLonPoint llp = new LatLonPoint.Double();
