@@ -40,7 +40,7 @@ public class CoordinateReferenceSystem {
 
     static {
         // unprojected wgs84
-        addCrs(new CoordinateReferenceSystem("EPSG:4326", LatLonGCT.INSTANCE, LLXYLoader.class, Ellipsoid.WGS_84, null, null,
+        addCrs(new CoordinateReferenceSystem("EPSG:4326", LatLonGCT.INSTANCE, LLXYLoader.class, Ellipsoid.WGS_84, null, new BoundingBox(-180d, -90d, 180d, 90d),
                                              AxisOrder.northBeforeEast));
         addCrs(new CoordinateReferenceSystem("CRS:84", LatLonGCT.INSTANCE, LLXYLoader.class, Ellipsoid.WGS_84));
 
