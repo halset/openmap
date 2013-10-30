@@ -24,5 +24,12 @@ public interface FeatureInfoResponse {
     public void flush();
 
     public void output(LayerFeatureInfoResponse layerFeatureInfoResponse);
+    
+   /**
+    * The content type to use for the response. Typically the same as in
+    * {@link #setOutput(String, StringBuffer)}, but could vary. As an example,
+    * it might be wise to return a UTF-8 version of text/{plain,html}
+    */
+    public String getContentType();
 
 }

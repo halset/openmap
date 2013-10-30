@@ -51,7 +51,7 @@ public class DefaultFeatureInfoResponse
       out.append(s);
    }
    
-   protected String getContentType() {
+   public String getContentType() {
       return contentType;
    }
 

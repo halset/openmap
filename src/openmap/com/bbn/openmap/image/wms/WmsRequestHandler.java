@@ -464,7 +464,7 @@ public class WmsRequestHandler
         featureInfoResponse.flush();
 
         byte[] response = out.toString().getBytes("UTF-8");
-        httpResponse.writeHttpResponse(parameters.infoFormat, response);
+        httpResponse.writeHttpResponse(featureInfoResponse.getContentType(), response);
     }
 
     private FeatureInfoResponse getFeatureInfoResponse() {
