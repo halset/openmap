@@ -1,5 +1,6 @@
 package com.bbn.openmap.image.wms;
 
+import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,6 +86,8 @@ abstract class Version {
     
     public abstract Collection<String> getExceptionFormats();
 
+    public abstract String[] getFeatureInfoPointKeys();
+
     private static class V111 extends Version {
 
         public V111(String version) {
@@ -142,6 +145,11 @@ abstract class Version {
       @Override
       public Collection<String> getCapabiltiesFormats() {
          return Arrays.asList("application/vnd.ogc.wms_xml");
+      }
+
+      @Override
+      public String[] getFeatureInfoPointKeys() {
+         return new String[]{"X", "Y"};
       }
 
     }
@@ -220,6 +228,11 @@ abstract class Version {
       @Override
       public Collection<String> getCapabiltiesFormats() {
          return Arrays.asList("text/xml");
+      }
+      
+      @Override
+      public String[] getFeatureInfoPointKeys() {
+         return new String[]{"I", "J"};
       }
 
     }

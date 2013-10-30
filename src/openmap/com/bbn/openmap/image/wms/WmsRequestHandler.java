@@ -866,16 +866,17 @@ public class WmsRequestHandler
         parameters.x = -1;
         parameters.y = -1;
 
+        String[] keys = parameters.getVersion().getFeatureInfoPointKeys();
         try {
-            parameters.x = Integer.parseInt(requestProperties.getProperty(X));
+            parameters.x = Integer.parseInt(requestProperties.getProperty(keys[0]));
         } catch (NumberFormatException e) {
-            throw new WMSException("Invalid X parameter: " + requestProperties.getProperty(X), WMSException.INVALIDPOINT);
+            throw new WMSException("Invalid "+keys[0]+" parameter: " + requestProperties.getProperty(X), WMSException.INVALIDPOINT);
         }
 
         try {
-            parameters.y = Integer.parseInt(requestProperties.getProperty(Y));
+            parameters.y = Integer.parseInt(requestProperties.getProperty(keys[1]));
         } catch (NumberFormatException e) {
-            throw new WMSException("Invalid Y parameter: " + requestProperties.getProperty(Y), WMSException.INVALIDPOINT);
+           throw new WMSException("Invalid "+keys[1]+" parameter: " + requestProperties.getProperty(X), WMSException.INVALIDPOINT);
         }
     }
 
