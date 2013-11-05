@@ -22,6 +22,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.5</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.vividsolutions</groupId>
@@ -32,23 +33,26 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.0.1</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_core</artifactId>
       <version>1.1.3</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_codec</artifactId>
       <version>1.1.3</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_imageio</artifactId>
       <version>1.1</version>
+      <scope>provided</scope>
     </dependency>
-            
   </dependencies>
 
 </project>
