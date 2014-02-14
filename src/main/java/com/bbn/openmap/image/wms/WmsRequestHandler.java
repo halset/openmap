@@ -828,11 +828,9 @@ public class WmsRequestHandler
             parameters.setVersion(Version.getDefault());
             Debug.message("wms", "missing version string. default to " + parameters.getVersion());
         } else {
-            if (parameters instanceof GetCapabilitiesRequestParameters) {
-                parameters.setVersion(Version.getVersionBestMatch(versionString));
-            } else {
-                parameters.setVersion(Version.getVersion(versionString));
-            }
+            // version matching is allowed for GetCapabilities, but World Wind 
+            // uses "1.3" instead of "1.3.0" so be nice and try to match.
+            parameters.setVersion(Version.getVersionBestMatch(versionString));
             if (parameters.getVersion() == null) {
                 throw new WMSException("Unsupported protocol version: " + versionString);
             }
