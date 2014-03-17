@@ -1,6 +1,5 @@
 package com.bbn.openmap.image.wms;
 
-import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +8,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -72,7 +72,7 @@ abstract class Version {
         return getVersionString();
     }
 
-    public abstract Document createCapabilitiesDocumentStart();
+    public abstract Document createCapabilitiesDocumentStart(String ogcSchemaLocationPrefix);
 
     public abstract Element createLatLonBoundingBox(Document doc);
 
@@ -94,7 +94,12 @@ abstract class Version {
             super(version);
         }
 
-        public Document createCapabilitiesDocumentStart() {
+        public Document createCapabilitiesDocumentStart(String ogcSchemaLocationPrefix) {
+            
+            if (ogcSchemaLocationPrefix == null) {
+                ogcSchemaLocationPrefix = CapabilitiesSupport.WMSOgcSchemaLocationPrefixDefault;
+            }
+            
             try {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                         .newDocumentBuilder();
@@ -102,10 +107,10 @@ abstract class Version {
                 DOMImplementation impl = builder.getDOMImplementation();
                 DocumentType doctype = impl
                         .createDocumentType("wms", "WMT_MS_Capabilities",
-                                "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd");
+                                ogcSchemaLocationPrefix + "/wms/1.1.1/WMS_MS_Capabilities.dtd");
                 Document doc = impl.createDocument(null, "WMT_MS_Capabilities",
                         doctype);
-
+                
                 return doc;
             } catch (javax.xml.parsers.ParserConfigurationException ex) {
                 throw new RuntimeException("Cannot create new Xml Document:"
@@ -160,22 +165,27 @@ abstract class Version {
             super(version);
         }
 
-        public Document createCapabilitiesDocumentStart() {
+        public Document createCapabilitiesDocumentStart(String ogcSchemaLocationPrefix) {
+            
+            if (ogcSchemaLocationPrefix == null) {
+                ogcSchemaLocationPrefix = CapabilitiesSupport.WMSOgcSchemaLocationPrefixDefault;
+            }
+            
             try {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                         .newDocumentBuilder();
 
                 DOMImplementation impl = builder.getDOMImplementation();
-                // TODO: add xsd stuff for WMS_Capabilities. how?
-                // <WMS_Capabilities version="1.3.0"
-                // xmlns="http://www.opengis.net/wms"
-                // xmlns:xlink="http://www.w3.org/1999/xlink"
-                // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                // xsi:schemaLocation="http://www.opengis.net/wms
-                // http://schemas.opengis.net/wms/1.3.0/capabilities_1_2_0.xsd">
+                
                 Document doc = impl.createDocument(
                         "http://www.opengis.net/wms", "WMS_Capabilities", null);
-
+                
+                Element root = doc.getDocumentElement();
+                
+                root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
+                        "xsi:schemaLocation", "http://www.opengis.net/wms " + ogcSchemaLocationPrefix
+                                + "/wms/1.3.0/capabilities_1_3_0.xsd");
+                
                 return doc;
             } catch (javax.xml.parsers.ParserConfigurationException ex) {
                 throw new RuntimeException("Cannot create new Xml Document:"

@@ -46,24 +46,38 @@ import com.bbn.openmap.proj.coords.CoordinateReferenceSystem;
 public class CapabilitiesSupport {
 
     public static final String WMSPrefix = ImageServer.OpenMapPrefix + "wms.";
+    public static final String WMSTitle = WMSPrefix + "Title";
+    public static final String WMSAbstract = WMSPrefix + "Abstract";
+    public static final String WMSLayersTitle = WMSPrefix + "LayersTitle";
+    public static final String WMSKeyword = WMSPrefix + "Keyword";
+    
+    /**
+     * A properties key for the OGC schema site or a mirror of it. To be used
+     * for schemaLocation in off line setups.
+     */
+    public static final String WMSOgcSchemaLocationPrefix = WMSPrefix + "OgcSchemaLocationPrefix";
+    
+    public static final String WMSOgcSchemaLocationPrefixDefault = "http://schemas.opengis.net";
     
     private String onlineResource;
 
     private List<String> keywordsList = null;
 
-    private String wmsTitle = null;
+    private final String wmsTitle;
 
-    private String wmsAbstract = null;
+    private final String wmsAbstract;
 
     private int updateSequence = 1;
 
     private List<IWmsLayer> wmslayers = new ArrayList<IWmsLayer>();
 
-    private String layersTitle;
+    private final String layersTitle;
 
     private Collection<String> crsCodes = CoordinateReferenceSystem.getCodes();
     
     private final WmsRequestHandler requestHandler;
+    
+    private final String ogcSchemaLocationPrefix;
 
     /**
      * Creates a new instance of CapabilitiesSupport
@@ -80,10 +94,11 @@ public class CapabilitiesSupport {
             throws WMSException {
 
         this.requestHandler = requestHandler;
-        wmsTitle = props.getProperty(WMSPrefix + "Title", "Sample Title");
-        wmsAbstract = props.getProperty(WMSPrefix + "Abstract", "Sample Abstract");
-        layersTitle = props.getProperty(WMSPrefix + "LayersTitle", "Sample Layer List");
-        String[] strKeywords = props.getProperty(WMSPrefix + "Keyword", "").split(" ");
+        this.wmsTitle = props.getProperty(WMSTitle, "Sample Title");
+        this.wmsAbstract = props.getProperty(WMSAbstract, "Sample Abstract");
+        this.layersTitle = props.getProperty(WMSLayersTitle, "Sample Layer List");
+        this.ogcSchemaLocationPrefix = props.getProperty(WMSOgcSchemaLocationPrefix, WMSOgcSchemaLocationPrefixDefault);
+        String[] strKeywords = props.getProperty(WMSKeyword, "").split(" ");
         List<String> keywords = Arrays.asList(strKeywords);
         setKeywords(keywords);
 
@@ -129,7 +144,7 @@ public class CapabilitiesSupport {
      */
     private Document generateCapabilitiesDocument(Version version) {
 
-        Document doc = version.createCapabilitiesDocumentStart();
+        Document doc = version.createCapabilitiesDocumentStart(ogcSchemaLocationPrefix);
 
         Element root = doc.getDocumentElement();
         root.setAttribute("version", version.getVersionString());
@@ -149,7 +164,7 @@ public class CapabilitiesSupport {
         }
 
         service.appendChild(onlineResource(doc, onlineResource));
-
+        
         service.appendChild(textnode(doc, "Fees", "none"));
         service.appendChild(textnode(doc, "AccessConstraints", "none"));
         root.appendChild(service);
@@ -306,10 +321,6 @@ public class CapabilitiesSupport {
 
     public void addLayer(IWmsLayer wmsLayer) {
         wmslayers.add(wmsLayer);
-    }
-
-    public void setLayersTitle(String title) {
-        this.layersTitle = title;
     }
 
     private void appendSRSBoundingBox(Document doc, Element layers, String crsCode, Version version) {
