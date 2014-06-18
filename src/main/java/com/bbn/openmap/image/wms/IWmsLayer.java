@@ -22,10 +22,15 @@ public interface IWmsLayer {
     public String getTitle();
 
     /**
-     * @return a String representing the short layer name. It is like
-     *         {@link Layer#getPropertyPrefix()} and are used in WMS Urls.
+     * @return a String representing the short layer name. It is used in WMS GetMap
+     *         LAYERS argument. It might be equal to {@link com.bbn.openmap.Layer#getPropertyPrefix()}.
      */
     public String getWmsName();
+    
+    /**
+     * @see com.bbn.openmap.Layer#getPropertyPrefix()
+     */
+    public String getPropertyPrefix();
 
     /**
      * @return a string description of the layer

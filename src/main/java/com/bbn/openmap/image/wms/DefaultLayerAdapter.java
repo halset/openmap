@@ -73,6 +73,10 @@ class DefaultLayerAdapter implements IWmsLayer {
     public String getWmsName() {
         return layer.getPropertyPrefix();
     }
+    
+    public String getPropertyPrefix() {
+        return layer.getPropertyPrefix();
+    }
 
     /**
      * @return

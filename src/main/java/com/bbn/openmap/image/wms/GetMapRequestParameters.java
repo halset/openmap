@@ -36,12 +36,12 @@ class GetMapRequestParameters extends WmsRequestParameters implements FormatRequ
 	 */
 	public final List<String> layerNames = new ArrayList<String>();
 
-	/**
-	 * All top level layer names for each of the layer names. So, if the request
-	 * has two sub level layer names with the same top level layer name, this
-	 * list will only have that single top level layer name.
-	 */
-	public final List<String> topLayerNames = new ArrayList<String>();
+    /**
+     * All top level layer property prefixes for each of the layers. So, if the
+     * request has two sub level layers with the same top level, this list will
+     * only have that single top level property prefix.
+     */
+    public final List<String> topLayerPropertyPrefixes = new ArrayList<String>();
 
 	public ImageFormatter getFormatter() {
 		return formatter;

@@ -192,7 +192,7 @@ public class WmsRequestHandler
     }
 
     protected IWmsLayer getLayerByName(String wmsName) {
-        return (IWmsLayer) wmsLayerByName.get(wmsName);
+        return wmsLayerByName.get(wmsName);
     }
 
     /**
@@ -299,9 +299,8 @@ public class WmsRequestHandler
         Proj projection = createProjection(requestProperties, parameters);
 
         checkLayersAndStyles(requestProperties, parameters);
-
-        Debug.message("ms", "handleGetMapRequest: createImage layers:" + parameters.topLayerNames.toString());
-        return createImage(projection, parameters.width, parameters.height, parameters.topLayerNames, bgPaint);
+        
+        return createImage(projection, parameters.width, parameters.height, parameters.topLayerPropertyPrefixes, bgPaint);
     }
 
     public byte[] handleGetLegendGraphicRequest(Properties requestProperties)
@@ -629,7 +628,7 @@ public class WmsRequestHandler
             }
         }
 
-        parameters.topLayerNames.clear();
+        parameters.topLayerPropertyPrefixes.clear();
         parameters.layerNames.clear();
 
         /*
@@ -647,14 +646,15 @@ public class WmsRequestHandler
 
             if (wmsLayer instanceof IWmsNestedLayer) {
                 IWmsNestedLayer nestedLayer = (IWmsNestedLayer) wmsLayer;
-                String topLayerName = nestedLayer.getTopLayer().getWmsName();
-                if (!parameters.topLayerNames.contains(topLayerName)) {
-                    parameters.topLayerNames.add(topLayerName);
+                String topLayerPropertyPrefix = nestedLayer.getTopLayer().getPropertyPrefix();
+                if (!parameters.topLayerPropertyPrefixes.contains(topLayerPropertyPrefix)) {
+                    parameters.topLayerPropertyPrefixes.add(topLayerPropertyPrefix);
                 }
                 nestedLayer.setIsActive(true);
             } else {
-                if (!parameters.topLayerNames.contains(layerName)) {
-                    parameters.topLayerNames.add(layerName);
+                String layerPropertyPrefix = wmsLayer.getPropertyPrefix();
+                if (!parameters.topLayerPropertyPrefixes.contains(layerPropertyPrefix)) {
+                    parameters.topLayerPropertyPrefixes.add(layerPropertyPrefix);
                 }
             }
 
