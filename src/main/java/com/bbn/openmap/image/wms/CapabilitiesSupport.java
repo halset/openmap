@@ -230,12 +230,6 @@ public class CapabilitiesSupport {
         if (wmsLayer.getAbstract() != null) {
             layerElement.appendChild(textnode(doc, "Abstract", wmsLayer.getAbstract()));
         }
-        
-        // append bounding boxes
-        layerElement.appendChild(version.createLatLonBoundingBox(doc));
-        for (Iterator<String> it = crsCodes.iterator(); it.hasNext();) {
-            appendSRSBoundingBox(doc, layerElement, it.next(), version);
-        }
 
         // add styles
         IWmsLayerStyle[] styles = wmsLayer.getStyles();
