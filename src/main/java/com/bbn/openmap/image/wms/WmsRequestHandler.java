@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -58,6 +59,7 @@ public class WmsRequestHandler
     private WmsLayerFactory wmsLayerFactory;
     private final Map<String, ImageFormatter> imageFormatterByContentType = new HashMap<String, ImageFormatter>();
     private FeatureInfoResponse featureInfoResponse;
+    private Locale locale;
     public static final String WMSPrefix = CapabilitiesSupport.WMSPrefix;
     private static final String FeatureInfoResponseClassNameProperty = "featureInfoResponse.class";
 
@@ -69,14 +71,16 @@ public class WmsRequestHandler
      * @param wmsPort for capabilities description
      * @param wmsUrlPath for capabilities description
      * @param props openmap properties to configure layers
+     * @param locale
      * @throws IOException
      * @throws WMSException
      */
-    public WmsRequestHandler(String wmsScheme, String wmsHostName, int wmsPort, String wmsUrlPath, Properties props)
-            throws IOException, WMSException {
+    public WmsRequestHandler(String wmsScheme, String wmsHostName, int wmsPort, String wmsUrlPath,
+            Properties props, Locale locale) throws IOException, WMSException {
 
         super(props);
         setProperties(props);
+        this.locale = locale;
 
         // separate antialias property for wms.
         boolean antialias = PropUtils.booleanFromProperties(props, WMSPrefix + AntiAliasingProperty, false);
@@ -104,6 +108,17 @@ public class WmsRequestHandler
         // read from configuration fixed part of Capabilities Document returned
         // in getCapabilities method
         capabilities = new CapabilitiesSupport(props, wmsScheme, wmsHostName, wmsPort, wmsUrlPath, this);
+    }
+    
+    /**
+     * @deprecated use
+     *             {@link #WmsRequestHandler(String, String, int, String, Properties, Locale)}
+     *             instead
+     */
+    @Deprecated
+    public WmsRequestHandler(String wmsScheme, String wmsHostName, int wmsPort, String wmsUrlPath,
+            Properties props) throws IOException, WMSException {
+        this(wmsScheme, wmsHostName, wmsPort, wmsUrlPath, props, Locale.ENGLISH);
     }
 
    /**
@@ -148,6 +163,9 @@ public class WmsRequestHandler
         wmsLayers.clear();
         for (int i = 0; i < layers.length; i++) {
             Layer layer = layers[i];
+            if (locale != null) {
+                layer.setLocale(locale);
+            }
             createWmsLayers(wmsLayerFactory.createWmsLayer(layer));
         }
     }

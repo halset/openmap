@@ -119,7 +119,8 @@ public class OgcWmsServlet extends HttpServlet {
 
         try {
             WmsRequestHandler wmsRequestHandler = new WmsRequestHandler(schema, hostName,
-                    serverPort, contextPath + servletPath + servletPathInfo, getProperties());
+                    serverPort, contextPath + servletPath + servletPathInfo, getProperties(),
+                    request.getLocale());
             return wmsRequestHandler;
         } catch (java.net.MalformedURLException me) {
             Debug.message("wms", "MS: caught MalformedURLException - \n" + me.getMessage());
