@@ -53,6 +53,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.bbn.openmap.Layer;
@@ -372,9 +373,8 @@ public class VPFConfig
       oldDrawingAttributes.setTo(drawingAttributes);
    }
 
-   @SuppressWarnings("unchecked")
    protected void loadCurrentFeatures(DefaultMutableTreeNode top, String featureName, LayerGraphicWarehouseSupport warehouse) {
-      Enumeration<DefaultMutableTreeNode> treeEnum = top.children();
+      Enumeration<TreeNode> treeEnum = top.children();
       while (treeEnum.hasMoreElements()) {
          DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEnum.nextElement();
          Object obj = node.getUserObject();

@@ -7,6 +7,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compile.source>1.8</maven.compile.source>
+    <maven.compile.target>1.8</maven.compile.target>
   </properties>
 
   <repositories>
@@ -54,5 +56,40 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  
+  <build>
+   <plugins>  
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.8.1</version>
+      <configuration>
+        <source>${maven.compile.source}</source>
+        <target>${maven.compile.target}</target>
+        <debug>true</debug>
+        <encoding>UTF-8</encoding>
+      </configuration>
+    </plugin>
+    <plugin>
+     <inherited>true</inherited>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-source-plugin</artifactId>
+     <version>3.1.0</version>
+     <configuration>
+      <attach>true</attach>
+     </configuration>
+     <executions>
+      <execution>
+       <id>attach-sources</id>
+       <goals>
+        <goal>jar</goal>
+        <goal>test-jar</goal>
+       </goals>
+      </execution>
+     </executions>
+    </plugin>   
+   </plugins>
+ </build>
+  
 
 </project>
