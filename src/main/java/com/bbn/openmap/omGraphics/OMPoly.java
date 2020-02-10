@@ -806,7 +806,7 @@ public class OMPoly
                     if (!isFillClear) {
                         // set the interior coloring parameters
                         setGraphicsForFill(g);
-                        GeneralPath polyGon = new GeneralPath();
+                        GeneralPath polyGon = new GeneralPath(GeneralPath.WIND_NON_ZERO, _x.length);
                         for (int j = 0; j < _x.length; j++) {
                             if (j == 0) {
                                 polyGon.moveTo(_x[j], _y[j]);
@@ -831,7 +831,7 @@ public class OMPoly
                             if (g instanceof Graphics2D && stroke instanceof BasicStroke) {
                                 ((Graphics2D) g).setStroke(new BasicStroke(((BasicStroke) stroke).getLineWidth() + 2f));
                                 setGraphicsColor(g, mattingPaint);
-                                GeneralPath polyLine = new GeneralPath();
+                                GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_NON_ZERO, _x.length);
                                 for (int j = 0; j < _x.length; j++) {
                                     if (j == 0) {
                                         polyLine.moveTo(_x[j], _y[j]);
@@ -847,7 +847,7 @@ public class OMPoly
                         setGraphicsForEdge(g);
                         // for some reason, this used to be
                         // drawPolygon
-                        GeneralPath polyGon = new GeneralPath();
+                        GeneralPath polyGon = new GeneralPath(GeneralPath.WIND_NON_ZERO, _x.length);
                         for (int j = 0; j < _x.length; j++) {
                             if (j == 0) {
                                 polyGon.moveTo(_x[j], _y[j]);
@@ -873,7 +873,7 @@ public class OMPoly
                                 arrowhead.render(g);
                             }
                             setGraphicsColor(g, mattingPaint);
-                            GeneralPath polyLine = new GeneralPath();
+                            GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_NON_ZERO, _x.length);
                             for (int j = 0; j < _x.length; j++) {
                                 if (j == 0) {
                                     polyLine.moveTo(_x[j], _y[j]);
@@ -888,7 +888,7 @@ public class OMPoly
 
                     // draw main outline
                     setGraphicsForEdge(g);
-                    GeneralPath polyLine = new GeneralPath();
+                    GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_NON_ZERO, _x.length);
                     for (int j = 0; j < _x.length; j++) {
                         if (j == 0) {
                             polyLine.moveTo(_x[j], _y[j]);
