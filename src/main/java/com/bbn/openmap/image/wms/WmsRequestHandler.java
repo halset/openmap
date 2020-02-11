@@ -149,6 +149,13 @@ public class WmsRequestHandler
     Collection<String> getInfoFormats() {
        return getFeatureInfoResponse().getInfoFormats();
     }
+    
+    /**
+     * @return a {@link Locale} for the request or null if none are specified.
+     */
+    Locale getLocale() {
+        return locale;
+    }
 
     /**
      * For each layer managed by ImageServer create corresponding IWmsLayer

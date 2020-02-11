@@ -274,6 +274,11 @@ public class CapabilitiesSupport {
                         url.append("&").append(WMTConstants.FORMAT).append("=").append(format);
                         url.append("&").append(WMTConstants.WIDTH).append("=").append(width);
                         url.append("&").append(WMTConstants.HEIGHT).append("=").append(height);
+                        
+                        if (requestHandler.getLocale() != null) {
+                            url.append("&").append(WMTConstants.LANGUAGE).append("=")
+                                    .append(requestHandler.getLocale().toLanguageTag());
+                        }
 
                         legendURLElement.appendChild(onlineResource(doc, url.toString()));
 

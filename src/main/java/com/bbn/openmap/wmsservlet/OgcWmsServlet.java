@@ -15,6 +15,7 @@ package com.bbn.openmap.wmsservlet;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.bbn.openmap.PropertyHandler;
+import com.bbn.openmap.image.WMTConstants;
 import com.bbn.openmap.image.wms.WMSException;
 import com.bbn.openmap.image.wms.WmsRequestHandler;
 import com.bbn.openmap.util.Debug;
@@ -116,11 +118,22 @@ public class OgcWmsServlet extends HttpServlet {
         if (servletPathInfo == null) {
             servletPathInfo = "";
         }
+        
+        // locale from request Accept-Language HTTP header and allow override
+        // with LANGUAGE parameter.
+        Locale locale = request.getLocale();
+        String languageParameter = request.getParameter(WMTConstants.LANGUAGE);
+        if (languageParameter != null) {
+            Locale localeFromLanguageParameter = Locale.forLanguageTag(languageParameter);
+            if (localeFromLanguageParameter != null) {
+                locale = localeFromLanguageParameter;
+            }
+        }
 
         try {
             WmsRequestHandler wmsRequestHandler = new WmsRequestHandler(schema, hostName,
                     serverPort, contextPath + servletPath + servletPathInfo, getProperties(),
-                    request.getLocale());
+                    locale);
             return wmsRequestHandler;
         } catch (java.net.MalformedURLException me) {
             Debug.message("wms", "MS: caught MalformedURLException - \n" + me.getMessage());

@@ -78,6 +78,12 @@ public interface WMTConstants {
     public final static String LAYER = "LAYER";
     
     /**
+     * Non-standard WMS paramter commonly used for specifying a language. For
+     * overriding Accept-Language HTTP header.
+     */
+    public final static String LANGUAGE = "LANGUAGE";
+    
+    /**
      * Query Layer list (QUERY_LAYERS), comma separated layer names. Required for
      * WMS GetFeatureInfo requests.
      */
