@@ -30,8 +30,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An abstract class that presents a static interface for debugging
@@ -130,7 +131,7 @@ public abstract class Debug {
      */
     public static String debugAllToken = "all";
 
-    private static Hashtable dbgTable = new Hashtable();
+    private static final Map<String, Boolean> dbgTable = new ConcurrentHashMap<>();
     private static String debugTokenHeader = "debug.";
 
     /**
