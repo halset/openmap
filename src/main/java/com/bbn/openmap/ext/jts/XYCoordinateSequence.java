@@ -6,9 +6,9 @@
 package com.bbn.openmap.ext.jts;
 
 import com.bbn.openmap.util.DeepCopyUtil;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.Envelope;
 
 class XYCoordinateSequence
       implements CoordinateSequence {
@@ -96,6 +96,11 @@ class XYCoordinateSequence
 
    @Override
    public Object clone() {
+      return copy();
+   }
+
+   @Override
+   public CoordinateSequence copy() {
       return new XYCoordinateSequence(DeepCopyUtil.deepCopy(xpts), DeepCopyUtil.deepCopy(ypts));
    }
 

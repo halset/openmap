@@ -5,8 +5,8 @@
  */
 package com.bbn.openmap.ext.jts;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
 
 /**
  * A {@link CoordinateSequenceFilter} to extract float[] xpts and ypts from a
