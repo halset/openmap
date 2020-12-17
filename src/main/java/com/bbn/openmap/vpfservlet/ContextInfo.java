@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.ServletContext;
-
 import com.bbn.openmap.layer.vpf.LibrarySelectionTable;
+
+import jakarta.servlet.ServletContext;
 
 /**
  * This class holds information retrieved from the ServletContext.

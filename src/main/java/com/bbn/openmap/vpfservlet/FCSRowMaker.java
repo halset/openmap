@@ -16,12 +16,12 @@ package com.bbn.openmap.vpfservlet;
 import java.io.File;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.bbn.openmap.layer.vpf.Constants;
 import com.bbn.openmap.layer.vpf.DcwRecordFile;
 import com.bbn.openmap.util.html.TableRowElement;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A RowMaker class specifically for the markup of VPF feature class schema

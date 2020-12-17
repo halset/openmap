@@ -18,16 +18,16 @@ import java.net.MalformedURLException;
 import java.util.Locale;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.bbn.openmap.PropertyHandler;
 import com.bbn.openmap.image.WMTConstants;
 import com.bbn.openmap.image.wms.WMSException;
 import com.bbn.openmap.image.wms.WmsRequestHandler;
 import com.bbn.openmap.util.Debug;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 

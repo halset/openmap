@@ -3,9 +3,7 @@ package com.bbn.openmap.util.http;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
-import com.bbn.openmap.util.http.IHttpResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A version of {@link IHttpResponse} that does not do any sending before the
