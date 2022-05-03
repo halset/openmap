@@ -23,16 +23,15 @@
 package com.bbn.openmap.util;
 
 import java.applet.Applet;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that presents a static interface for debugging
@@ -68,7 +67,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Tom Mitchell (tmitchell@bbn.com)
  * @author $Author: dietrick $
  * @version $Revision: 1.6 $, $Date: 2004/12/08 01:10:45 $
+ * @deprecated use slf4j directly instead of this class
  */
+@Deprecated
 public abstract class Debug {
 
     public static String ERROR_HEADER = "\n*** ERROR ***";
@@ -84,21 +85,6 @@ public abstract class Debug {
      */
     public static final boolean On = true;
     /**
-     * The stream where debugging output should go. Default is
-     * System.out.
-     */
-    public static PrintStream out = System.out;
-    /**
-     * The stream where debugging error messages should go. Default is
-     * System.err. Use the function Debug.error to write to it, in
-     * case you also want to direct output to a file.
-     */
-    protected static PrintStream err = System.err;
-    /**
-     * The File for logging errors.
-     */
-    protected static File errorFile = null;
-    /**
      * The flag for whether the output stream should still be notified
      * if logging output.
      */
@@ -108,14 +94,6 @@ public abstract class Debug {
      * logging errors.
      */
     protected static boolean notifyErr = true;
-    /**
-     * The DataOutputStream for logging output.
-     */
-    protected static DataOutputStream outputLog = null;
-    /**
-     * The DataOutputStream for logging errors.
-     */
-    protected static DataOutputStream errorLog = null;
     /**
      * Flag to have the errors appended to the error log.
      */
@@ -280,24 +258,6 @@ public abstract class Debug {
     }
 
     /**
-     * Sets the debugging output stream to the named stream.
-     * 
-     * @param out the desired debugging output stream
-     */
-    public static void setPrintStream(PrintStream out) {
-        Debug.out = out;
-    }
-
-    /**
-     * Accessor for the current debugging output stream.
-     * 
-     * @return the current debugging output stream.
-     */
-    public static PrintStream getPrintStream() {
-        return out;
-    }
-
-    /**
      * Provide a file to log output. This can be in conjunction with
      * the output stream, or instead of it. Will overwrite the file, if
      * it exists.
@@ -307,16 +267,7 @@ public abstract class Debug {
      *        provide output, in addition to logging the output.
      */
     public static void directOutput(File file, boolean alsoToOutStream) {
-        try {
-            directOutput(new FileOutputStream(file), alsoToOutStream);
-        } catch (IOException ioe) {
-            // If something goes wrong, set the output to the
-            // System.out only, and hope someone sees it.
-            notifyOut = true;
-            out = System.out;
-            error("Debug: can't set up <" + file + "> for log file! \n" + ioe);
-            return;
-        }
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -331,18 +282,7 @@ public abstract class Debug {
      */
     public static void directOutput(String filename, boolean append,
                                     boolean alsoToOutStream) {
-        try {
-            directOutput(new FileOutputStream(filename, append),
-                    alsoToOutStream);
-        } catch (IOException ioe) {
-            // If something goes wrong, set the output to the
-            // System.out only, and hope someone sees it.
-            notifyOut = true;
-            out = System.out;
-            error("Debug: can't set up <" + filename + "> for log file! \n"
-                    + ioe);
-            return;
-        }
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -354,8 +294,7 @@ public abstract class Debug {
      *        provide output, in addition to logging the output.
      */
     public static void directOutput(OutputStream os, boolean alsoToOutStream) {
-        outputLog = new DataOutputStream(os);
-        notifyOut = alsoToOutStream;
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -364,7 +303,6 @@ public abstract class Debug {
      * @param err the desired error output stream
      */
     public static void setErrorStream(PrintStream err) {
-        Debug.err = err;
     }
 
     /**
@@ -373,7 +311,7 @@ public abstract class Debug {
      * @return the current error output stream.
      */
     public static PrintStream getErrorStream() {
-        return err;
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -385,8 +323,7 @@ public abstract class Debug {
      *        provide output, in addition to logging the errors.
      */
     public static void directErrors(File file, boolean alsoToErrStream) {
-        errorFile = file;
-        notifyErr = alsoToErrStream;
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -401,9 +338,7 @@ public abstract class Debug {
      */
     public static void directErrors(String filename, boolean append,
                                     boolean alsoToErrStream) {
-        errorAppend = append;
-        errorFile = new File(filename);
-        notifyErr = alsoToErrStream;
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -415,8 +350,7 @@ public abstract class Debug {
      *        provide output, in addition to logging the errors.
      */
     public static void directErrors(OutputStream os, boolean alsoToErrStream) {
-        errorLog = new DataOutputStream(os);
-        notifyErr = alsoToErrStream;
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -429,97 +363,7 @@ public abstract class Debug {
      * @param errorString the string to write as an error.
      */
     public static void error(String errorString) {
-
-        try {
-            if (errorLog == null) {
-                // If no errors have happened yet, this will get run.
-                if (errorFile != null) {
-                    FileOutputStream log = new FileOutputStream(errorFile.getPath(), errorAppend);
-                    errorLog = new DataOutputStream(log);
-
-                    // Lets make introductions into the error file,
-                    // shall we?
-                    errorLog.writeBytes("\n");
-                    errorLog.writeBytes(getMapBeanMessage());
-                    errorLog.writeBytes("\n");
-                    errorLog.writeBytes("ERROR log file - "
-                            + java.util.Calendar.getInstance().getTime());
-                    errorLog.writeBytes("\n");
-                    errorLog.writeBytes(ERROR_TAIL);
-                    errorLog.writeBytes(ERROR_TAIL);
-                    errorLog.writeBytes(ERROR_TAIL);
-                    errorLog.writeBytes("\n");
-                    /////////////////////
-
-                    errorLog.writeBytes(ERROR_HEADER);
-                    errorLog.writeBytes(errorString);
-                    errorLog.writeBytes("\n");
-                    errorLog.writeBytes(ERROR_TAIL);
-                    errorLog.writeBytes("\n");
-                }
-            } else {
-                // With the log already set up, this should get run.
-                errorLog.writeBytes(ERROR_HEADER);
-                errorLog.writeBytes("\n");
-                errorLog.writeBytes(errorString);
-                errorLog.writeBytes("\n");
-                errorLog.writeBytes(ERROR_TAIL);
-                errorLog.writeBytes("\n");
-            }
-        } catch (IOException ioe) {
-            // If something goes wrong, set the output to the
-            // System.err only, and hope someone sees it.
-            errorFile = null;
-            notifyErr = true;
-            err = System.err;
-            err.println(ERROR_HEADER);
-            err.println("Debug: error writing <" + errorString + "> to log! \n"
-                    + ioe);
-            err.println(ERROR_TAIL);
-            return;
-        }
-
-        // Write to the error stream if required.
-        if (notifyErr) {
-            err.println(ERROR_HEADER);
-            err.println(errorString);
-            err.println(ERROR_TAIL);
-        }
-    }
-
-    /**
-     * A reflective method to get the copyright message from the
-     * MapBean without having to actually compile the MapBean when
-     * Debug is compiled.
-     */
-    public static String getMapBeanMessage() {
-        String message = "";
-        try {
-            Class mbClass = Class.forName("com.bbn.openmap.MapBean");
-            java.lang.reflect.Method crMessage = mbClass.getDeclaredMethod("getCopyrightMessage",
-                    (Class[])null);
-            message = (String) crMessage.invoke(mbClass, (Object[])null);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            System.out.println(ite.getMessage());
-        } catch (IllegalArgumentException iae) {
-            System.out.println(iae.getMessage());
-        } catch (IllegalAccessException iae2) {
-            System.out.println(iae2.getMessage());
-        } catch (NoSuchMethodException nme) {
-            System.out.println(nme.getMessage());
-        } catch (NullPointerException npe) {
-            System.out.println(npe.getMessage());
-        } catch (SecurityException se) {
-            System.out.println(se.getMessage());
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe.getMessage());
-        }
-        return message;
-    }
-
-    /** println to output. */
-    public static void output() {
-        Debug.output("");
+        LoggerFactory.getLogger(Debug.class).error(errorString);
     }
 
     /**
@@ -530,26 +374,7 @@ public abstract class Debug {
      * @param outputString the string to write as output.
      */
     public static void output(String outputString) {
-
-        try {
-            if (outputLog != null) {
-                outputLog.writeBytes(outputString);
-                outputLog.writeBytes("\n");
-            }
-        } catch (IOException ioe) {
-            // If something goes wrong, set the output to the
-            // System.out only, and hope someone sees it.
-            notifyOut = true;
-            out = System.out;
-            error("Debug: output writing <" + outputString + "> to log! \n"
-                    + ioe);
-            return;
-        }
-
-        // Write to the output stream if required.
-        if (notifyOut) {
-            out.println(outputString);
-        }
+        LoggerFactory.getLogger(Debug.class).info(outputString);
     }
 
     /**
@@ -562,16 +387,7 @@ public abstract class Debug {
      *        output, in addition to logging the output.
      */
     public static void setLog(File file, boolean alsoToStreams) {
-
-        try {
-            FileOutputStream logStream = new FileOutputStream(file);
-            setLog(logStream, alsoToStreams);
-        } catch (IOException ioe) {
-            // If something goes wrong, set the output to the
-            // System streams only, and hope someone sees it.
-            resetOutput();
-            error("IOException trying to create a log file.\n" + ioe);
-        }
+        throw new UnsupportedOperationException("not supported");
     }
 
     /**
@@ -585,46 +401,6 @@ public abstract class Debug {
      *        output, in addition to logging the output.
      */
     public static void setLog(OutputStream logStream, boolean alsoToStreams) {
-        DataOutputStream dos = new DataOutputStream(logStream);
-        outputLog = dos;
-        errorLog = dos;
-        // Wrap up loose ends - if something happens to the
-        // logStream, we'll just shut down logging, and force
-        // everything to the output streams.
-        errorFile = null;
-        notifyErr = alsoToStreams;
-        notifyOut = alsoToStreams;
-    }
-
-    /**
-     * Reset the logging to the output.
-     */
-    public static void resetOutput() {
-        // If something goes wrong, set the output to the
-        // System streams only, and hope someone sees it.
-        notifyOut = true;
-        errorFile = null;
-        notifyErr = true;
-        err = System.err;
-        out = System.out;
-    }
-
-    /**
-     * Dummy function to illustrate usage of the debugging class.
-     */
-    public static void sampleUsage() {
-        if (Debug.On && Debug.debugging("debug")) {
-            Debug.output("debug message");
-        } else {
-            Debug.output("try again");
-        }
-    }
-
-    /**
-     * <code>main</code> routine used in unit testing.
-     */
-    public static void main(String args[]) {
-        Debug.init(System.getProperties());
-        Debug.sampleUsage();
+        throw new UnsupportedOperationException("not supported");
     }
 }

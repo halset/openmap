@@ -24,6 +24,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bbn.openmap.Layer;
 import com.bbn.openmap.event.ProjectionEvent;
 import com.bbn.openmap.image.ImageFormatter;
@@ -36,7 +39,6 @@ import com.bbn.openmap.proj.Proj;
 import com.bbn.openmap.proj.ProjectionFactory;
 import com.bbn.openmap.proj.coords.CoordinateReferenceSystem;
 import com.bbn.openmap.proj.coords.LatLonPoint;
-import com.bbn.openmap.util.Debug;
 import com.bbn.openmap.util.PropUtils;
 import com.bbn.openmap.util.http.HttpConnection;
 import com.bbn.openmap.util.http.IHttpResponse;
@@ -62,6 +64,8 @@ public class WmsRequestHandler
     private Locale locale;
     public static final String WMSPrefix = CapabilitiesSupport.WMSPrefix;
     private static final String FeatureInfoResponseClassNameProperty = "featureInfoResponse.class";
+    
+    private static final Logger log = LoggerFactory.getLogger(WmsRequestHandler.class);
 
     /**
      * Creates a new WmsRequestHandler object.
@@ -259,22 +263,22 @@ public class WmsRequestHandler
             }
             setRequestParametersOnLayers(requestProperties);
             if (requestType.equalsIgnoreCase(GETMAP)) {
-                Debug.message("ms", "OGCMRH: GetMap request...");
+                log.debug("OGCMRH: GetMap request...");
                 handleGetMapRequest(requestProperties, httpResponse);
             } else if (requestType.equals(GETCAPABILITIES)) {
-                Debug.message("ms", "OGCMRH: GetCapabilities request...");
+                log.debug("OGCMRH: GetCapabilities request...");
                 handleGetCapabilitiesRequest(requestProperties, httpResponse);
             } else if (requestType.equalsIgnoreCase(GETFEATUREINFO)) {
-                Debug.message("ms", "OGCMRH: GetFeatureInfo request...");
+                log.debug("OGCMRH: GetFeatureInfo request...");
                 handleGetFeatureInfoRequest(requestProperties, httpResponse);
             } else if (requestType.equalsIgnoreCase(GETLEGENDGRAPHIC)) {
-                Debug.message("ms", "OGCMRH: GetFeatureInfo request...");
+                log.debug("OGCMRH: GetFeatureInfo request...");
                 handleGetLegendGraphicRequest(requestProperties, httpResponse);
             } else {
                 throw new WMSException("Invalid REQUEST parameter: " + requestType, WMSException.OPERATIONNOTSUPPORTED);
             }
         } catch (WMSException e) {
-            Debug.output("WMSException(" + e.getCode() + "): " + e.getMessage());
+            log.info("WMSException(" + e.getCode() + "): " + e.getMessage());
             httpResponse.writeHttpResponse("application/vnd.ogc.se_xml", e.getXML());
         }
     }
@@ -289,8 +293,8 @@ public class WmsRequestHandler
     public void handleGetMapRequest(Properties requestProperties, IHttpResponse httpResponse)
             throws IOException, MapRequestFormatException, WMSException {
         byte[] image = handleGetMapRequest(requestProperties);
-        if (Debug.debugging("imageserver")) {
-            Debug.output("OGCMRH: have completed image, size " + image.length);
+        if (log.isDebugEnabled()) {
+            log.debug("OGCMRH: have completed image, size " + image.length);
         }
         String contentType = getFormatter().getContentType();
         if (contentType == null) {
@@ -339,7 +343,9 @@ public class WmsRequestHandler
         setFormatter(parameters.getFormatter());
         checkLayerAndStyle(requestProperties, parameters);
 
-        Debug.message("ms", "handleGetLegendGraphic: createImage layer:" + parameters.layerName);
+        if (log.isDebugEnabled()) {
+            log.debug("handleGetLegendGraphic: createImage layer:" + parameters.layerName);
+        }
 
         IWmsLayer layer = wmsLayerByName.get(parameters.layerName);
 
@@ -508,7 +514,9 @@ public class WmsRequestHandler
      */
     @Override
     protected byte[] getFormattedImage(ImageFormatter formatter, int scaledWidth, int scaledHeight) {
-        Debug.message("imageserver", "ImageServer: using full scale image (unscaled).");
+        if (log.isDebugEnabled()) {
+            log.debug("ImageServer: using full scale image (unscaled).");
+        }
         byte[] formattedImage = formatter.getImageBytes();
         return formattedImage;
     }
@@ -630,8 +638,8 @@ public class WmsRequestHandler
         if (strLayers == null) {
             throw new WMSException("LAYERS not specified.", WMSException.LAYERNOTDEFINED);
         }
-        if (Debug.debugging("imageserver")) {
-            Debug.output("OGCMRH.checkLayersAndStyles: requested layers >> " + strLayers);
+        if (log.isDebugEnabled()) {
+            log.debug("OGCMRH.checkLayersAndStyles: requested layers >> " + strLayers);
         }
         String[] layers_in = strLayers.replace('\"', '\0').split(",", -1);
         // ... i style
@@ -738,8 +746,8 @@ public class WmsRequestHandler
         if (strLayers == null) {
             throw new WMSException("QUERY_LAYERS not specified.", WMSException.LAYERNOTDEFINED);
         }
-        if (Debug.debugging("imageserver")) {
-            Debug.output("OGCMRH.checkQueryLayers: requested layers >> " + strLayers);
+        if (log.isDebugEnabled()) {
+            log.debug("OGCMRH.checkQueryLayers: requested layers >> " + strLayers);
         }
         String[] layers_in = strLayers.replace('\"', '\0').split(",", -1);
 
@@ -789,7 +797,9 @@ public class WmsRequestHandler
 
         LatLonPoint llp1 = parameters.bboxLatLonLowerLeft;
         LatLonPoint llp2 = parameters.bboxLatLonUpperRight;
-        Debug.message("wms", "bbox toLatLon: 1: " + llp1 + ", 2: " + llp2 + ", center: " + parameters.bboxLatLonCenter);
+        if (log.isDebugEnabled()) {
+            log.debug("wms", "bbox toLatLon: 1: " + llp1 + ", 2: " + llp2 + ", center: " + parameters.bboxLatLonCenter);
+        }
         projection.setCenter(parameters.bboxLatLonCenter);
 
         int intnewwidth = parameters.width;
@@ -807,7 +817,9 @@ public class WmsRequestHandler
         int w = (int) (xyp2.getX() - xyp1.getX());
         int h = (int) (xyp1.getY() - xyp2.getY());
         if (Math.abs(w - parameters.width) > 2 || Math.abs(h - parameters.height) > 2) {
-            Debug.message("wms", "use aspect ratio fix");
+            if (log.isDebugEnabled()) {
+                log.debug("wms", "use aspect ratio fix");
+            }
             projection.setWidth(w);
             projection.setHeight(h);
             projection.setCenter(parameters.bboxLatLonCenter);
@@ -851,7 +863,9 @@ public class WmsRequestHandler
         String versionString = requestProperties.getProperty(VERSION);
         if (versionString == null) {
             parameters.setVersion(Version.getDefault());
-            Debug.message("wms", "missing version string. default to " + parameters.getVersion());
+            if (log.isDebugEnabled()) {
+                log.debug("missing version string. default to " + parameters.getVersion());
+            }
         } else {
             // version matching is allowed for GetCapabilities, but World Wind 
             // uses "1.3" instead of "1.3.0" so be nice and try to match.
