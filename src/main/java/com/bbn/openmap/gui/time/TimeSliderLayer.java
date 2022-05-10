@@ -33,14 +33,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -81,7 +82,7 @@ public class TimeSliderLayer
       extends OMGraphicHandlerLayer
       implements PropertyChangeListener, MapMouseListener, ComponentListener, TimeBoundsListener, TimeEventListener {
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.gui.time.TimeSliderLayer");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.time.TimeSliderLayer");
 
    protected I18n i18n = Environment.getI18n();
 
@@ -325,10 +326,10 @@ public class TimeSliderLayer
       int east = x + selectionHalfWidth;
       int mid = contextBuffer + 1 + (south - contextBuffer) / 2;
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("selectionCenter:" + selectionCenter + ", selectionWidthMinutes:" + selectionWidthMinutes + ", x:" + x
+      if (logger.isDebugEnabled()) {
+         logger.debug("selectionCenter:" + selectionCenter + ", selectionWidthMinutes:" + selectionWidthMinutes + ", x:" + x
                + ", origin:" + origin);
-         logger.fine("  projection:" + projection);
+         logger.debug("  projection:" + projection);
       }
 
       selectionPoint.setLon((float) selectionCenter);
@@ -388,8 +389,8 @@ public class TimeSliderLayer
    protected void updateTimeline() {
       if (timelinePanel != null) {
          float scale = (float) (magicScaleFactor * selectionWidthMinutes / getProjection().getWidth());
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Updating timeline with scale: " + scale);
+         if (logger.isDebugEnabled()) {
+            logger.debug("Updating timeline with scale: " + scale);
          }
          timelinePanel.getMapBean().setScale(scale);
       }
@@ -437,7 +438,7 @@ public class TimeSliderLayer
 
          double nCenterLon = TimelineLayer.forwardProjectMillis(gameEndTime - gameStartTime) / 2f;
 
-         logger.fine("Telling the center delegate that the new center is 0, " + nCenterLon);
+         logger.debug("Telling the center delegate that the new center is 0, " + nCenterLon);
 
          centerDelegate.fireCenter(0, nCenterLon);
 
@@ -477,8 +478,8 @@ public class TimeSliderLayer
 
       if (timerStatus.equals(TimerStatus.FORWARD) || timerStatus.equals(TimerStatus.BACKWARD)
             || timerStatus.equals(TimerStatus.STOPPED)) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("updated time: " + te);
+         if (logger.isDebugEnabled()) {
+            logger.debug("updated time: " + te);
          }
          // Checking for a running clock prevents a time status
          // update after the clock is stopped. The
@@ -505,7 +506,7 @@ public class TimeSliderLayer
       if (propertyName == MapBean.ProjectionProperty) {
          // This property should be from the TimelineLayer's MapBean, solely
          // for the scale measurement.
-         logger.fine(propertyName + " from " + evt.getSource());
+         logger.debug(propertyName + " from " + evt.getSource());
          Projection timeLineProj = (Projection) evt.getNewValue();
          // Need to solve for selectionWidthMinutes
          if (!realTimeMode || !userHasChangedScale) {
@@ -514,8 +515,8 @@ public class TimeSliderLayer
 
          if (selectionWidthMinutes > maxSelectionWidthMinutes + .0001
          /* || selectionWidthMinutes < .0001 */) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("resetting selectionWidthMinutes to max (projection change property change), was "
+            if (logger.isDebugEnabled()) {
+               logger.debug("resetting selectionWidthMinutes to max (projection change property change), was "
                      + selectionWidthMinutes + ", now " + maxSelectionWidthMinutes);
             }
             selectionWidthMinutes = maxSelectionWidthMinutes;
@@ -660,8 +661,8 @@ public class TimeSliderLayer
 
       if(scaleChange) {
          if (selectionWidthMinutes > maxSelectionWidthMinutes) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("resetting selectionWidthMinutes to max, was " + selectionWidthMinutes + ", now "
+            if (logger.isDebugEnabled()) {
+               logger.debug("resetting selectionWidthMinutes to max, was " + selectionWidthMinutes + ", now "
                      + maxSelectionWidthMinutes);
             }
             selectionWidthMinutes = maxSelectionWidthMinutes;
@@ -916,8 +917,8 @@ public class TimeSliderLayer
       try {
          super.paint(g);
       } catch (Exception e) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.warning(e.getMessage());
+         if (logger.isDebugEnabled()) {
+            logger.error(e.getMessage());
             e.printStackTrace();
          }
       }
@@ -946,8 +947,8 @@ public class TimeSliderLayer
    }
 
    public void updateTimeBounds(TimeBoundsEvent tbe) {
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("updating time bounds: " + tbe);
+      if (logger.isDebugEnabled()) {
+         logger.debug("updating time bounds: " + tbe);
       }
       TimeBounds timeBounds = (TimeBounds) tbe.getNewTimeBounds();
 
@@ -983,8 +984,8 @@ public class TimeSliderLayer
          selectionWidthMinutes = maxSelectionWidthMinutes;
       } else {
          if (selectionWidthMinutes > maxSelectionWidthMinutes || selectionWidthMinutes < .0001) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("resetting selectionWidthMinutes to max (time bounds property change), was " + selectionWidthMinutes
+            if (logger.isDebugEnabled()) {
+               logger.debug("resetting selectionWidthMinutes to max (time bounds property change), was " + selectionWidthMinutes
                      + ", now " + maxSelectionWidthMinutes);
             }
             selectionWidthMinutes = maxSelectionWidthMinutes;

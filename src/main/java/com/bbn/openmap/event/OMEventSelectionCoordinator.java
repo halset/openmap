@@ -27,13 +27,15 @@ package com.bbn.openmap.event;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.OMComponent;
 
 public class OMEventSelectionCoordinator extends OMComponent {
     
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.event.OMEventSelectionCoordinator");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.OMEventSelectionCoordinator");
     public final static String EventsSelectedProperty = "eventsSelected";
     
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);

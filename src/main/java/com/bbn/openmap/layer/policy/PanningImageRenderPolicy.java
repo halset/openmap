@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 
 import com.bbn.openmap.layer.OMGraphicHandlerLayer;
 import com.bbn.openmap.omGraphics.OMGraphicList;
@@ -100,17 +99,17 @@ public class PanningImageRenderPolicy extends RenderingHintsRenderPolicy {
 
                 return list;
             } else {
-                logger.warning("NULL projection, can't do anything.");
+                logger.error("NULL projection, can't do anything.");
             }
         } else {
-            logger.warning("NULL layer, can't do anything.");
+            logger.error("NULL layer, can't do anything.");
         }
         return null;
     }
 
     public void paint(Graphics g) {
         if (layer == null) {
-            logger.warning("NULL layer, skipping...");
+            logger.error("NULL layer, skipping...");
             return;
         }
 
@@ -124,7 +123,7 @@ public class PanningImageRenderPolicy extends RenderingHintsRenderPolicy {
                 // Not sure how we get here, but it's here just in case so that
                 // the list might get painted if it exists and the buffered
                 // image wasn't created.
-                logger.fine("creating image buffer in paint");
+                logger.debug("creating image buffer in paint");
                 if (list != null) {
                     setBuffer(createAndPaintImageBuffer(list));
                 }
@@ -144,8 +143,8 @@ public class PanningImageRenderPolicy extends RenderingHintsRenderPolicy {
                 AffineTransform af = new AffineTransform();
                 af.translate(offset.getX(), offset.getY());
                 g2.drawRenderedImage((BufferedImage) bufferedImage, af);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("RenderingPolicy:" + layer.getName()
+                if (logger.isDebugEnabled()) {
+                    logger.debug("RenderingPolicy:" + layer.getName()
                             + ": rendering buffer");
                 }
 
@@ -153,12 +152,12 @@ public class PanningImageRenderPolicy extends RenderingHintsRenderPolicy {
                 super.setRenderingHints(g);
                 list.render(g);
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(layer.getName() + ": rendering list directly");
+                if (logger.isDebugEnabled()) {
+                    logger.debug(layer.getName() + ": rendering list directly");
                 }
             }
-        } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine(layer.getName()
+        } else if (logger.isDebugEnabled()) {
+            logger.debug(layer.getName()
                     + ".paint(): "
                     + (list == null ? "NULL list, skipping..."
                             : " skipping due to projection."));
@@ -186,8 +185,8 @@ public class PanningImageRenderPolicy extends RenderingHintsRenderPolicy {
             Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
             super.setRenderingHints(g2d);
             list.render(g2d);
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(layer.getName() + ": rendering list into buffer");
+            if (logger.isDebugEnabled()) {
+                logger.debug(layer.getName() + ": rendering list into buffer");
             }
         }
         return bufferedImage;

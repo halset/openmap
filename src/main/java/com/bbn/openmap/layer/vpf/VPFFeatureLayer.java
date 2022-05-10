@@ -27,8 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.ProjectionListener;
 import com.bbn.openmap.io.FormatException;
@@ -69,7 +70,7 @@ public class VPFFeatureLayer
 
    private static final long serialVersionUID = 1L;
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.vpf.VPFFeatureLayer");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.vpf.VPFFeatureLayer");
 
    /** property extension used to set the VPF root directory */
    public static final String pathProperty = "vpfPath";
@@ -193,12 +194,12 @@ public class VPFFeatureLayer
                tmp.load(in);
                in.close();
             } else {
-               logger.warning("can't load default properties file");
+               logger.error("can't load default properties file");
                // just use an empty properties file
             }
             defaultProps = tmp;
          } catch (IOException io) {
-            logger.warning("can't load default properties: " + io);
+            logger.error("can't load default properties: " + io);
             defaultProps = new Properties();
          }
       }
@@ -209,7 +210,7 @@ public class VPFFeatureLayer
     * Set the data path to a single place.
     */
    public void setPath(String newPath) {
-      logger.fine("setting paths to " + newPath);
+      logger.debug("setting paths to " + newPath);
       setPath(new String[] {
          newPath
       });
@@ -238,14 +239,14 @@ public class VPFFeatureLayer
     * initialize the library selection table.
     */
    protected void initLST() {
-      logger.fine("initializing Library Selection Table (LST)");
+      logger.debug("initializing Library Selection Table (LST)");
 
       try {
          if (lst == null) {
             if (dataPaths == null) {
                logger.info("VPFLayer|" + getName() + ": path not set");
             } else {
-               logger.fine("VPFLayer.initLST(dataPaths)");
+               logger.debug("VPFLayer.initLST(dataPaths)");
                lst = new LibrarySelectionTable(dataPaths);
                lst.setCutoffScale(cutoffScale);
             }
@@ -272,7 +273,7 @@ public class VPFFeatureLayer
     */
    public void checkWarehouse(boolean sbf) {
       if (warehouse == null) {
-         logger.fine("need to create warehouse");
+         logger.debug("need to create warehouse");
          warehouse = new VPFAutoFeatureGraphicWarehouse();
       }
    }
@@ -286,14 +287,14 @@ public class VPFFeatureLayer
          try {
             initLST();
          } catch (IllegalArgumentException iae) {
-            logger.warning("VPFLayer.prepare: Illegal Argument Exception.\n\nPerhaps a file not found.  Check to make sure that the paths to the VPF data directories are the parents of \"lat\" or \"lat.\" files. \n\n"
+            logger.error("VPFLayer.prepare: Illegal Argument Exception.\n\nPerhaps a file not found.  Check to make sure that the paths to the VPF data directories are the parents of \"lat\" or \"lat.\" files. \n\n"
                   + iae);
             return null;
          }
 
          if (lst == null) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("VPFLayer| " + getName() + " prepare(), Library Selection Table not set.");
+            if (logger.isDebugEnabled()) {
+               logger.debug("VPFLayer| " + getName() + " prepare(), Library Selection Table not set.");
             }
 
             return null;
@@ -311,7 +312,7 @@ public class VPFFeatureLayer
             }
          }
 
-         logger.warning("VPFLayer.getRectangle:  Data path probably wasn't set correctly (" + dpb.toString()
+         logger.error("VPFLayer.getRectangle:  Data path probably wasn't set correctly (" + dpb.toString()
                + ").  The warehouse not initialized.");
          return null;
       }
@@ -319,8 +320,8 @@ public class VPFFeatureLayer
       Projection p = getProjection();
 
       if (p == null || !(p instanceof GeoProj)) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("VPFLayer.getRectangle() called with a projection (" + p + ") set in the layer, which isn't being handled.");
+         if (logger.isDebugEnabled()) {
+            logger.debug("VPFLayer.getRectangle() called with a projection (" + p + ") set in the layer, which isn't being handled.");
          }
          return new OMGraphicList();
       }
@@ -330,8 +331,8 @@ public class VPFFeatureLayer
 
       // Check both dynamic args and palette values when
       // deciding what to draw.
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("calling draw with boundaries: " + ll1 + " " + ll2);
+      if (logger.isDebugEnabled()) {
+         logger.debug("calling draw with boundaries: " + ll1 + " " + ll2);
       }
       long start = System.currentTimeMillis();
 
@@ -339,13 +340,13 @@ public class VPFFeatureLayer
       try {
          omgList = warehouse.getFeatures(lst, ll1, ll2, p, omgList);
       } catch (FormatException fe) {
-         logger.warning("Caught FormatException reading features: " + fe.getMessage());
+         logger.error("Caught FormatException reading features: " + fe.getMessage());
       }
 
       long stop = System.currentTimeMillis();
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("read time: " + ((stop - start) / 1000d) + " seconds");
+      if (logger.isDebugEnabled()) {
+         logger.debug("read time: " + ((stop - start) / 1000d) + " seconds");
       }
 
       return omgList;

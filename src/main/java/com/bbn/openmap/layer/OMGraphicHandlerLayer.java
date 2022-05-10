@@ -32,14 +32,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Layer;
 import com.bbn.openmap.PropertyConsumer;
@@ -166,7 +167,7 @@ public class OMGraphicHandlerLayer
       extends Layer
       implements GestureResponsePolicy {
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.OMGraphicHandlerLayer");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.OMGraphicHandlerLayer");
 
    /**
      * 
@@ -406,8 +407,8 @@ public class OMGraphicHandlerLayer
     * @see com.bbn.openmap.layer.policy.ListResetPCPolicy
     */
    public void projectionChanged(ProjectionEvent pe) {
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("OMGraphicHandlerLayer " + getName() + " projection changed, calling "
+      if (logger.isDebugEnabled()) {
+         logger.debug("OMGraphicHandlerLayer " + getName() + " projection changed, calling "
                + getProjectionChangePolicy().getClass().getName());
       }
       getProjectionChangePolicy().projectionChanged(pe);
@@ -461,7 +462,7 @@ public class OMGraphicHandlerLayer
             }
          }
       } catch (SecurityException se) {
-         logger.warning(getName() + " layer caught a SecurityException when something tried to stop work on the worker thread");
+         logger.error(getName() + " layer caught a SecurityException when something tried to stop work on the worker thread");
       }
    }
 
@@ -523,7 +524,7 @@ public class OMGraphicHandlerLayer
     */
    public synchronized void renderDataForProjection(Projection proj, Graphics g) {
       if (proj == null) {
-         logger.warning("Layer(" + getName() + ").renderDataForProjection: null projection!");
+         logger.error("Layer(" + getName() + ").renderDataForProjection: null projection!");
          return;
       } else if (!proj.equals(getProjection())) {
          setProjection(proj.makeClone());
@@ -559,8 +560,8 @@ public class OMGraphicHandlerLayer
          getRenderPolicy().prePrepare();
 
          if (isWorking()) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine(getName() + " layer already working in prepare(), canceling");
+            if (logger.isDebugEnabled()) {
+               logger.debug(getName() + " layer already working in prepare(), canceling");
             }
             // This won't do anything if the layer knows it's already been
             // canceled, but we need to call this the first time. We never
@@ -570,7 +571,7 @@ public class OMGraphicHandlerLayer
             if (layerWorkerQueue == null) {
                setCancelled(true);
             } else {
-               logger.finer("skipping swing worker creation, already queued");
+               logger.debug("skipping swing worker creation, already queued");
             }
 
             return;
@@ -579,8 +580,8 @@ public class OMGraphicHandlerLayer
          // changed or other doPrepare call, then create a thread that
          // will do the real work. If there is a thread working on
          // this, then set the canceled flag in the layer.
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("creating another layer worker..." + (layerWorker == null) + ", " + (layerWorkerQueue == null));
+         if (logger.isDebugEnabled()) {
+            logger.debug("creating another layer worker..." + (layerWorker == null) + ", " + (layerWorkerQueue == null));
          }
          setLayerWorker(createLayerWorker());
       }
@@ -681,8 +682,8 @@ public class OMGraphicHandlerLayer
    protected void workerComplete(LayerWorker worker) {
       synchronized (LAYERWORKER_LOCK) {
          if (layerWorkerQueue != null) {
-            if (logger.isLoggable(Level.FINER)) {
-               logger.finer("worker " + worker + " SW launching another because of interruption of thread "
+            if (logger.isDebugEnabled()) {
+               logger.debug("worker " + worker + " SW launching another because of interruption of thread "
                      + Thread.currentThread().getName());
             }
             setLayerWorker(layerWorkerQueue);
@@ -715,7 +716,7 @@ public class OMGraphicHandlerLayer
        * Compute the value to be returned by the <code>get</code> method.
        */
       public OMGraphicList construct() {
-         logger.fine(getName() + "|LayerWorker.construct()");
+         logger.debug(getName() + "|LayerWorker.construct()");
          fireStatusUpdate(LayerStatusEvent.START_WORKING);
          String msg;
 
@@ -724,8 +725,8 @@ public class OMGraphicHandlerLayer
             long start = System.currentTimeMillis();
             OMGraphicList list = getRenderPolicy().prepare();
             long stop = System.currentTimeMillis();
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine(getName() + "|LayerWorker.construct(): fetched "
+            if (logger.isDebugEnabled()) {
+               logger.debug(getName() + "|LayerWorker.construct(): fetched "
                      + (list == null ? "null list " : (list.size() + " graphics ")) + "in " + (double) ((stop - start) / 1000d)
                      + " seconds");
             }
@@ -733,11 +734,11 @@ public class OMGraphicHandlerLayer
 
          } catch (OutOfMemoryError e) {
             msg = getName() + "|LayerWorker.construct(): " + e.getMessage();
-            if (logger.isLoggable(Level.FINER)) {
-               logger.fine(msg);
+            if (logger.isDebugEnabled()) {
+               logger.debug(msg);
                e.printStackTrace();
             } else {
-               logger.fine(getName() + " layer ran out of memory, attempting to recover...");
+               logger.debug(getName() + " layer ran out of memory, attempting to recover...");
             }
          } catch (Exception e) {
             msg = getName() + "|LayerWorker.construct(): " + e.getClass().getName() + ", " + e.getMessage();
@@ -804,21 +805,21 @@ public class OMGraphicHandlerLayer
             Object obj = ComponentFactory.create(pcpClass, policyPrefix, props);
             if (obj != null) {
 
-               if (logger.isLoggable(Level.FINE)) {
-                  logger.fine("Layer " + getName() + " setting ProjectionChangePolicy [" + obj.getClass().getName() + "]");
+               if (logger.isDebugEnabled()) {
+                  logger.debug("Layer " + getName() + " setting ProjectionChangePolicy [" + obj.getClass().getName() + "]");
                }
 
                try {
                   setProjectionChangePolicy((ProjectionChangePolicy) obj);
                } catch (ClassCastException cce) {
-                  logger.warning("Layer " + getName() + " has " + policyPrefix
+                  logger.error("Layer " + getName() + " has " + policyPrefix
                         + " property defined in properties for ProjectionChangePolicy, but " + policyPrefix + ".class property ("
                         + pcpClass + ") does not define a valid ProjectionChangePolicy. A " + obj.getClass().getName()
                         + " was created instead.");
                }
 
             } else {
-               logger.warning("Layer " + getName() + " has " + policyPrefix
+               logger.error("Layer " + getName() + " has " + policyPrefix
                      + " property defined in properties for PropertyChangePolicy, but " + policyPrefix
                      + ".class property does not define a valid PropertyChangePolicy.");
             }
@@ -835,13 +836,13 @@ public class OMGraphicHandlerLayer
                ((PropertyConsumer) projectionChangePolicy).setProperties(policyPrefix, props);
             }
          } else {
-            logger.warning("Layer " + getName() + " has " + policyPrefix
+            logger.error("Layer " + getName() + " has " + policyPrefix
                   + " property defined in properties for PropertyChangePolicy, but " + policyPrefix
                   + ".class property is undefined.");
          }
 
-      } else if (logger.isLoggable(Level.FINE)) {
-         logger.fine("Layer " + getName() + " using default ProjectionChangePolicy ["
+      } else if (logger.isDebugEnabled()) {
+         logger.debug("Layer " + getName() + " using default ProjectionChangePolicy ["
                + getProjectionChangePolicy().getClass().getName() + "]");
       }
 
@@ -857,19 +858,19 @@ public class OMGraphicHandlerLayer
             Object rpObj = ComponentFactory.create(rpClass, policyPrefix, props);
 
             if (rpObj != null) {
-               if (logger.isLoggable(Level.FINE)) {
-                  logger.fine("Layer " + getName() + " setting RenderPolicy [" + rpObj.getClass().getName() + "]");
+               if (logger.isDebugEnabled()) {
+                  logger.debug("Layer " + getName() + " setting RenderPolicy [" + rpObj.getClass().getName() + "]");
                }
 
                try {
                   setRenderPolicy((RenderPolicy) rpObj);
                } catch (ClassCastException cce) {
-                  logger.warning("Layer " + getName() + " has " + policyPrefix
+                  logger.error("Layer " + getName() + " has " + policyPrefix
                         + " property defined in properties for RenderPolicy, but " + policyPrefix + ".class property (" + rpClass
                         + ") does not define a valid RenderPolicy. A " + rpObj.getClass().getName() + " was created instead.");
                }
             } else {
-               logger.warning("Layer " + getName() + " has " + policyPrefix
+               logger.error("Layer " + getName() + " has " + policyPrefix
                      + " property defined in properties for RenderPolicy, but " + policyPrefix + ".class property (" + rpClass
                      + ") isn't being created.");
             }
@@ -881,12 +882,12 @@ public class OMGraphicHandlerLayer
                ((PropertyConsumer) renderPolicy).setProperties(policyPrefix, props);
             }
          } else {
-            logger.warning("Layer " + getName() + " has " + policyPrefix + " property defined in properties for RenderPolicy, but "
+            logger.error("Layer " + getName() + " has " + policyPrefix + " property defined in properties for RenderPolicy, but "
                   + policyPrefix + ".class property is undefined.");
          }
 
-      } else if (logger.isLoggable(Level.FINE)) {
-         logger.fine("Layer " + getName() + " using default RenderPolicy [" + getRenderPolicy().getClass().getName() + "]");
+      } else if (logger.isDebugEnabled()) {
+         logger.debug("Layer " + getName() + " using default RenderPolicy [" + getRenderPolicy().getClass().getName() + "]");
       }
 
       String mmString = props.getProperty(realPrefix + MouseModesProperty);
@@ -1109,7 +1110,7 @@ public class OMGraphicHandlerLayer
       MapMouseListener mml = getMouseEventInterpreter();
 
       if (mml != null) {
-         if (logger.isLoggable(Level.FINE)) {
+         if (logger.isDebugEnabled()) {
 
             String[] modes = mml.getMouseModeServiceList();
             StringBuffer sb = new StringBuffer();
@@ -1117,7 +1118,7 @@ public class OMGraphicHandlerLayer
                sb.append(modes[i]).append(", ");
             }
 
-            logger.fine("Layer " + getName() + " returning " + mml.getClass().getName()
+            logger.debug("Layer " + getName() + " returning " + mml.getClass().getName()
                   + " as map mouse listener that listens to: " + sb.toString());
          }
       }
@@ -1162,13 +1163,13 @@ public class OMGraphicHandlerLayer
     */
    public void setMouseModeIDsForEvents(String[] mm) {
 
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          StringBuffer sb = new StringBuffer();
          for (int i = 0; i < mm.length; i++) {
             sb.append(mm[i]).append(" ");
          }
 
-         logger.fine("For layer " + getName() + ", setting mouse modes to " + sb.toString());
+         logger.debug("For layer " + getName() + ", setting mouse modes to " + sb.toString());
       }
 
       mouseModeIDs = mm;

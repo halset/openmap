@@ -39,7 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -51,6 +50,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.MapBean;
@@ -86,7 +88,7 @@ import com.bbn.openmap.util.PropUtils;
  */
 public class EmbeddedNavPanel extends OMComponentPanel implements
 		ProjectionListener, ProjectionStackTrigger, SoloMapComponent {
-	public static Logger logger = Logger
+	public static Logger logger = LoggerFactory
 			.getLogger("com.bbn.openmap.gui.EmbeddedNavPanel");
 
 	private static final long serialVersionUID = 1L;

@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Paint;
 import java.awt.event.ContainerEvent;
-import java.util.logging.Level;
 
 import com.bbn.openmap.event.LayerEvent;
 import com.bbn.openmap.layer.BufferedLayer;
@@ -61,12 +60,12 @@ public class BufferedLayerMapBean
     */
    public BufferedLayerMapBean() {
       super();
-      DEBUG = logger.isLoggable(Level.FINE);
+      DEBUG = logger.isDebugEnabled();
    }
 
    public BufferedLayerMapBean(boolean useThreadedNotification) {
       super(useThreadedNotification);
-      DEBUG = logger.isLoggable(Level.FINE);
+      DEBUG = logger.isDebugEnabled();
    }
 
    /**
@@ -137,7 +136,7 @@ public class BufferedLayerMapBean
 
       // @HACK is this cool?:
       if (layers == null) {
-         logger.warning("layer[] is null!");
+         logger.error("layer[] is null!");
          return;
       }
 
@@ -163,7 +162,7 @@ public class BufferedLayerMapBean
          for (int i = 0; i < layers.length; i++) {
             // @HACK is this cool?:
             if (layers[i] == null) {
-               logger.warning("layer " + i + " is null");
+               logger.error("layer " + i + " is null");
                continue;
             }
 
@@ -173,7 +172,7 @@ public class BufferedLayerMapBean
 
             if (layers[i].getAddAsBackground()) {
                if (DEBUG) {
-                  logger.fine("Adding layer[" + i + "]= " + layers[i].getName() + " to background");
+                  logger.debug("Adding layer[" + i + "]= " + layers[i].getName() + " to background");
                }
 
                bufLayer.addLayer(layers[i]);

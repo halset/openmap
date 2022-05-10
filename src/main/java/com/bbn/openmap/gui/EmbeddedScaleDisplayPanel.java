@@ -23,12 +23,13 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.event.ProjectionEvent;
@@ -105,7 +106,7 @@ public class EmbeddedScaleDisplayPanel
    static final float RADIANS_270 = Length.DECIMAL_DEGREE.toRadians(270);
    protected OMGraphicList legend;
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.EmbedddedScaleDisplayPanel");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.EmbedddedScaleDisplayPanel");
 
    /**
     * Sets the properties for the <code>Layer</code>. This allows
@@ -184,7 +185,7 @@ public class EmbeddedScaleDisplayPanel
    public java.awt.Component getGUI() {
       if (palette == null) {
 
-         logger.fine("creating palette.");
+         logger.debug("creating palette.");
 
          palette = new JPanel();
          uomButtonGroup = new ButtonGroup();
@@ -253,8 +254,8 @@ public class EmbeddedScaleDisplayPanel
       dist = uom.fromRadians(dist);
       double new_dist = scopeDistance(dist);
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("modifying " + dist + " to new distance: " + new_dist);
+      if (logger.isDebugEnabled()) {
+         logger.debug("modifying " + dist + " to new distance: " + new_dist);
       }
 
       left_x = getPtAtDistanceFromLatLon(loc2, new_dist, projection, uom);
@@ -269,14 +270,14 @@ public class EmbeddedScaleDisplayPanel
          lineLength /= 3;
          new_dist /= 3.0;
 
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("length of line too long, halving to " + lineLength);
+         if (logger.isDebugEnabled()) {
+            logger.debug("length of line too long, halving to " + lineLength);
          }
          double testDist = scopeDistance(new_dist);
          if (testDist != new_dist) {
             lineLength = right_x - getPtAtDistanceFromLatLon(loc2, testDist, projection, uom);
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("needed to rescope distance to " + testDist + " from " + new_dist);
+            if (logger.isDebugEnabled()) {
+               logger.debug("needed to rescope distance to " + testDist + " from " + new_dist);
             }
             new_dist = testDist;
          }
@@ -297,15 +298,15 @@ public class EmbeddedScaleDisplayPanel
             cur_uom = Length.FEET;
          }
 
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("modified UOM to " + cur_uom.getAbbr() + ", value: " + new_dist);
+         if (logger.isDebugEnabled()) {
+            logger.debug("modified UOM to " + cur_uom.getAbbr() + ", value: " + new_dist);
          }
 
          double testDist = scopeDistance(new_dist);
          if (testDist != new_dist) {
             lineLength = right_x - getPtAtDistanceFromLatLon(loc2, testDist, projection, cur_uom);
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("needed to rescope distance to " + testDist + " from " + new_dist);
+            if (logger.isDebugEnabled()) {
+               logger.debug("needed to rescope distance to " + testDist + " from " + new_dist);
             }
             new_dist = testDist;
          }

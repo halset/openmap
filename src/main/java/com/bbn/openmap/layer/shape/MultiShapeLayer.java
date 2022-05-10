@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -127,8 +126,8 @@ public class MultiShapeLayer
 
         String shapeFileList = p.getProperty(prefix + ShapeFileListProperty);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(getName() + "| list = \"" + shapeFileList + "\"");
+        if (logger.isDebugEnabled()) {
+            logger.debug(getName() + "| list = \"" + shapeFileList + "\"");
         }
 
         Vector<String> shapeFileStrings = PropUtils.parseSpacedMarkers(shapeFileList);
@@ -141,12 +140,12 @@ public class MultiShapeLayer
                 SpatialIndexHandler sih = new SpatialIndexHandler(prefix + listName, p);
                 spatialIndexes.add(sih);
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(getName() + ": MultiShapeLayer adding: " + sih);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(getName() + ": MultiShapeLayer adding: " + sih);
                 }
             }
         } else {
-            logger.fine(getName() + ": " + prefix + ShapeFileListProperty + " not set in properties");
+            logger.debug(getName() + ": " + prefix + ShapeFileListProperty + " not set in properties");
         }
     }
 
@@ -218,7 +217,7 @@ public class MultiShapeLayer
     public synchronized OMGraphicList prepare() {
 
         if (spatialIndexes == null || spatialIndexes.isEmpty()) {
-            logger.fine(getName() + ": spatialIndexes is empty!");
+            logger.debug(getName() + ": spatialIndexes is empty!");
             return new OMGraphicList();
         }
 
@@ -230,7 +229,7 @@ public class MultiShapeLayer
             // is pressed before the ScaleFilterLayer gives it a
             // projection (which only happens if the layer is the
             // active one).
-            logger.fine(getName() + ": prepare called with null projection");
+            logger.debug(getName() + ": prepare called with null projection");
             return new OMGraphicList();
         }
 
@@ -248,8 +247,8 @@ public class MultiShapeLayer
         // ulLon >= lrLon, but we need to be careful of the check for
         // equality because of floating point arguments...
         if (ProjMath.isCrossingDateline(ulLon, lrLon, projection.getScale())) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(getName() + ": Dateline is on screen");
+            if (logger.isDebugEnabled()) {
+                logger.debug(getName() + ": Dateline is on screen");
             }
 
             double ymin = Math.min(ulLat, lrLat);
@@ -286,8 +285,8 @@ public class MultiShapeLayer
                 if (!sih.enabled)
                     continue;
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(getName() + ": Getting graphics from " + sih.prettyName + " spatial index");
+                if (logger.isDebugEnabled()) {
+                    logger.debug(getName() + ": Getting graphics from " + sih.prettyName + " spatial index");
                 }
                 try {
                     list = sih.getGraphics(xmin, ymin, xmax, ymax, list, projection);

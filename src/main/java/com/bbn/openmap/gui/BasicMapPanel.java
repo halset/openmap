@@ -30,13 +30,14 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.BufferedLayerMapBean;
 import com.bbn.openmap.Environment;
@@ -75,7 +76,7 @@ public class BasicMapPanel
         extends OMComponentPanel
         implements MapPanel {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.MapPanel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.MapPanel");
 
     public final static String SET_NAME_PROPERTY = "setName";
 
@@ -390,8 +391,8 @@ public class BasicMapPanel
                 addMapPanelChild(mpc);
                 invalidate();
             } else {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("MapPanel with name: " + myName + " not adding child (" + someObj.getClass().getName()
+                if (logger.isDebugEnabled()) {
+                    logger.debug("MapPanel with name: " + myName + " not adding child (" + someObj.getClass().getName()
                             + ") looking for: " + parentName);
                 }
             }

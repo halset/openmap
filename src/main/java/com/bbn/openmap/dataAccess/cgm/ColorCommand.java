@@ -63,7 +63,7 @@ public class ColorCommand
          C = Colors[args[0] - 1];
       } else if (args.length == 1) {
          index = args[0];
-         logger.fine("index set for color: " + index);
+         logger.debug("index set for color: " + index);
       } else {
          C = new Color(128, 128, 128);
       }

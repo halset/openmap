@@ -7,11 +7,7 @@ package com.bbn.openmap.ext.jts;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.bbn.openmap.proj.Projection;
-import com.bbn.openmap.util.Debug;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
@@ -19,13 +15,17 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbn.openmap.proj.Projection;
 
 /**
  * A collection of utility methods for using JTS in OpenMap
  */
 public class JTS {
 
-   private static final Logger logger = Logger.getLogger("com.bbn.openmap.ext.jts.JTS");
+   private static final Logger logger = LoggerFactory.getLogger("com.bbn.openmap.ext.jts.JTS");
 
    private JTS() {
 

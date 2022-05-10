@@ -27,7 +27,9 @@ package com.bbn.openmap.tools.roads;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.Serializable;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.omGraphics.OMGraphicList;
 import com.bbn.openmap.omGraphics.OMRect;
@@ -155,7 +157,7 @@ public abstract class Waypoint extends Visual implements Serializable {
     public abstract void render(OMGraphicList gl, boolean projectionIsNew);
 
     public abstract class Graphic extends OMRect implements RoadGraphic {
-        Logger logger = Logger.getLogger(this.getClass().getName());
+        Logger logger = LoggerFactory.getLogger(this.getClass().getName());
         private boolean blinkState = false;
 
         protected Graphic(int radius) {

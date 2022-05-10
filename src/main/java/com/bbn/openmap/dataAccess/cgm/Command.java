@@ -22,13 +22,14 @@ package com.bbn.openmap.dataAccess.cgm;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Command
       implements Cloneable {
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.cgm.Command");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.cgm.Command");
 
    int args[];
    int ElementClass;
@@ -490,8 +491,8 @@ public class Command
             break;
       }
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("Ignored Opcode: " + ec + "/" + eid);
+      if (logger.isDebugEnabled()) {
+         logger.debug("Ignored Opcode: " + ec + "/" + eid);
       }
 
       return new Command(ec, eid, l, in);

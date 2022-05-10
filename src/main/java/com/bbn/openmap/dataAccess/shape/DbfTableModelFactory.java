@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.OMComponent;
 import com.bbn.openmap.io.FormatException;
@@ -13,7 +15,7 @@ import com.bbn.openmap.util.PropUtils;
 
 public class DbfTableModelFactory extends OMComponent implements ShapeConstants {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.shape.DbfTableModelFactory");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.shape.DbfTableModelFactory");
 
     public final static String ColumnsProperty = "columns";
     /**
@@ -82,7 +84,7 @@ public class DbfTableModelFactory extends OMComponent implements ShapeConstants 
                 try {
                     this.defaultValue = new Double(defaultVal);
                 } catch (NumberFormatException nfe) {
-                    logger.warning("can't parse default value for " + name
+                    logger.error("can't parse default value for " + name
                             + ", setting to 0");
                     this.defaultValue = new Double(0);
                 }
@@ -116,7 +118,7 @@ public class DbfTableModelFactory extends OMComponent implements ShapeConstants 
 
     public void setProperties(String prefix, Properties props) {
         super.setProperties(prefix, props);
-        logger.fine("parsing properties");
+        logger.debug("parsing properties");
         prefix = PropUtils.getScopedPropertyPrefix(prefix);
         String markerList = props.getProperty(prefix + ColumnsProperty);
         Vector<String> colStrings = PropUtils.parseSpacedMarkers(markerList);
@@ -133,9 +135,9 @@ public class DbfTableModelFactory extends OMComponent implements ShapeConstants 
 
                     columns.add(col);
 
-                    logger.fine("parsed: " + col);
+                    logger.debug("parsed: " + col);
                 } catch (FormatException fe) {
-                    logger.warning("For column: " + colString + ", def: " + colDef + ": "
+                    logger.error("For column: " + colString + ", def: " + colDef + ": "
                             + fe.getMessage());
                 }
             }

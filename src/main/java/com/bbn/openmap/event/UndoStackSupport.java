@@ -22,8 +22,9 @@
 package com.bbn.openmap.event;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a utility class that can be used by beans that need support for
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 public class UndoStackSupport
         implements java.io.Serializable {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.event.UndoStackSupport");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.UndoStackSupport");
     transient private ArrayList<UndoStackTrigger> triggers;
 
     /**
@@ -108,8 +109,8 @@ public class UndoStackSupport
 
         for (UndoStackTrigger target : targets) {
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("target is: " + target);
+            if (logger.isDebugEnabled()) {
+                logger.debug("target is: " + target);
             }
 
             target.updateUndoStackStatus(undoEvent, redoEvent);

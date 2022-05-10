@@ -35,13 +35,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -113,7 +114,7 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
      * out how to display those changes.
      */
     public final static String TimeParametersProperty = "timeParameters";
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.time.TimelineLayer");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.time.TimelineLayer");
 
     protected I18n i18n = Environment.getI18n();
 
@@ -234,8 +235,8 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
     public synchronized OMGraphicList prepare() {
        
         Projection proj = getProjection();
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("Updating projection with " + proj);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Updating projection with " + proj);
         }
         
         OMGraphicList graphicList = getList();
@@ -263,8 +264,8 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
                 eventGraphicList = getEventList(proj);
                 setEventGraphicList(eventGraphicList);
             } else {
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("don't need to re-create event lines, haven't changed with ("
+                if (logger.isDebugEnabled()) {
+                    logger.debug("don't need to re-create event lines, haven't changed with ("
                             + eventGraphicList.size() + ") events");
                 }
                 // TODO Don, why does this not seem to place event markers properly if time is advancing?
@@ -388,12 +389,12 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
             // As long as we feel the need to recreate the event markers,
             // let's re-evaluate the annotations.
             evaluateEventAttributes();
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Creating event lines with ("
+            if (logger.isDebugEnabled()) {
+                logger.debug("Creating event lines with ("
                         + eventGraphicList.size() + ") events");
             }
         } else {
-            logger.fine("Can't create event list for timeline display, no event presenter");
+            logger.debug("Can't create event list for timeline display, no event presenter");
             eventGraphicList = new OMGraphicList();
         }
 
@@ -455,7 +456,7 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
     public java.awt.Component getGUI() {
 
         if (palette == null) {
-            logger.fine("creating Palette.");
+            logger.debug("creating Palette.");
 
             palette = Box.createVerticalBox();
 
@@ -504,8 +505,8 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
             gameStartTime = start;
             gameEndTime = end;
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("gst: " + gameStartTime + ", get: " + gameEndTime
+            if (logger.isDebugEnabled()) {
+                logger.debug("gst: " + gameStartTime + ", get: " + gameEndTime
                         + ", bounds of " + postTime);
             }
             
@@ -616,7 +617,7 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
 
         if (propertyName == EventPresenter.ActiveEventsProperty) {
             setEventGraphicList(null);
-            logger.fine("EventPresenter updated event list, calling doPrepare() "
+            logger.debug("EventPresenter updated event list, calling doPrepare() "
                     + evt.getNewValue());
             doPrepare();
         } else if (propertyName == OMEventSelectionCoordinator.EventsSelectedProperty) {
@@ -631,7 +632,7 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
                     null,
                     new Boolean(!inUse || !playFilter.isEmpty()));
         } else {
-            logger.finer("AAGGH: " + propertyName);
+            logger.debug("AAGGH: " + propertyName);
         }
     }
 
@@ -1467,8 +1468,8 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
                 heightStepSize = 10;
             }
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer("figure on needing " + num + annotation + ", "
+            if (logger.isDebugEnabled()) {
+                logger.debug("figure on needing " + num + annotation + ", "
                         + stepSize + " stepsize for " + (timeSpan / stepSize)
                         + " lines");
             }
@@ -1651,8 +1652,8 @@ public class TimelineLayer extends OMGraphicHandlerLayer implements
         try {
             super.paint(g);
         } catch (Exception e) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.warning(e.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.error(e.getMessage());
                 e.printStackTrace();
             }
         }

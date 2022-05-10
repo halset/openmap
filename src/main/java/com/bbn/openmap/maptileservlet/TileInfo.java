@@ -7,7 +7,9 @@ package com.bbn.openmap.maptileservlet;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.mapTile.EmptyTileHandler;
 import com.bbn.openmap.dataAccess.mapTile.MapTileCoordinateTransform;
@@ -30,7 +32,7 @@ public class TileInfo {
    String pathInfo;
    MapTileCoordinateTransform mtcTransform;
    
-   Logger logger = Logger.getLogger("com.bbn.openmap.maptileservlet");
+   Logger logger = LoggerFactory.getLogger("com.bbn.openmap.maptileservlet");
 
    public TileInfo(String pathInfo) {
       this.pathInfo = pathInfo;
@@ -71,7 +73,7 @@ public class TileInfo {
          Mercator merc =
                new Mercator(center, MapTileMaker.getScaleForZoom(zoomLevel), SimpleEmptyTileHandler.TILE_SIZE,
                             SimpleEmptyTileHandler.TILE_SIZE);
-        logger.fine("going to create empty tile: " + pathInfo + " from " + eth.getClass().getName());
+        logger.debug("going to create empty tile: " + pathInfo + " from " + eth.getClass().getName());
 
          return eth.getImageForEmptyTile(pathInfo, x, y, zoomLevel, getMtcTransform(), merc);
       }

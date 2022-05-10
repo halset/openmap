@@ -31,7 +31,6 @@ import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,6 +40,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Layer;
 import com.bbn.openmap.LayerHandler;
@@ -109,7 +111,7 @@ public class MapTileMakerComponent
       extends OMComponentPanel
       implements MapPanelChild, LayerListener, DrawingToolRequestor, PaintListener, ProjectionListener {
 
-   protected Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.mapTile.MapTileMakerComponent");
+   protected Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.mapTile.MapTileMakerComponent");
 
    public final static String TILE_MAKER_PROPERTIES_FILE = "file";
 
@@ -232,7 +234,7 @@ public class MapTileMakerComponent
             bWriter.flush();
             bWriter.close();
          } catch (IOException e) {
-            logger.warning("caught exception writing out properties file");
+            logger.error("caught exception writing out properties file");
             e.printStackTrace();
          }
       }

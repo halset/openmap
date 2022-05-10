@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotiff.image.KeyRegistry;
 import org.geotiff.image.jai.GeoTIFFDescriptor;
@@ -40,6 +38,8 @@ import org.geotiff.image.jai.GeoTIFFFactory;
 import org.libtiff.jai.codec.XTIFFDecodeParam;
 import org.libtiff.jai.codec.XTIFFField;
 import org.libtiff.jai.codecimpl.XTIFFImageDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.image.ImageTile;
 import com.bbn.openmap.omGraphics.OMRaster;
@@ -60,7 +60,7 @@ import com.sun.media.jai.codec.SeekableStream;
  */
 public class GeoTIFFFile {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFFile");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFFile");
 
     protected GeoTIFFDirectory gtfDirectory;
     protected XTIFFField[] geoKeys;
@@ -321,8 +321,8 @@ public class GeoTIFFFile {
 
         if (field != null) {
             int type = field.getType();
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("field type is " + getStringOfType(type));
+            if (logger.isDebugEnabled()) {
+                logger.debug("field type is " + getStringOfType(type));
             }
             if (type == XTIFFField.TIFF_SHORT) {
                 return field.getAsInt(0);

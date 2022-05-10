@@ -35,11 +35,12 @@ import java.beans.beancontext.BeanContextMembershipEvent;
 import java.beans.beancontext.BeanContextMembershipListener;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -64,7 +65,7 @@ public class OpenMapFrame
         extends JFrame
         implements BeanContextMembershipListener, BeanContextChild, PropertyConsumer {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.OpenMapFrame");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.OpenMapFrame");
 
     /** Starting X coordinate of window, x */
     public static final String xProperty = "x";
@@ -167,7 +168,7 @@ public class OpenMapFrame
         pack();
 
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        logger.fine("Screen dimensions are " + d);
+        logger.debug("Screen dimensions are " + d);
 
         if (w > d.width)
             w = d.width - d.width / 10;
@@ -179,8 +180,8 @@ public class OpenMapFrame
         if (y < 0)
             y = d.height / 2 - h / 2;
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Setting window bounds from " + x + ", " + y + " for size " + w + ", " + h);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Setting window bounds from " + x + ", " + y + " for size " + w + ", " + h);
         }
 
         // compose the frame, but don't show it here
@@ -216,7 +217,7 @@ public class OpenMapFrame
         // in the MapPanel, but we have this for backward
         // compatibility.
         if (someObj instanceof JMenuBar) {
-            logger.fine("OpenMapFrame: Found a MenuBar");
+            logger.debug("OpenMapFrame: Found a MenuBar");
             getRootPane().setJMenuBar((JMenuBar) someObj);
             invalidate();
         }
@@ -236,7 +237,7 @@ public class OpenMapFrame
      */
     public void considerForContent(Object someObj) {
         if (someObj instanceof MapPanel && someObj instanceof Component && getContentPane().getComponentCount() == 0) {
-            logger.fine("Found a MapPanel");
+            logger.debug("Found a MapPanel");
             setContent((Component) someObj);
         }
     }
@@ -255,7 +256,7 @@ public class OpenMapFrame
 
             JMenuBar jmb = mapPanel.getMapMenuBar();
             if (jmb != null) {
-                logger.fine("OpenMapFrame: Got MenuBar from MapPanel");
+                logger.debug("OpenMapFrame: Got MenuBar from MapPanel");
                 getRootPane().setJMenuBar(jmb);
             }
         }
@@ -297,18 +298,18 @@ public class OpenMapFrame
      */
     public void findAndUndo(Object someObj) {
         if (someObj instanceof MapPanel && someObj instanceof Container) {
-            logger.fine("OpenMapFrame: MapBean is being removed from frame");
+            logger.debug("OpenMapFrame: MapBean is being removed from frame");
             getContentPane().remove((Container) someObj);
 
             if (getJMenuBar() == ((MapPanel) someObj).getMapMenuBar()) {
-                logger.fine("OpenMapFrame: Menu Bar is being removed");
+                logger.debug("OpenMapFrame: Menu Bar is being removed");
                 setJMenuBar(null);
             }
         }
 
         if (someObj instanceof JMenuBar) {
             if (getJMenuBar() == (JMenuBar) someObj) {
-                logger.fine("OpenMapFrame: Menu Bar is being removed");
+                logger.debug("OpenMapFrame: Menu Bar is being removed");
                 setJMenuBar(null);
             }
         }
@@ -392,7 +393,7 @@ public class OpenMapFrame
         setTitle(setList.getProperty(prefix + TitleProperty, getTitle()));
 
         if (getContentPane().getComponentCount() > 0) {
-            logger.fine("setting window dimensions");
+            logger.debug("setting window dimensions");
             setPosition(width, height);
         }
 
@@ -400,7 +401,7 @@ public class OpenMapFrame
             boolean useInternalFrames = PropUtils.booleanFromProperties(setList, Environment.UseInternalFrames, false);
 
             if (useInternalFrames && Environment.getInternalFrameDesktop() == null) {
-                logger.fine("Setting OpenMapFrame as internal pane.");
+                logger.debug("Setting OpenMapFrame as internal pane.");
                 Environment.useInternalFrames(getRootPane());
             }
         }

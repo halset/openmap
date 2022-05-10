@@ -11,9 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -28,7 +28,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 abstract public class AbstractXmlParser
       extends DefaultHandler {
-   private final Logger logger = Logger.getLogger("com.bbn.openmap.util.AbstractXmlParser");
+   private final Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.AbstractXmlParser");
 
    private final StringBuilder charactersCollector = new StringBuilder();
    private String collectCharactersForElement;
@@ -46,7 +46,7 @@ abstract public class AbstractXmlParser
          reader = new BufferedReader(new FileReader(file));
          return parseXmlResource(file.getPath(), new InputSource(reader));
       } catch (FileNotFoundException e) {
-         logger.warning("Failed to open " + file + ":" + e.getMessage());
+         logger.error("Failed to open " + file + ":" + e.getMessage());
          return false;
       } finally {
          if (reader != null) {
@@ -76,8 +76,8 @@ abstract public class AbstractXmlParser
       try {
          reader = XMLReaderFactory.createXMLReader();
       } catch (SAXException e) {
-         if (logger.isLoggable(Level.SEVERE)) {
-            logger.warning("Failed to create reader for " + resourceName + ": " + e.getMessage());
+         if (logger.isErrorEnabled()) {
+            logger.error("Failed to create reader for " + resourceName + ": " + e.getMessage());
          }
          return false;
       }
@@ -88,17 +88,17 @@ abstract public class AbstractXmlParser
          reader.parse(source);
          status = true;
       } catch (SAXParseException e) {
-         if (logger.isLoggable(Level.WARNING)) {
-            logger.warning("Failed to parse " + resourceName + " Line: " + e.getLineNumber() + " Col: " + e.getColumnNumber()
+         if (logger.isErrorEnabled()) {
+            logger.error("Failed to parse " + resourceName + " Line: " + e.getLineNumber() + " Col: " + e.getColumnNumber()
                   + ": " + e);
          }
       } catch (SAXException e) {
-         if (logger.isLoggable(Level.WARNING)) {
-            logger.warning("Failed to parse " + resourceName + e.getMessage());
+         if (logger.isErrorEnabled()) {
+            logger.error("Failed to parse " + resourceName + e.getMessage());
          }
       } catch (IOException e) {
-         if (logger.isLoggable(Level.WARNING)) {
-            logger.warning("Failed to parse " + resourceName + ":" + e.getMessage());
+         if (logger.isErrorEnabled()) {
+            logger.error("Failed to parse " + resourceName + ":" + e.getMessage());
          }
       }
       return status;

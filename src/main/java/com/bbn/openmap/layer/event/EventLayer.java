@@ -27,8 +27,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.PropertyConsumer;
 import com.bbn.openmap.event.OMEvent;
@@ -71,7 +72,7 @@ public class EventLayer extends OMGraphicHandlerLayer implements
         DataBoundsProvider, TimeBoundsProvider, TimeEventListener,
         OMEventHandler {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.event.EventLayer");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.event.EventLayer");
 
     public final static String ImporterProperty = "importer";
     protected EventImporter importer = null;
@@ -98,7 +99,7 @@ public class EventLayer extends OMGraphicHandlerLayer implements
         // Need this check in here because the time stuff might cause this to be
         // called before the layer is actually added to the map.
         if (p != null) {
-            boolean DEBUG = logger.isLoggable(Level.FINE);
+            boolean DEBUG = logger.isDebugEnabled();
             if (list == null || !(list instanceof TemporalOMGraphicList)) {
                 scenarioGraphics = createData();
                 if (scenarioGraphics == null) {
@@ -115,14 +116,14 @@ public class EventLayer extends OMGraphicHandlerLayer implements
             long currentTime = getTime();
 
             if (DEBUG) {
-                logger.fine("EventLayer (" + getName() + ") snapshot at "
+                logger.debug("EventLayer (" + getName() + ") snapshot at "
                         + currentTime);
             }
 
             scenarioGraphics.generate(p, currentTime);
 
             if (DEBUG) {
-                logger.fine("EventLayer (" + getName() + ") setting list of "
+                logger.debug("EventLayer (" + getName() + ") setting list of "
                         + scenarioGraphics.size() + " scenario graphics");
             }
         }
@@ -254,7 +255,7 @@ public class EventLayer extends OMGraphicHandlerLayer implements
     protected List<TimeBoundsHandler> timeBoundsHandlers = new ArrayList<TimeBoundsHandler>();
 
     public void addTimeBoundsHandler(TimeBoundsHandler tbh) {
-        logger.fine("found TimeBoundsHandler: " + tbh.getClass().getName());
+        logger.debug("found TimeBoundsHandler: " + tbh.getClass().getName());
         timeBoundsHandlers.add(tbh);
     }
 

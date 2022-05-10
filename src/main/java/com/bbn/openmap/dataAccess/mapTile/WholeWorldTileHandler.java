@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipOutputStream;
@@ -177,16 +176,16 @@ public class WholeWorldTileHandler
                if (imageURL != null) {
                   bi = BufferedImageHelper.getBufferedImage(imageURL);
                } else {
-                  logger.fine("Can't find resource located at " + imagePath);
+                  logger.debug("Can't find resource located at " + imagePath);
                }
             } catch (MalformedURLException e) {
-               logger.fine("Can't find resource located at " + imagePath);
+               logger.debug("Can't find resource located at " + imagePath);
             } catch (InterruptedException e) {
-               logger.fine("Reading the image file was interrupted: " + imagePath);
+               logger.debug("Reading the image file was interrupted: " + imagePath);
             }
          }
       } else {
-         logger.fine("parent jar name not set, can't figure out how to load tile jars.");
+         logger.debug("parent jar name not set, can't figure out how to load tile jars.");
       }
 
       if (bi == null) {
@@ -221,10 +220,10 @@ public class WholeWorldTileHandler
 
       if (!ret) {
          try {
-            logger.fine("adding " + jarFileName + " to classpath");
+            logger.debug("adding " + jarFileName + " to classpath");
             ClasspathHacker.addFile(jarFileName);
          } catch (IOException ioe) {
-            logger.warning("couldn't add map data jar file: " + jarFileName);
+            logger.error("couldn't add map data jar file: " + jarFileName);
          }
 
          /*
@@ -351,7 +350,6 @@ public class WholeWorldTileHandler
       protected int maxy = -1;
       protected boolean doWorldJar = true;
       protected boolean fill = false;
-      protected Level logLevel = Level.FINE;
 
       public Builder(File source)
             throws FileNotFoundException {
@@ -440,10 +438,10 @@ public class WholeWorldTileHandler
 
             } catch (MalformedURLException e) {
                e.printStackTrace();
-               logger.warning("can't find/read properties file for tile set");
+               logger.error("can't find/read properties file for tile set");
             } catch (IOException e) {
                e.printStackTrace();
-               logger.warning("exception reading/copying properties file for tile set");
+               logger.error("exception reading/copying properties file for tile set");
             }
          }
       }
@@ -472,7 +470,7 @@ public class WholeWorldTileHandler
 
             if (!jarDirs.isEmpty() && sourceFile != null) {
                String worldWideJarFile = targetFile + File.separator + sourceFile.getName() + ".jar";
-               logger.log(logLevel, "writing :" + worldWideJarFile);
+               logger.debug("writing :" + worldWideJarFile);
 
                if (fill) {
                   File fileCheck = new File(worldWideJarFile);
@@ -498,11 +496,11 @@ public class WholeWorldTileHandler
 
                   copyAndUpdateProperties(sourceFile, targetFile);
                } else {
-                  logger.log(logLevel, worldWideJarFile + " already exists, skipping");
+                  logger.debug(worldWideJarFile + " already exists, skipping");
                }
             }
          } else {
-            logger.log(logLevel, "skipping world file");
+            logger.debug("skipping world file");
          }
          // Worldwide jar created.
 
@@ -544,11 +542,11 @@ public class WholeWorldTileHandler
                File subJarFile = new File(targetFile, sourceFile.getName() + "_" + x + "_" + y + ".jar");
 
                if (fill && subJarFile.exists()) {
-                  logger.log(logLevel, subJarFile + " already exists, skipping");
+                  logger.debug(subJarFile + " already exists, skipping");
                   continue;
                }
 
-               logger.log(logLevel, "Creating: " + subJarFile);
+               logger.debug("Creating: " + subJarFile);
                long fileCount = 0;
                ZipOutputStream zoStream = null;
                int trim = sourceFile.getParent().length() + 1;
@@ -563,7 +561,7 @@ public class WholeWorldTileHandler
                      Point2D uv1 = transform.latLonToTileUV(llp1, zoomLevel);
                      Point2D uv2 = transform.latLonToTileUV(llp2, zoomLevel);
 
-                     logger.log(logLevel, "adding zoom level " + zoomLevel + " tiles to " + subJarFile.getName() + ": " + uv1 + "|"
+                     logger.debug("adding zoom level " + zoomLevel + " tiles to " + subJarFile.getName() + ": " + uv1 + "|"
                            + uv2);
 
                      for (int u = (int) uv1.getX(); u < uv2.getX(); u++) {
@@ -605,7 +603,7 @@ public class WholeWorldTileHandler
                if (zoStream != null) {
                   zoStream.close();
                   zoStream = null;
-                  logger.log(logLevel, "closing zip file (" + subJarFile.getPath() + "), added " + fileCount + " files to jar");
+                  logger.debug("closing zip file (" + subJarFile.getPath() + "), added " + fileCount + " files to jar");
                }
             }
          }
@@ -752,11 +750,6 @@ public class WholeWorldTileHandler
                wwthBuilder.maxy(Integer.parseInt(arg[0]));
             }
 
-            arg = ap.getArgValues("verbose");
-            if (arg != null) {
-               wwthBuilder.logLevel = Level.INFO;
-            }
-
             arg = ap.getArgValues("fill");
             if (arg != null) {
                wwthBuilder.setFill(true);
@@ -764,7 +757,7 @@ public class WholeWorldTileHandler
 
             arg = ap.getArgValues("noWorldJar");
             if (arg != null) {
-               logger.log(wwthBuilder.logLevel, "setting build world file to false");
+               logger.debug("setting build world file to false");
                wwthBuilder.setDoWorldJar(false);
             }
 
@@ -774,13 +767,13 @@ public class WholeWorldTileHandler
 
          } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
-            logger.warning(nfe.getMessage());
+            logger.error(nfe.getMessage());
          } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
-            logger.warning(fnfe.getMessage());
+            logger.error(fnfe.getMessage());
          } catch (IOException ioe) {
             ioe.printStackTrace();
-            logger.warning(ioe.getMessage());
+            logger.error(ioe.getMessage());
          }
       } else {
          ap.bail("Need a source directory.", true);

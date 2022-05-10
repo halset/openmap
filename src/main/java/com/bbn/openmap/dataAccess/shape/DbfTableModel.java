@@ -39,8 +39,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
@@ -57,6 +55,9 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -117,7 +118,7 @@ public class DbfTableModel
      * When data is changed in a field, the block numbers may also change and
      * the number in the .DBF may be changed to reflect the new location.
      */
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.shape.DbfTableModel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.shape.DbfTableModel");
 
     private static final long serialVersionUID = 1L;
     /**
@@ -236,7 +237,7 @@ public class DbfTableModel
 
     protected DbfTableModel() {
         parent = this;
-        DEBUG = logger.isLoggable(Level.FINE);
+        DEBUG = logger.isDebugEnabled();
     }
 
     /**
@@ -583,10 +584,10 @@ public class DbfTableModel
 
                             for (int i = index.length - 1; i >= 0; i--) {
                                 if (DEBUG)
-                                    logger.fine("Deleting record " + index[i]);
+                                    logger.debug("Deleting record " + index[i]);
                                 List<Object> removed = remove(index[i]);
                                 if (DEBUG)
-                                    logger.fine("Deleted records: " + removed);
+                                    logger.debug("Deleted records: " + removed);
                             }
                             fireTableDataChanged();
                         }
@@ -679,7 +680,7 @@ public class DbfTableModel
     public void tableChanged(TableModelEvent e) {
         dirty = true;
         if (DEBUG)
-            logger.fine("DbfTableModel sensing change");
+            logger.debug("DbfTableModel sensing change");
 
         int row = e.getFirstRow();
         // Of course, the only thing we're listening to here is the
@@ -696,7 +697,7 @@ public class DbfTableModel
     protected void commitEvents(DbfTableModel model) {
 
         if (DEBUG)
-            logger.fine("Committing changes");
+            logger.debug("Committing changes");
 
         Iterator<List<Object>> modelRecords = model.getRecords();
         int index = -1;
@@ -713,7 +714,7 @@ public class DbfTableModel
             if (index < _columnCount) {
                 String columnName = _names[index];
                 if (DEBUG)
-                    logger.fine(columnName + ", " + modelColumnName);
+                    logger.debug(columnName + ", " + modelColumnName);
                 while (!columnName.equalsIgnoreCase(modelColumnName)) {
                     deleteColumn(index);
                     if (index >= _columnCount) {
@@ -732,21 +733,21 @@ public class DbfTableModel
             } else {
                 // Add Column
                 if (DEBUG)
-                    logger.fine("Add column " + modelColumnName);
+                    logger.debug("Add column " + modelColumnName);
                 addColumn(modelRecord);
             }
         }
 
         while (++index < _columnCount) {
             if (DEBUG)
-                logger.fine("Deleting extra column");
+                logger.debug("Deleting extra column");
             deleteColumn(index);
         }
 
         if (DEBUG) {
-            logger.fine("New Table:");
+            logger.debug("New Table:");
             for (int j = 0; j < _names.length; j++) {
-                logger.fine("  " + _names[j]);
+                logger.debug("  " + _names[j]);
             }
         }
         fireTableStructureChanged();
@@ -877,8 +878,8 @@ public class DbfTableModel
         try {
             return read(dbf);
         } catch (Exception exception) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.warning("problem loading DBF file" + exception.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.error("problem loading DBF file" + exception.getMessage());
             }
             return null;
         }
@@ -1174,7 +1175,7 @@ public class DbfTableModel
         }
 
         if (list.size() != getRowCount()) {
-            logger.warning("DBF rows don't match list contents");
+            logger.error("DBF rows don't match list contents");
             return;
         }
 
@@ -1187,7 +1188,7 @@ public class DbfTableModel
             if (index != null) {
                 if (index != indexCount) {
                     // ooh jeez.
-                    logger.warning("the indexes in the list are off, (counted) " + indexCount + " vs (record) " + index);
+                    logger.error("the indexes in the list are off, (counted) " + indexCount + " vs (record) " + index);
                 }
                 omg.putAttribute(SHAPE_DBF_INFO_ATTRIBUTE, getRecord(index));
             } else {

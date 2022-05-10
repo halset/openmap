@@ -36,7 +36,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 
@@ -200,7 +199,7 @@ public class OMScalingRaster
     */
    public void setImage(Image image) {
       if (DEBUG) {
-         logger.fine("OMScalingRaster.setImage: " + image);
+         logger.debug("OMScalingRaster.setImage: " + image);
       }
 
       /**
@@ -260,7 +259,7 @@ public class OMScalingRaster
 
       if (proj == null) {
          if (DEBUG) {
-            logger.fine("OMScalingRaster: null projection in position!");
+            logger.debug("OMScalingRaster: null projection in position!");
          }
          return false;
       }
@@ -339,7 +338,7 @@ public class OMScalingRaster
       // Position sets the position for the OMRaster!!!!
       if (!position(proj)) {
          if (DEBUG) {
-            logger.fine("OMRaster.generate(): positioning failed!");
+            logger.debug("OMRaster.generate(): positioning failed!");
          }
          return false;
       }
@@ -349,7 +348,7 @@ public class OMScalingRaster
          // be, then just do what we normally do in OMRaster.
          if (sourceImage == null || getNeedToRegenerate()) {
             if (DEBUG) {
-               logger.fine("OMScalingRaster: generating image");
+               logger.debug("OMScalingRaster: generating image");
             }
             super.generate(proj);
             // bitmap is set to a BufferedImage
@@ -441,11 +440,11 @@ public class OMScalingRaster
    protected void scaleTo(Projection thisProj) {
 
       if (DEBUG)
-         logger.fine("OMScalingRaster: scaleTo()");
+         logger.debug("OMScalingRaster: scaleTo()");
 
       if (sourceImage == null) {
          if (DEBUG) {
-            logger.fine("OMScalingRaster.scaleTo() sourceImage is null");
+            logger.debug("OMScalingRaster.scaleTo() sourceImage is null");
          }
          return;
       }
@@ -562,7 +561,7 @@ public class OMScalingRaster
                // This has been kicked off when the dimensions of the
                // filter get too big. Treat it like the height and width
                // being set to -1.
-               logger.fine("Caught IllegalArgumentException: " + iae.getMessage());
+               logger.debug("Caught IllegalArgumentException: " + iae.getMessage());
                bitmap = null;
             }
          }
@@ -602,8 +601,8 @@ public class OMScalingRaster
             rotate((Graphics2D) g);
          }
 
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("OMRasterObject.render() | drawing " + width + "x" + height + " image at " + point1.x + ", " + point1.y);
+         if (logger.isDebugEnabled()) {
+            logger.debug("OMRasterObject.render() | drawing " + width + "x" + height + " image at " + point1.x + ", " + point1.y);
          }
 
          if (g instanceof Graphics2D && bitmap instanceof RenderedImage) {

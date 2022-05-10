@@ -28,8 +28,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.OMComponent;
@@ -48,7 +49,7 @@ import com.bbn.openmap.event.ProjectionListener;
 public class ProjectionStack extends OMComponent implements ActionListener,
 		ProjectionListener {
 
-	private final static Logger logger = Logger
+	private final static Logger logger = LoggerFactory
 			.getLogger("com.bbn.openmap.proj.ProjectionStack");
 
 	public final static int DEFAULT_MAX_SIZE = 10;
@@ -97,7 +98,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 	public void actionPerformed(ActionEvent ae) {
 		String command = ae.getActionCommand().intern();
 
-		logger.fine("Received command: " + command);
+		logger.debug("Received command: " + command);
 
 		boolean changeProjection = false;
 
@@ -122,8 +123,8 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 		}
 
 		if (changeProjection && mapBean != null) {
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine("changing mapbean projection to : "
+			if (logger.isDebugEnabled()) {
+				logger.debug("changing mapbean projection to : "
 						+ currentProjection);
 			}
 
@@ -155,7 +156,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 	 *            ProjectionEvent
 	 */
 	public void projectionChanged(ProjectionEvent e) {
-		logger.fine("ProjectionStack.projectionChanged()");
+		logger.debug("ProjectionStack.projectionChanged()");
 		Projection newProj = e.getProjection();
 
 		// If the ProjectionStack doesn't already know about the
@@ -163,7 +164,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 		// and the new projection needs to get added to the stack,
 		// with the forwardStack cleared.
 		if (currentProjection == null || !currentProjection.equals(newProj)) {
-			logger.fine("pushing projection on backStack");
+			logger.debug("pushing projection on backStack");
 			// push on the backStack, clear the forwardStack;
 			currentProjection = push(new ProjHolder(newProj,
 					getProjectionFactory(e)));
@@ -173,7 +174,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 			fireStackStatus();
 		} else {
 			logger
-					.fine("new projection matches current projection, no action.");
+					.debug("new projection matches current projection, no action.");
 		}
 	}
 
@@ -267,8 +268,8 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 	public void fireStackStatus(boolean enableBackButton,
 			boolean enableForwardButton) {
 		if (triggers != null) {
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine("back enabled: " + enableBackButton
+			if (logger.isDebugEnabled()) {
+				logger.debug("back enabled: " + enableBackButton
 						+ ", forward enabled: " + enableForwardButton);
 			}
 			triggers.fireStackStatus(enableBackButton, enableForwardButton);
@@ -311,7 +312,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 	 */
 	public void findAndUndo(Object someObj) {
 		if (someObj instanceof com.bbn.openmap.MapBean) {
-			logger.fine("ProjectionStack removing a MapBean.");
+			logger.debug("ProjectionStack removing a MapBean.");
 			MapBean map = getMapBean();
 			if (map != null && map == (MapBean) someObj) {
 				setMapBean(null);
@@ -325,7 +326,7 @@ public class ProjectionStack extends OMComponent implements ActionListener,
 	 */
 	public void findAndInit(Object someObj) {
 		if (someObj instanceof com.bbn.openmap.MapBean) {
-			logger.fine("ProjectionStack found a MapBean.");
+			logger.debug("ProjectionStack found a MapBean.");
 			setMapBean((MapBean) someObj);
 		}
 	}

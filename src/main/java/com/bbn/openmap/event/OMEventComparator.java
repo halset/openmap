@@ -3,8 +3,9 @@
 package com.bbn.openmap.event;
 
 import java.util.Comparator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.util.HashCodeUtil;
 
@@ -13,7 +14,7 @@ import com.bbn.openmap.util.HashCodeUtil;
 public class OMEventComparator
         implements Comparator<OMEvent> {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.event.OMEventComparator");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.OMEventComparator");
 
     /**
      * 
@@ -45,7 +46,7 @@ public class OMEventComparator
             boolean logging = false;
             String id1 = null, id2 = null;
 
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                 id1 = obj1.getDescription();
                 id2 = obj2.getDescription();
 

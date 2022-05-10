@@ -26,8 +26,9 @@ package com.bbn.openmap.omGraphics.time;
 
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The TemporalSupport object is intended to provide rudimentary support for
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
  */
 public abstract class TemporalSupport {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.omGraphics.time.TemporalSupport");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.omGraphics.time.TemporalSupport");
 
     protected TreeSet<? extends TemporalRecord> temporals;
 
@@ -65,8 +66,8 @@ public abstract class TemporalSupport {
                 T temporal = it.next();
                 long recTimeStamp = temporal.getTime();
 
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("evaluating: " + temporal + " vs " + time);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("evaluating: " + temporal + " vs " + time);
                 }
 
                 if (recTimeStamp < time) {
@@ -99,8 +100,8 @@ public abstract class TemporalSupport {
                 // still want to get here if interpolation is not
                 // wanted if the current time is before the first
                 // position report.
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("premature time, invisible: " + next.toString());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("premature time, invisible: " + next.toString());
                 }
                 // We're displaying this position before we're
                 // supposed to know it's there.

@@ -24,8 +24,9 @@ package com.bbn.openmap.event;
 
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a utility class that can be used by beans that need support for
@@ -43,7 +44,7 @@ public class MapMouseSupport
 
    private static final long serialVersionUID = 1L;
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.event.MapMouseSupport");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.MapMouseSupport");
 
    /**
     * The flag that dictates whether the events should be passed to all the
@@ -132,8 +133,8 @@ public class MapMouseSupport
       super(mode);
 
       consumeEvents = shouldConsumeEvents;
-      DEBUG = logger.isLoggable(Level.FINE);
-      DEBUG_DETAIL = logger.isLoggable(Level.FINER);
+      DEBUG = logger.isDebugEnabled();
+      DEBUG_DETAIL = logger.isDebugEnabled();
    }
 
    /**
@@ -175,13 +176,13 @@ public class MapMouseSupport
     */
    public boolean fireMapMousePressed(MouseEvent evt) {
       if (DEBUG) {
-         logger.fine("MapMouseSupport.fireMapMousePressed()");
+         logger.debug("MapMouseSupport.fireMapMousePressed()");
       }
 
       boolean consumed = false;
 
       if (DEBUG) {
-         logger.fine("  -- has proxy (" + (proxy != null) + ") -- shift used (" + evt.isShiftDown() + ")");
+         logger.debug("  -- has proxy (" + (proxy != null) + ") -- shift used (" + evt.isShiftDown() + ")");
       }
 
       if (proxy == null || evt.isShiftDown() || (proxyDistributionMask & PROXY_DISTRIB_MOUSE_PRESSED) > 0) {
@@ -189,7 +190,7 @@ public class MapMouseSupport
          evt = new MapMouseEvent(getParentMode(), evt);
 
          if (DEBUG && proxy != null && evt.isShiftDown()) {
-            logger.fine("MMS.fireMapMousePressed(): proxy enabled, but side stepping to send event to primary listeners");
+            logger.debug("MMS.fireMapMousePressed(): proxy enabled, but side stepping to send event to primary listeners");
          }
 
          Iterator<MapMouseListener> it = iterator();
@@ -210,7 +211,7 @@ public class MapMouseSupport
          consumed = true;
       } else {
          if (DEBUG && evt.isShiftDown()) {
-            logger.fine("MMS.fireMapMousePressed(): side-stepped proxy");
+            logger.debug("MMS.fireMapMousePressed(): side-stepped proxy");
          }
       }
 
@@ -228,7 +229,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseReleased(MouseEvent evt) {
       if (DEBUG) {
-         logger.fine("MapMouseSupport: fireMapMouseReleased");
+         logger.debug("MapMouseSupport: fireMapMouseReleased");
       }
 
       boolean consumed = false;
@@ -270,7 +271,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseClicked(MouseEvent evt) {
       if (DEBUG) {
-         logger.fine("MapMouseSupport: fireMapMouseClicked");
+         logger.debug("MapMouseSupport: fireMapMouseClicked");
       }
 
       clickHappened = true;
@@ -317,7 +318,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseEntered(MouseEvent evt) {
       if (DEBUG) {
-         logger.fine("MapMouseSupport: fireMapMouseEntered");
+         logger.debug("MapMouseSupport: fireMapMouseEntered");
       }
 
       boolean consumed = false;
@@ -348,7 +349,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseExited(MouseEvent evt) {
       if (DEBUG) {
-         logger.fine("MapMouseSupport: fireMapMouseExited");
+         logger.debug("MapMouseSupport: fireMapMouseExited");
       }
 
       boolean consumed = false;
@@ -379,7 +380,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseDragged(MouseEvent evt) {
       if (DEBUG_DETAIL) {
-         logger.finer("MapMouseSupport: fireMapMouseDragged");
+         logger.debug("MapMouseSupport: fireMapMouseDragged");
       }
 
       clickHappened = false;
@@ -416,7 +417,7 @@ public class MapMouseSupport
     */
    public boolean fireMapMouseMoved(MouseEvent evt) {
       if (DEBUG_DETAIL) {
-         logger.fine("MapMouseSupport: fireMapMouseMoved");
+         logger.debug("MapMouseSupport: fireMapMouseMoved");
       }
 
       boolean consumed = false;

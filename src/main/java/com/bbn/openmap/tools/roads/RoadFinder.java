@@ -45,8 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.ProjectionEvent;
 import com.bbn.openmap.event.ProjectionListener;
@@ -82,7 +83,7 @@ public class RoadFinder
     */
    protected float halo;
 
-   Logger logger = Logger.getLogger(this.getClass().getName());
+   Logger logger = LoggerFactory.getLogger(this.getClass().getName());
    boolean drawIntersections = false;
    boolean drawResults = false;
    boolean doLoopCheck = false;
@@ -117,7 +118,7 @@ public class RoadFinder
       try {
          getData();
       } catch (Exception ee) {
-         logger.warning("Got exception " + ee);
+         logger.error("Got exception " + ee);
          ee.printStackTrace();
       }
    }
@@ -163,7 +164,7 @@ public class RoadFinder
 
       synchronized (rectangle) {
          double[] points = new double[6];
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info("iterating over rectangle contents.");
 
          int num = 0;
@@ -175,8 +176,8 @@ public class RoadFinder
             num++;
             OMGeometry graphic = (OMGeometry) iter.next();
 
-            if (logger.isLoggable(Level.FINE))
-               logger.fine("examining " + graphic);
+            if (logger.isDebugEnabled())
+               logger.debug("examining " + graphic);
 
             Shape shape = graphic.getShape();
             if (shape == null)
@@ -192,22 +193,22 @@ public class RoadFinder
                itemsInPath++;
                boolean offScreen = false;
                if (points[0] < 0 || points[0] >= width) {
-                  // logger.warning("skipping x point " +
+                  // logger.error("skipping x point " +
                   // points[0] + " b/c it's off the map.");
                   offScreen = true;
                }
                if (points[1] < 0 || points[1] >= height) {
-                  // logger.warning("skipping y point " +
+                  // logger.error("skipping y point " +
                   // points[1] + " b/c it's off the map.");
                   offScreen = true;
                }
 
                switch (type) {
                   case PathIterator.SEG_CLOSE:
-                     logger.warning("got close");
+                     logger.error("got close");
                      break;
                   case PathIterator.SEG_CUBICTO:
-                     logger.warning("got cubic to");
+                     logger.error("got cubic to");
                      break;
                   case PathIterator.SEG_LINETO:
                      if (offScreen) {
@@ -248,8 +249,8 @@ public class RoadFinder
                         lastYOff = 0;
                      }
 
-                     if (logger.isLoggable(Level.FINE))
-                        logger.fine(" line to " + points[0] + ", " + points[1]);
+                     if (logger.isDebugEnabled())
+                        logger.debug(" line to " + points[0] + ", " + points[1]);
 
                      break;
                   case PathIterator.SEG_MOVETO:
@@ -271,24 +272,24 @@ public class RoadFinder
                         lastYOff = 0;
                      }
 
-                     if (logger.isLoggable(Level.FINE))
-                        logger.fine(" moving to " + points[0] + ", " + points[1]);
+                     if (logger.isDebugEnabled())
+                        logger.debug(" moving to " + points[0] + ", " + points[1]);
 
                      break;
                   case PathIterator.SEG_QUADTO:
-                     logger.warning("got quad to");
+                     logger.error("got quad to");
                      break;
                   default:
-                     logger.warning("got another type : " + type);
+                     logger.error("got another type : " + type);
                      break;
                }
             }
 
             if (segment < 2) {
                skipped++;
-               logger.fine("Skipping line that doesn't have an end point");
+               logger.debug("Skipping line that doesn't have an end point");
             } else {
-               if (logger.isLoggable(Level.INFO))
+               if (logger.isInfoEnabled())
                   logger.info("items in path " + itemsInPath);
 
                makeRoad(shape, graphic, made++, xPoints, yPoints, segment);
@@ -296,7 +297,7 @@ public class RoadFinder
             segment = 0;
          }
 
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info("num items " + num + " skipped " + skipped);
       }
    }
@@ -335,23 +336,23 @@ public class RoadFinder
       int intY = (int) newY;
 
       if (intX < 0) {
-         logger.warning("new x is " + intX);
+         logger.error("new x is " + intX);
          intX = 0;
       }
       if (intX >= width) {
-         logger.warning("new x is " + intX);
+         logger.error("new x is " + intX);
          intX = width - 1;
       }
       if (intY < 0) {
-         logger.warning("new y is " + intY);
+         logger.error("new y is " + intY);
          intY = 0;
       }
       if (intY >= height) {
-         logger.warning("new y is " + intY);
+         logger.error("new y is " + intY);
          intY = height - 1;
       }
 
-      if (logger.isLoggable(Level.INFO)) {
+      if (logger.isInfoEnabled()) {
          logger.info("from " + x1 + "," + y1 + " to " + x2 + "," + y2 + "w " + width + " h " + height + " interp " + intX + ","
                + intY);
       }
@@ -383,22 +384,22 @@ public class RoadFinder
       int toBefore = to.getRoadCount();
 
       if (from == null) {
-         logger.warning("no from intersection for " + xpoints[0] + ", " + ypoints[0]);
+         logger.error("no from intersection for " + xpoints[0] + ", " + ypoints[0]);
       }
       if (to == null) {
-         logger.warning("no to intersection for " + xpoints[nPoints - 1] + ", " + ypoints[nPoints - 1]);
+         logger.error("no to intersection for " + xpoints[nPoints - 1] + ", " + ypoints[nPoints - 1]);
       }
 
       String name = "road";
       Road road = createRoad(id, name + "-" + id, from, to, defaultRoadClass);
       if (fromBefore + 1 != from.getRoadCount())
-         logger.severe("huh? " + from + " had " + fromBefore + " roads before and now " + from.getRoadCount());
+         logger.error("huh? " + from + " had " + fromBefore + " roads before and now " + from.getRoadCount());
       if (toBefore + 1 != to.getRoadCount())
-         logger.severe("huh? " + to + " had " + toBefore + " roads before and now " + to.getRoadCount());
+         logger.error("huh? " + to + " had " + toBefore + " roads before and now " + to.getRoadCount());
       int width = roadsMade % 5;
       roadsMade++;
 
-      if (logger.isLoggable(Level.INFO)) {
+      if (logger.isInfoEnabled()) {
          logger.info("road # " + roadsMade + " " + road + " has " + nPoints + " points");
       }
 
@@ -444,14 +445,14 @@ public class RoadFinder
       road.setRoadPoints(roadPoints);
 
       if (!road.getFirstIntersection().equals(from))
-         logger.severe("huh? " + road + " first inter " + road.getFirstIntersection() + " not " + from);
+         logger.error("huh? " + road + " first inter " + road.getFirstIntersection() + " not " + from);
 
       if (!road.getSecondIntersection().equals(to))
-         logger.severe("huh? " + road + " second inter " + road.getSecondIntersection() + " not " + to);
+         logger.error("huh? " + road + " second inter " + road.getSecondIntersection() + " not " + to);
 
       if (road.getPoints().length < 2)
-         logger.warning("Error : somehow made a road " + road + " with too few points.");
-      else if (logger.isLoggable(Level.INFO)) {
+         logger.error("Error : somehow made a road " + road + " with too few points.");
+      else if (logger.isInfoEnabled()) {
          // logger.info("made " + road);
       }
 
@@ -533,14 +534,14 @@ public class RoadFinder
       String name = Intersection.getLatLonPointName(loc);
       Intersection intersection = intersections.get(name);
       if (intersection == null) {
-         if (logger.isLoggable(Level.FINE))
-            logger.fine("making new intersection for " + loc);
+         if (logger.isDebugEnabled())
+            logger.debug("making new intersection for " + loc);
          intersection = new Intersection(loc, name, this);
          interQuadTree.put(intersection.getLatitude(), intersection.getLongitude(), intersection);
          intersections.put(intersection);
       } else {
-         if (logger.isLoggable(Level.FINE))
-            logger.fine("found existing intersection for " + loc + " with " + intersection.getRoadCount()
+         if (logger.isDebugEnabled())
+            logger.debug("found existing intersection for " + loc + " with " + intersection.getRoadCount()
                   + " roads coming out of it.");
       }
       return intersection;
@@ -744,7 +745,7 @@ public class RoadFinder
             }
          }
       } catch (Exception e) {
-         logger.warning("Got exception " + e);
+         logger.error("Got exception " + e);
          e.printStackTrace();
          return null;
       }
@@ -772,7 +773,7 @@ public class RoadFinder
          Route bestRoute = getRouteBetweenPoints(start, end);
          newPoints = displayPathOnRoad(start, end, bestRoute, segments);
       } catch (Exception e) {
-         logger.warning("Got exception " + e);
+         logger.error("Got exception " + e);
          e.printStackTrace();
          return null;
       }
@@ -836,21 +837,21 @@ public class RoadFinder
 
       if (startTemp != null && endTemp != null) {
          if (roadClasses == null)
-            logger.warning("huh? road classes is null???");
+            logger.error("huh? road classes is null???");
 
          bestRoute = Route.getBestRoute(startTemp, endTemp, roadClasses.getBestConvoySpeed(), roadClasses.getWorstConvoySpeed());
       }
 
       if (bestRoute == null) {
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info("no route from " + startTemp + " to " + endTemp);
       } else {
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info("route from " + startTemp + " to " + endTemp + " is " + bestRoute);
       }
 
       // post condition check
-      if (logger.isLoggable(Level.INFO) && bestRoute != null) {
+      if (logger.isInfoEnabled() && bestRoute != null) {
          float length = 0;
          for (int i = 0; i < bestRoute.getRoads().length; i++) {
             Road road = bestRoute.getRoads()[i];
@@ -894,7 +895,7 @@ public class RoadFinder
    protected Intersection findClosestIntersection(LatLonPoint latLon) {
       Intersection inter = (Intersection) interQuadTree.get(latLon.getLatitude(), latLon.getLongitude());
       if (inter == null)
-         logger.warning("no intersection at " + latLon);
+         logger.error("no intersection at " + latLon);
 
       return inter;
    }
@@ -915,7 +916,7 @@ public class RoadFinder
       Intersection origin = bestRoute.getOriginIntersection();
       // Intersection dest = bestRoute.getDestinationIntersection();
 
-      if (logger.isLoggable(Level.INFO))
+      if (logger.isInfoEnabled())
          logger.info("adding " + bestRoute.roads.length + " new roads.");
 
       Road road = null;
@@ -930,14 +931,14 @@ public class RoadFinder
          road = bestRoute.roads[i];
 
          if (!from.equals(road.getFirstIntersection()) && !from.equals(road.getSecondIntersection())) {
-            logger.severe("huh? " + from + " is not an intersection on road " + road);
+            logger.error("huh? " + from + " is not an intersection on road " + road);
          }
 
          Point pt = createPoint((Point) proj.forward(from.getLocation(), new Point()));
 
          if (doLoopCheck) {
             if (ptSet.contains(pt)) {
-               logger.warning("pt set has duplicate at " + pt);
+               logger.error("pt set has duplicate at " + pt);
             }
             ptSet.add(pt);
          }
@@ -946,7 +947,7 @@ public class RoadFinder
          to = road.getOtherIntersection(from);
          if (doLoopCheck) {
             if (loopSet.contains(to)) {
-               logger.warning("road has a cycle at " + to);
+               logger.error("road has a cycle at " + to);
             }
             loopSet.add(to);
          }
@@ -958,7 +959,7 @@ public class RoadFinder
          boolean reverse = from.equals(road.getSecondIntersection());
          Segment path = getPathSegment(proj, road, reverse);
 
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info("created path " + path);
 
          segments.add(path);
@@ -969,12 +970,12 @@ public class RoadFinder
       if (to != null) {
          Point pt = createPoint((Point) proj.forward(to.getLocation(), new Point()));
          if (ptSet.contains(pt)) {
-            logger.warning("pt set has duplicate at " + pt);
+            logger.error("pt set has duplicate at " + pt);
          }
 
          newPoints.add(pt);
 
-         if (logger.isLoggable(Level.INFO))
+         if (logger.isInfoEnabled())
             logger.info(" now " + newPoints.size() + " points and " + segments.size() + " segments.");
       }
    }

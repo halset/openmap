@@ -33,11 +33,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.OMComponent;
 import com.bbn.openmap.event.OMEvent;
@@ -86,7 +87,7 @@ import com.bbn.openmap.util.PropUtils;
  */
 public class CSVEventImporter extends OMComponent implements EventImporter {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.event.CSVEventImporter");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.event.CSVEventImporter");
 
     /** locationFile */
     public final static String LocationFileProperty = "locationFile";
@@ -176,7 +177,7 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
 
         // Create TemporalOMGraphics, to associate events to
         if (locationFile != null && nameIndex != -1) {
-            logger.fine("Reading location file...");
+            logger.debug("Reading location file...");
             try {
                 CSVFile locations = new CSVFile(locationFile);
                 locations.loadData();
@@ -220,27 +221,27 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
                         library.put(name.intern(), location);
                         list.add(location);
                     } else {
-                        logger.warning("no name to use to create location: "
+                        logger.error("no name to use to create location: "
                                 + name);
                     }
                 }
             } catch (MalformedURLException murle) {
-                logger.warning("problem finding the location file: "
+                logger.error("problem finding the location file: "
                         + locationFile);
                 return list;
             } catch (ArrayIndexOutOfBoundsException aioobe) {
-                logger.warning("problem with parsing location file: "
+                logger.error("problem with parsing location file: "
                         + locationFile);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("The problem is with one of the indexes into the file: \n"
+                if (logger.isDebugEnabled()) {
+                    logger.debug("The problem is with one of the indexes into the file: \n"
                             + aioobe.getMessage());
                     aioobe.printStackTrace();
                 }
             } catch (NullPointerException npe) {
-                logger.warning("null pointer exception, most likely a problem finding the organization data file");
+                logger.error("null pointer exception, most likely a problem finding the organization data file");
             }
         } else {
-            logger.warning("Location file (" + locationFile
+            logger.error("Location file (" + locationFile
                     + ") not configured.");
             return list;
         }
@@ -250,7 +251,7 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
         // 
         if (activityFile != null && activityNameIndex != -1 && latIndex != -1
                 && lonIndex != -1 && timeIndex != -1) {
-            logger.fine("Reading activity file...");
+            logger.debug("Reading activity file...");
 
             try {
                 CSVFile activities = new CSVFile(activityFile);
@@ -298,11 +299,11 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
                                 callback.events.add(event);
 
                             } else {
-                                logger.warning("ScenarioPoint not found for "
+                                logger.error("ScenarioPoint not found for "
                                         + name + ", entry: " + record);
                             }
                         } else {
-                            logger.warning("no name to use to create activity point: "
+                            logger.error("no name to use to create activity point: "
                                     + name);
                         }
 
@@ -313,7 +314,7 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
                         Object obj2 = record.elementAt(lonIndex);
                         Object obj3 = record.elementAt(timeIndex);
 
-                        logger.warning("Problem with indexes in activity file for "
+                        logger.error("Problem with indexes in activity file for "
                                 + obj0
                                 + " ("
                                 + obj0.getClass().getName()
@@ -337,23 +338,23 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
                                 + " ("
                                 + obj3.getClass().getName() + ")");
                     } catch (ParseException pe) {
-                        logger.fine("Problem with time format. "
+                        logger.debug("Problem with time format. "
                                 + pe.getMessage());
                     }
                 }
             } catch (MalformedURLException murle) {
-                logger.warning("problem with activity file: " + activityFile);
+                logger.error("problem with activity file: " + activityFile);
                 return list;
             } catch (NullPointerException npe) {
-                logger.warning("null pointer exception, most likely a problem finding the activites data file");
+                logger.error("null pointer exception, most likely a problem finding the activites data file");
             }
         } else {
-            logger.warning("Activity file (" + activityFile
+            logger.error("Activity file (" + activityFile
                     + ") not configured.");
             return list;
         }
 
-        logger.fine("Reading files OK");
+        logger.debug("Reading files OK");
 
         // IMPORTANT!
         callback.setTimeBounds(timeBounds);
@@ -405,8 +406,8 @@ public class CSVEventImporter extends OMComponent implements EventImporter {
 
         timeFormat = new SimpleDateFormat(timeFormatString);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("EventLayer indexes:" + "\n\tlocation file: "
+        if (logger.isDebugEnabled()) {
+            logger.debug("EventLayer indexes:" + "\n\tlocation file: "
                     + locationFile + "\n\tlocation file has header: "
                     + locationHeader + "\n\tnameIndex = " + nameIndex
                     + "\n\ticonIndex = " + iconIndex + "\n\tactivity file: "

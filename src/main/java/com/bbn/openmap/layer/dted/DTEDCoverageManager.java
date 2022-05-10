@@ -29,12 +29,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -60,7 +61,7 @@ public class DTEDCoverageManager
 
    protected I18n i18n = Environment.getI18n();
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.dted.DTEDCoverageManager");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.dted.DTEDCoverageManager");
 
    protected String[] paths;
 
@@ -119,18 +120,18 @@ public class DTEDCoverageManager
          maxNumPaths = paths.length;
 
       if (paths == null || maxNumPaths == 0) {
-         logger.warning("No paths for DTED data given.");
+         logger.error("No paths for DTED data given.");
          return;
       }
 
-      logger.fine("checking out DTED at paths:");
+      logger.debug("checking out DTED at paths:");
       for (int d1 = 0; d1 < paths.length; d1++) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("       " + paths[d1]);
+         if (logger.isDebugEnabled()) {
+            logger.debug("       " + paths[d1]);
          }
          if (!BinaryFile.exists(paths[d1])) {
             paths[d1] = null;
-            logger.fine("       - path invalid, ignoring.");
+            logger.debug("       - path invalid, ignoring.");
          }
       }
 
@@ -154,7 +155,7 @@ public class DTEDCoverageManager
 
          } catch (NumberFormatException nfe) {
             curLon = Integer.MAX_VALUE;
-            logger.warning("Can't process " + name);
+            logger.error("Can't process " + name);
          }
       }
       return true;
@@ -179,7 +180,7 @@ public class DTEDCoverageManager
                }
 
             } catch (NumberFormatException nfe) {
-               logger.warning("Can't process " + name);
+               logger.error("Can't process " + name);
             }
 
          }
@@ -201,7 +202,7 @@ public class DTEDCoverageManager
    public OMGraphicList getCoverageRects(Projection proj) {
       if (level0Frames == null) {
 
-         logger.fine("Scanning for frames - This could take several minutes!");
+         logger.debug("Scanning for frames - This could take several minutes!");
          checkOutCoverage(paths);
       }
 

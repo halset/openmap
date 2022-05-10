@@ -38,8 +38,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -48,6 +46,9 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.border.AbstractBorder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.I18n;
 import com.bbn.openmap.event.OMEventSelectionCoordinator;
@@ -78,7 +79,7 @@ import com.bbn.openmap.util.PropUtils;
 public class TimePanel extends OMComponentPanel implements MapPanelChild,
         PropertyChangeListener, TimeEventListener {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.time.TimePanel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.time.TimePanel");
 
     /**
      * This property is used to signify whether the play filter should be used.
@@ -411,8 +412,8 @@ public class TimePanel extends OMComponentPanel implements MapPanelChild,
             return;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("TimePanel received TIMER_STATUS property update: "
+        if (logger.isDebugEnabled()) {
+            logger.debug("TimePanel received TIMER_STATUS property update: "
                     + te);
         }
 
@@ -484,7 +485,7 @@ public class TimePanel extends OMComponentPanel implements MapPanelChild,
     }
 
     public void setClock(Clock cl) {
-        logger.fine("found and setting clock: " + cl);
+        logger.debug("found and setting clock: " + cl);
         if (clock != null) {
             clock.removeTimeEventListener(this);
         }

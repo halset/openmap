@@ -215,7 +215,7 @@ public class VPFCachedFeatureGraphicWarehouse
          OMGraphicList ret = new OMGraphicList();
          ret.setTraverseMode(OMGraphicList.LAST_ADDED_ON_TOP);
 
-         logger.fine("checking for cached lists");
+         logger.debug("checking for cached lists");
          for (OMGraphic omg :graphics) {
             if (omg instanceof FeatureCacheGraphicList) {
                FeatureCacheGraphicList fcgl = (FeatureCacheGraphicList) ((FeatureCacheGraphicList) omg).clone();

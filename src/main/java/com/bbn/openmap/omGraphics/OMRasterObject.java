@@ -41,8 +41,9 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.image.ImageHelper;
 import com.bbn.openmap.proj.Projection;
@@ -197,9 +198,9 @@ public abstract class OMRasterObject
    /** the angle by which the image is to be rotated, in radians */
    protected double rotationAngle;
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.omGraphics.OMRasterObject");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.omGraphics.OMRasterObject");
 
-   protected transient boolean DEBUG = logger.isLoggable(Level.FINE);
+   protected transient boolean DEBUG = logger.isDebugEnabled();
 
    /**
     * A Constructor that sets the graphic type to raster, render type to
@@ -312,7 +313,7 @@ public abstract class OMRasterObject
    public void render(Graphics graphics) {
       if (getNeedToRegenerate() || getNeedToReposition() || !isVisible()) {
          if (DEBUG) {
-            logger.fine("OMRasterObject.render(): need to regenerate or not visible!");
+            logger.debug("OMRasterObject.render(): need to regenerate or not visible!");
          }
          return;
       }
@@ -326,7 +327,7 @@ public abstract class OMRasterObject
       // return -1. This is just a courtesy notification in case
       // someone isn't seeing their image, and don't know why.
       if (colorModel == COLORMODEL_IMAGEICON && (getWidth() == -1)) {
-         logger.fine("OMRasterObject.render: Attempting to draw a Image that is not ready! Image probably wasn't available.");
+         logger.debug("OMRasterObject.render: Attempting to draw a Image that is not ready! Image probably wasn't available.");
       }
 
       if (g instanceof Graphics2D && rotationAngle != DEFAULT_ROTATIONANGLE) {
@@ -337,7 +338,7 @@ public abstract class OMRasterObject
       if (bitmap != null) {
 
          if (DEBUG) {
-            logger.fine("OMRasterObject.render() | drawing " + width + "x" + height + " image at " + point1.x + ", " + point1.y);
+            logger.debug("OMRasterObject.render() | drawing " + width + "x" + height + " image at " + point1.x + ", " + point1.y);
          }
          if (g instanceof Graphics2D && bitmap instanceof RenderedImage) {
             // Affine translation for placement...
@@ -350,10 +351,10 @@ public abstract class OMRasterObject
          }
       } else {
          if (DEBUG)
-            logger.fine("OMRasterObject.render: ignoring null bitmap");
+            logger.debug("OMRasterObject.render: ignoring null bitmap");
       }
 
-      if (isSelected() || logger.isLoggable(Level.FINER)) {
+      if (isSelected() || logger.isDebugEnabled()) {
          super.render(g);
       }
 
@@ -389,7 +390,7 @@ public abstract class OMRasterObject
    protected boolean position(Projection proj) {
 
       if (proj == null) {
-         logger.fine("OMRasterObject: null projection in position!");
+         logger.debug("OMRasterObject: null projection in position!");
          return false;
       }
 
@@ -401,7 +402,7 @@ public abstract class OMRasterObject
          case RENDERTYPE_LATLON:
             if (!proj.isPlotable(lat, lon)) {
                if (DEBUG) {
-                  logger.fine("OMRasterObject: point is not plotable!");
+                  logger.debug("OMRasterObject: point is not plotable!");
                }
                setNeedToReposition(true);// so we don't render it!
                return false;
@@ -414,7 +415,7 @@ public abstract class OMRasterObject
          case RENDERTYPE_OFFSET:
             if (!proj.isPlotable(lat, lon)) {
                if (DEBUG) {
-                  logger.fine("OMRasterObject: point is not plotable!");
+                  logger.debug("OMRasterObject: point is not plotable!");
                }
                setNeedToReposition(true);// so we don't render it!
                return false;
@@ -425,12 +426,12 @@ public abstract class OMRasterObject
             break;
          case RENDERTYPE_UNKNOWN:
             if (DEBUG) {
-               logger.fine("OMRasterObject.position(): ignoring unknown rendertype, wingin' it");
+               logger.debug("OMRasterObject.position(): ignoring unknown rendertype, wingin' it");
             }
             if (lat == 0 && lon == 0) {
                if (x == 0 && y == 0) {
                   if (DEBUG) {
-                     logger.fine("OMRasterObject.position(): Not enough info in object to place it reasonably.");
+                     logger.debug("OMRasterObject.position(): Not enough info in object to place it reasonably.");
                   }
                   point1 = new Point(-width, -height);
                   point2 = new Point(0, 0);
@@ -441,7 +442,7 @@ public abstract class OMRasterObject
 
             } else {
                if (!proj.isPlotable(lat, lon)) {
-                  logger.fine("OMRasterObject: point is not plotable!");
+                  logger.debug("OMRasterObject: point is not plotable!");
                   return false;
                }
                point1 = (Point) proj.forward(lat, lon, new Point());
@@ -463,7 +464,7 @@ public abstract class OMRasterObject
     */
    public void setImage(Image ii) {
       if (ii == null) {
-         logger.fine("OMRasterObject.setImage(): image is null!");
+         logger.debug("OMRasterObject.setImage(): image is null!");
          return;
       }
       colorModel = COLORMODEL_IMAGEICON;
@@ -507,7 +508,7 @@ public abstract class OMRasterObject
     */
    public void setPixels(int[] values) {
       if (values.length != (height * width))
-         logger.fine("OMRasterObject: new pixel[] size (" + +values.length + ") doesn't" + " match [height*width (" + height
+         logger.debug("OMRasterObject: new pixel[] size (" + +values.length + ") doesn't" + " match [height*width (" + height
                * width + ")]");
       pixels = values;
       setNeedToRegenerate(true);
@@ -777,10 +778,10 @@ public abstract class OMRasterObject
                point1.y = 0;
 
             if (DEBUG) {
-               logger.fine("OMRasterObject: newly located at " + point1);
+               logger.debug("OMRasterObject: newly located at " + point1);
             }
          } else if (DEBUG) {
-            logger.fine("OMRasterObject: not being trimmed due to projection");
+            logger.debug("OMRasterObject: not being trimmed due to projection");
          }
       }
 
@@ -882,13 +883,13 @@ public abstract class OMRasterObject
 
          if (filteredWidth <= width && filteredHeight <= height) {
             if (DEBUG) {
-               logger.fine("TrimScaleFilter.trimExcessPixels(): image not enlarged, using entire image.");
+               logger.debug("TrimScaleFilter.trimExcessPixels(): image not enlarged, using entire image.");
             }
             return null;
          }
 
          if (DEBUG) {
-            logger.fine("TrimScaleFilter.trimExcessPixels(): clipping enlarged image.");
+            logger.debug("TrimScaleFilter.trimExcessPixels(): clipping enlarged image.");
          }
 
          // Figure out the pixels of the old image being used in
@@ -908,7 +909,7 @@ public abstract class OMRasterObject
          int endYPixelInSource = scaledDim.y > projHeight ? (int) ((projHeight - point1.y) / heightScale) + 1 : height;
 
          if (DEBUG) {
-            logger.fine("TrimScaleFilter.trimExcessPixels(): image contributes " + startXPixelInSource + ", " + startYPixelInSource
+            logger.debug("TrimScaleFilter.trimExcessPixels(): image contributes " + startXPixelInSource + ", " + startYPixelInSource
                   + " to " + endXPixelInSource + ", " + endYPixelInSource);
          }
 
@@ -916,7 +917,7 @@ public abstract class OMRasterObject
          // out the unused pixels.
 
          if (DEBUG) {
-            logger.fine("TrimScaleFilter.trimExcessPixels(): " + " new dimensions of scaled image "
+            logger.debug("TrimScaleFilter.trimExcessPixels(): " + " new dimensions of scaled image "
                   + (int) ((endXPixelInSource - startXPixelInSource) * widthScale) + ", "
                   + (int) ((endYPixelInSource - startYPixelInSource) * heightScale));
          }

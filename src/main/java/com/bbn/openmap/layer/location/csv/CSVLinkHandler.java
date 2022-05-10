@@ -26,7 +26,6 @@ package com.bbn.openmap.layer.location.csv;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -255,13 +254,13 @@ public class CSVLinkHandler
     protected boolean checkIndexSettings() {
 
         if (lat1Index == -1 || lon1Index == -1 || lat2Index == -1 || lon2Index == -1) {
-            logger.warning("CSVLocationHandler: createData(): Index properties for Lat/Lon/Name are not set properly! lat index:"
+            logger.error("CSVLocationHandler: createData(): Index properties for Lat/Lon/Name are not set properly! lat index:"
                     + latIndex + ", lon index:" + lonIndex);
             return false;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLinkHandler: Reading File:" + locationFile + " lat1Index: " + lat1Index + " lon1Index: " + lon1Index
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLinkHandler: Reading File:" + locationFile + " lat1Index: " + lat1Index + " lon1Index: " + lon1Index
                     + " lat2Index: " + lat2Index + " lon2Index: " + lon2Index + " geoStyleIndex: " + geoStyleIndex
                     // + " linkTypeIndex: " + linkTypeIndex
                     + " dashIndex: " + dashIndex + " colorIndex: " + colorIndex + " thicknessIndex: " + thicknessIndex);
@@ -314,8 +313,8 @@ public class CSVLinkHandler
         int default_lintetype = OMGraphic.LINETYPE_STRAIGHT;
         String tokstring = ((String) token).trim().toLowerCase();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLinkHandler:getLineTypeFromToken(" + tokstring + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLinkHandler:getLineTypeFromToken(" + tokstring + ")");
         }
 
         if (tokstring.startsWith("s"))
@@ -325,7 +324,7 @@ public class CSVLinkHandler
         else if (tokstring.startsWith("r"))
             return OMGraphic.LINETYPE_RHUMB;
         else {
-            logger.warning("Don't understand Linetype " + tokstring + ", using default (STRAIGHT)");
+            logger.error("Don't understand Linetype " + tokstring + ", using default (STRAIGHT)");
             return default_lintetype;
         }
     }
@@ -344,8 +343,8 @@ public class CSVLinkHandler
     protected Color getColorFromToken(Object token) {
         String tokstring = (String) token;
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLinkHandler: getColorFromToken(" + tokstring + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLinkHandler: getColorFromToken(" + tokstring + ")");
         }
 
         Color c = ColorFactory.getNamedColor(tokstring, null);
@@ -358,8 +357,8 @@ public class CSVLinkHandler
             }
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLinkHandler: getColorFromToken returns (" + c + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLinkHandler: getColorFromToken returns (" + c + ")");
         }
 
         return c;
@@ -426,8 +425,8 @@ public class CSVLinkHandler
             // What we really want to do is get the
             // locationDrawingAttributes and set them on the link.
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("CSVLinkHandler: " + link.getDetails());
+            if (logger.isDebugEnabled()) {
+                logger.debug("CSVLinkHandler: " + link.getDetails());
             }
 
             organizer.put(lat1, lon1, link);

@@ -27,7 +27,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.Serializable;
-import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 
@@ -500,8 +499,8 @@ public class OMRaster
     public void setBits(byte[] values) {
         super.setBits(values);
         if ((values.length) != (height * width)) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("OMBitmap: new byte[] size (" + +values.length + ") doesn't" + " match [height*width (" + height
+            if (logger.isDebugEnabled()) {
+                logger.debug("OMBitmap: new byte[] size (" + +values.length + ") doesn't" + " match [height*width (" + height
                         * width + ")]");
             }
         }
@@ -563,7 +562,7 @@ public class OMRaster
      */
     public void setColors(int[] values) {
         if (colorModel != COLORMODEL_INDEXED) {
-            logger.fine("OMRaster: Setting colors for final colortable when a colortable isn't needed!");
+            logger.debug("OMRaster: Setting colors for final colortable when a colortable isn't needed!");
         } else {
             colors = values;
             setNeedToRegenerate(true);
@@ -582,12 +581,12 @@ public class OMRaster
     public void setColors(Color[] values) {
 
         if (colorModel != COLORMODEL_INDEXED) {
-            logger.fine("Setting colors for final colortable when a colortable isn't needed!");
+            logger.debug("Setting colors for final colortable when a colortable isn't needed!");
             return;
 
         } else if (values == null || values.length == 0) {
             colors = new int[0];
-            logger.fine("What are you trying to do to me?!? The colortables gots to have values!");
+            logger.debug("What are you trying to do to me?!? The colortables gots to have values!");
             return;
 
         } else {
@@ -633,7 +632,7 @@ public class OMRaster
                     }
                 }
                 if (DEBUG && allTransparent) {
-                    logger.fine("OMRaster: **Whasamatta?** Image created with all transparent pixels!");
+                    logger.debug("OMRaster: **Whasamatta?** Image created with all transparent pixels!");
                 }
             }
 
@@ -671,7 +670,7 @@ public class OMRaster
     protected boolean computePixels() {
 
         if (DEBUG)
-            logger.fine("OMRaster.compute pixels!");
+            logger.debug("OMRaster.compute pixels!");
 
         int i;
         if (colorModel != COLORMODEL_INDEXED) {
@@ -679,13 +678,13 @@ public class OMRaster
         }
 
         if (colors == null || colors.length == 0) {
-            logger.fine("OMRaster: attempting to compute pixels without color table!");
+            logger.debug("OMRaster: attempting to compute pixels without color table!");
             return false;
         }
 
         int nPixels = width * height;
         if (DEBUG) {
-            logger.fine("Computing pixels for image size:" + width + ", " + height);
+            logger.debug("Computing pixels for image size:" + width + ", " + height);
         }
         // pixels are the image pixels
         pixels = new int[nPixels];
@@ -709,7 +708,7 @@ public class OMRaster
             try {
                 if (b >= numColors) {
                     if (DEBUG)
-                        logger.fine("OMRaster:.computePixels() problem!: " + b);
+                        logger.debug("OMRaster:.computePixels() problem!: " + b);
                     color = clear.getRGB();
 
                 } else if (b < 0) {
@@ -720,7 +719,7 @@ public class OMRaster
             } catch (ArrayIndexOutOfBoundsException aiiobe) {
                 // If the color can't be found, don't paint it.
                 if (DEBUG) {
-                    logger.fine("OMRaster.computePixels() problem, can't find color for index: " + aiiobe.getMessage());
+                    logger.debug("OMRaster.computePixels() problem, can't find color for index: " + aiiobe.getMessage());
                 }
 
                 color = clear.getRGB();
@@ -759,7 +758,7 @@ public class OMRaster
         // Position sets the position for the OMRaster!!!!
         if (!position(proj)) {
             if (DEBUG) {
-                logger.fine("OMRaster.generate(): positioning failed!");
+                logger.debug("OMRaster.generate(): positioning failed!");
             }
             return false;
         }
@@ -798,7 +797,7 @@ public class OMRaster
                 if (bits != null)
                     allsWell = computePixels();
                 if (!allsWell) {
-                    logger.fine("attempted to generate without pixels defined!");
+                    logger.debug("attempted to generate without pixels defined!");
                     return null;
                 }
             }

@@ -40,8 +40,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -52,6 +50,9 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.BufferedLayerMapBean;
 import com.bbn.openmap.I18n;
@@ -138,7 +139,7 @@ import com.bbn.openmap.util.PropUtils;
 public class LayersPanel extends OMToolComponent implements Serializable,
         ActionListener, LayerListener, PropertyChangeListener {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.LayersPanel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.LayersPanel");
 
     /** Action command for the layer order buttons. */
     public final static String LayerTopCmd = "LayerTopCmd";
@@ -346,7 +347,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
         int type = evt.getType();
 
         if (type == LayerEvent.ALL) {
-            logger.fine("LayersPanel received layers update");
+            logger.debug("LayersPanel received layers update");
             setLayers(layers);
         }
     }
@@ -454,8 +455,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
             layers = new Layer[0];
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("LayersPanel.setLayers() with " + layers.length
+        if (logger.isDebugEnabled()) {
+            logger.debug("LayersPanel.setLayers() with " + layers.length
                     + " layers.");
         }
 
@@ -528,7 +529,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
      *        added to the map.
      */
     public void createPanel(Layer[] inLayers) {
-        logger.fine("creating panel");
+        logger.debug("creating panel");
 
         // if (scrollPane != null) {
         // remove(scrollPane);
@@ -581,7 +582,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
         for (int i = 0; i < layers.length; i++) {
             Layer layer = layers[i];
             if (layer == null) {
-                logger.fine("caught null layer, " + i + " out of "
+                logger.debug("caught null layer, " + i + " out of "
                         + layers.length);
                 continue;
             }
@@ -589,8 +590,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
             LayerPane lpane = (LayerPane) paneLookUp.get(layer);
 
             if (lpane == null) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Creating LayerPane for " + layer.getName());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Creating LayerPane for " + layer.getName());
                 }
                 lpane = createLayerPaneForLayer(layer, layerHandler, bg);
                 lpane.addPropertyChangeListener(LayerSelectedCmd, this);
@@ -612,8 +613,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
         }
 
         if (!backgroundPanes.isEmpty()) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Adding BackgroundLayerSeparator");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Adding BackgroundLayerSeparator");
             }
             panes.add(backgroundLayerSeparator);
             gridbag.setConstraints(backgroundLayerSeparator, c);
@@ -626,8 +627,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
             }
 
         } else if (backgroundLayerSeparator != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("No layers are background layers, adding separator");
+            if (logger.isDebugEnabled()) {
+                logger.debug("No layers are background layers, adding separator");
             }
             panes.add(backgroundLayerSeparator);
             gridbag.setConstraints(backgroundLayerSeparator, c);
@@ -681,7 +682,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
     }
 
     public void deletePanes(List<LayerPane> dpanes) {
-        logger.fine("deleting panes");
+        logger.debug("deleting panes");
         if (dpanes != null) {
             paneLookUp.clear();
 
@@ -748,8 +749,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
      */
     public void actionPerformed(java.awt.event.ActionEvent e) {
         String command = e.getActionCommand();
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(command);
+        if (logger.isDebugEnabled()) {
+            logger.debug(command);
         }
 
         try {
@@ -766,8 +767,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
      * Change a layer's position.
      */
     public void moveLayer(Layer layer, String command) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(command + " for " + layer.getName());
+        if (logger.isDebugEnabled()) {
+            logger.debug(command + " for " + layer.getName());
         }
 
         moveLayer((LayerPane) paneLookUp.get(layer), command);
@@ -780,8 +781,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
 
         if (lp == null) {
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("LayerPane not represented on list");
+            if (logger.isDebugEnabled()) {
+                logger.debug("LayerPane not represented on list");
             }
 
             if (command == LayerRemoveCmd) {
@@ -883,7 +884,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
      * LayerHandler.setLayers().
      */
     protected void rejiggerMapLayers() {
-        logger.fine("jiggering.......");
+        logger.debug("jiggering.......");
 
         if (layerHandler == null) {
             // Why bother doing anything??
@@ -967,16 +968,16 @@ public class LayersPanel extends OMToolComponent implements Serializable,
         String command = pce.getPropertyName();
         Object obj = pce.getNewValue();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("receiving PropertyChangeEvent " + command + ", "
+        if (logger.isDebugEnabled()) {
+            logger.debug("receiving PropertyChangeEvent " + command + ", "
                     + pce.toString());
         }
 
         if ((command == LayerSelectedCmd || command == LayerDeselectedCmd)
                 && obj instanceof Layer) {
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("layer panel notification that layer is selected: "
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer panel notification that layer is selected: "
                         + ((Layer) obj).getName());
             }
             firePropertyChange(command, null, ((Layer) obj));
@@ -986,8 +987,8 @@ public class LayersPanel extends OMToolComponent implements Serializable,
                 || command == LayersPanel.LayerUpCmd
                 || command == LayersPanel.LayerDownCmd || command == LayersPanel.LayerRemoveCmd)
                 && obj instanceof Layer) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("layer panel notification that layer should be raised: "
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer panel notification that layer should be raised: "
                         + ((Layer) obj).getName());
             }
             moveLayer((Layer) obj, command);
@@ -1006,12 +1007,12 @@ public class LayersPanel extends OMToolComponent implements Serializable,
     public void findAndInit(Object someObj) {
         if (someObj instanceof LayerHandler) {
             // do the initializing that need to be done here
-            logger.fine("LayersPanel found a LayerHandler");
+            logger.debug("LayersPanel found a LayerHandler");
             setLayerHandler((LayerHandler) someObj);
         }
 
         if (someObj instanceof BufferedLayerMapBean) {
-            logger.fine("LayersPanel found BufferedLayerMapBean, creating separator panel");
+            logger.debug("LayersPanel found BufferedLayerMapBean, creating separator panel");
             backgroundLayerSeparator = LayerPane.getBackgroundLayerSeparator(" --- Background Layers --- ");
         }
 
@@ -1033,7 +1034,7 @@ public class LayersPanel extends OMToolComponent implements Serializable,
     public void findAndUndo(Object someObj) {
         if (someObj instanceof LayerHandler) {
             // do the initializing that need to be done here
-            logger.fine("LayersPanel removing LayerHandler");
+            logger.debug("LayersPanel removing LayerHandler");
             if (getLayerHandler() == (LayerHandler) someObj) {
                 setLayerHandler(null);
             }

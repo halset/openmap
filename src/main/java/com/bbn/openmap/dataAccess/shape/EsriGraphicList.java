@@ -26,8 +26,9 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.shape.input.ShpInputStream;
 import com.bbn.openmap.dataAccess.shape.input.ShxInputStream;
@@ -53,7 +54,7 @@ public abstract class EsriGraphicList
         extends OMGraphicList
         implements ShapeConstants, EsriGraphic {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.shape.EsriGraphicList");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.shape.EsriGraphicList");
     protected double[] extents;
     protected int type;
 
@@ -268,8 +269,8 @@ public abstract class EsriGraphicList
             list = pis.getGeometry(egf);
             is.close();
         } catch (Exception e) {
-            logger.warning("Not able to stream SHP file");
-            if (logger.isLoggable(Level.FINE)) {
+            logger.error("Not able to stream SHP file");
+            if (logger.isDebugEnabled()) {
                 e.printStackTrace();
             }
             return null;
@@ -372,8 +373,6 @@ public abstract class EsriGraphicList
         String[] printit = ap.getArgValues("print");
         if (printit != null) {
             try {
-                EsriGraphicList.logger.setLevel(Level.FINER);
-                EsriGraphicFactory.logger.setLevel(Level.FINER);
                 URL eglURL = PropUtils.getResourceOrFileOrURL(printit[0]);
                 EsriGraphicList egl = EsriGraphicList.getEsriGraphicList(eglURL, null, null);
                 if (egl != null) {
@@ -381,7 +380,7 @@ public abstract class EsriGraphicList
                 }
 
             } catch (Exception e) {
-                logger.warning(e.getMessage());
+                logger.error(e.getMessage());
                 e.printStackTrace();
             }
         }

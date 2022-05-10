@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 
@@ -80,7 +79,7 @@ public class ServerMapTileFactory
     public ServerMapTileFactory(String rootDir) {
         this.rootDir = rootDir;
         this.fileExt = ".png";
-        verbose = logger.isLoggable(Level.FINE);
+        verbose = logger.isDebugEnabled();
     }
 
     /**
@@ -99,8 +98,8 @@ public class ServerMapTileFactory
              */
             CacheObject ret = searchCache(localLoc);
             if (ret != null) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("found tile (" + x + ", " + y + ") in cache");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("found tile (" + x + ", " + y + ") in cache");
                 }
                 return ret.obj;
             }
@@ -116,8 +115,8 @@ public class ServerMapTileFactory
 
         CacheObject ret = searchCache(key);
         if (ret != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("found tile (" + x + ", " + y + ") in cache");
+            if (logger.isDebugEnabled()) {
+                logger.debug("found tile (" + x + ", " + y + ") in cache");
             }
             return ret.obj;
         }
@@ -136,7 +135,7 @@ public class ServerMapTileFactory
         if (key instanceof String) {
             String imagePath = (String) key;
             if (verbose) {
-                logger.fine("fetching file for cache: " + imagePath);
+                logger.debug("fetching file for cache: " + imagePath);
             }
 
             java.net.URL url = null;
@@ -149,7 +148,7 @@ public class ServerMapTileFactory
                 CacheObject localVersion = super.load(localLoc, x, y, zoomLevel, proj);
 
                 if (localVersion != null) {
-                    logger.fine("found version of tile in local cache: " + localLoc);
+                    logger.debug("found version of tile in local cache: " + localLoc);
                     return localVersion;
                 }
             }
@@ -158,13 +157,13 @@ public class ServerMapTileFactory
                 url = new java.net.URL(imagePath);
                 java.net.HttpURLConnection urlc = (java.net.HttpURLConnection) url.openConnection();
 
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("url content type: " + urlc.getContentType());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("url content type: " + urlc.getContentType());
                 }
 
                 if (urlc == null || urlc.getContentType() == null) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("unable to connect to (tile might be unavailable): " + imagePath);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("unable to connect to (tile might be unavailable): " + imagePath);
                     }
 
                     /*
@@ -190,7 +189,7 @@ public class ServerMapTileFactory
                     // Debug.error(message.toString());
                     // How about we toss the message out to the user
                     // instead?
-                    logger.fine(message.toString());
+                    logger.debug(message.toString());
 
                     // image
                 } else if (urlc.getContentType().startsWith("image")) {
@@ -224,9 +223,9 @@ public class ServerMapTileFactory
 
                 } // end if image
             } catch (java.net.MalformedURLException murle) {
-                logger.warning("WebImagePlugIn: URL \"" + imagePath + "\" is malformed.");
+                logger.error("WebImagePlugIn: URL \"" + imagePath + "\" is malformed.");
             } catch (java.io.IOException ioe) {
-                logger.fine("Couldn't connect to " + imagePath + ", connection problem");
+                logger.debug("Couldn't connect to " + imagePath + ", connection problem");
             }
 
             if (ii != null && ii.getIconWidth() > 0) {
@@ -251,8 +250,8 @@ public class ServerMapTileFactory
                     }
 
                 } catch (InterruptedException ie) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("factory interrupted fetching " + imagePath);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("factory interrupted fetching " + imagePath);
                     }
                 }
 

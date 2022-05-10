@@ -28,12 +28,13 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.event.ProjectionEvent;
@@ -51,7 +52,7 @@ import com.bbn.openmap.proj.ProjectionLoader;
 public class ProjectionMenu extends AbstractOpenMapMenu implements
         ActionListener, ProjectionListener, PropertyChangeListener {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.menu.ProjectionMenu");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.menu.ProjectionMenu");
 
     public static final String defaultText = "Projection";
 
@@ -91,18 +92,18 @@ public class ProjectionMenu extends AbstractOpenMapMenu implements
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
 
-        logger.fine("received command: " + command);
+        logger.debug("received command: " + command);
 
         if (command == projCmd) {
             JRadioButtonMenuItem rb = (JRadioButtonMenuItem) (ae.getSource());
             String projclassname = rb.getName();
-            logger.fine("ProjectionMenu new proj name: " + projclassname);
+            logger.debug("ProjectionMenu new proj name: " + projclassname);
             try {
                 Projection newProj = getProjectionFactory().makeProjection(projclassname,
                         projection);
                 fireProjectionChanged(newProj);
             } catch (ProjectionException pe) {
-                logger.warning(pe.getMessage());
+                logger.error(pe.getMessage());
                 rb.setEnabled(false);
             }
         }
@@ -128,8 +129,8 @@ public class ProjectionMenu extends AbstractOpenMapMenu implements
 
         Projection newProj = e.getProjection();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(newProj != null ? newProj.toString() : "null");
+        if (logger.isDebugEnabled()) {
+            logger.debug(newProj != null ? newProj.toString() : "null");
         }
 
         if (newProj != null
@@ -161,8 +162,8 @@ public class ProjectionMenu extends AbstractOpenMapMenu implements
         for (int i = 0; i < getItemCount(); i++) {
             JMenuItem item = getItem(i);
             if (newProjClassName.equals(item.getName())) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("ProjectionMenu | setting " + item.getName()
+                if (logger.isDebugEnabled()) {
+                    logger.debug("ProjectionMenu | setting " + item.getName()
                             + " as active");
                 }
                 item.setSelected(true);
@@ -175,7 +176,7 @@ public class ProjectionMenu extends AbstractOpenMapMenu implements
      * Convenience function for setting up listeners
      */
     public void setupListeners(MapBean map) {
-        logger.fine("seting up listeners");
+        logger.debug("seting up listeners");
         addProjectionListener(map);
         map.addProjectionListener(this);
     }

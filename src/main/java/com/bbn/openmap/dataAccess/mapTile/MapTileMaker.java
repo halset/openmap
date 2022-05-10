@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.Layer;
@@ -257,8 +256,8 @@ public class MapTileMaker
             logger.info("writing zoom level " + zfi.getName() + " tiles...");
             int zoomLevel = zfi.getZoomLevel();
             for (Rectangle2D bounds : zfi.getUVBounds(mtcTransform, zoomLevel)) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(" creating tiles " + bounds);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(" creating tiles " + bounds);
                 }
                 int startx = (int) bounds.getX();
                 int starty = (int) bounds.getY();
@@ -284,11 +283,11 @@ public class MapTileMaker
 
                         try {
                             String outputFile = makeTileFile(x, y, zfi, proj);
-                            if (logger.isLoggable(Level.FINER)) {
-                                logger.finer("wrote: " + outputFile);
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("wrote: " + outputFile);
                             }
                         } catch (IOException ioe) {
-                            logger.warning("Caught IOException writing " + x + ", " + y + ", " + zfi);
+                            logger.error("Caught IOException writing " + x + ", " + y + ", " + zfi);
                         }
                     }
 
@@ -319,8 +318,8 @@ public class MapTileMaker
 
                     for (Rectangle2D rawBounds : zfi.getBounds()) {
                         Rectangle2D bounds = rangeZFI.getUVBounds(rawBounds, mtcTransform, rangeZoomLevel);
-                        if (logger.isLoggable(Level.INFO)) {
-                            logger.fine(" creating subtiles " + bounds);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(" creating subtiles " + bounds);
                         }
                         int startx = (int) bounds.getX();
                         int starty = (int) bounds.getY();
@@ -352,11 +351,11 @@ public class MapTileMaker
                                     String filePath = rangeZFI.formatImageFilePath(getRootDir(), (int) x, (int) y);
                                     String outputFile = writeImageFile(imageBytes, filePath, true);
 
-                                    if (logger.isLoggable(Level.INFO)) {
-                                        logger.finer("wrote: " + outputFile);
+                                    if (logger.isDebugEnabled()) {
+                                        logger.debug("wrote: " + outputFile);
                                     }
                                 } catch (IOException ioe) {
-                                    logger.warning("Caught IOException writing " + x + ", " + y + ", " + zfi);
+                                    logger.error("Caught IOException writing " + x + ", " + y + ", " + zfi);
                                 }
                             }
 
@@ -566,7 +565,7 @@ public class MapTileMaker
                 ps.println(sb.toString());
                 ps.close();
             } catch (IOException ioe) {
-                logger.warning("caught IOException writing property file: " + ioe.getMessage());
+                logger.error("caught IOException writing property file: " + ioe.getMessage());
             }
 
         }

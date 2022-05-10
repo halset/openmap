@@ -29,8 +29,9 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.PixelGrabber;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.image.WorldFile;
 import com.bbn.openmap.omGraphics.OMRaster;
@@ -47,7 +48,7 @@ import com.bbn.openmap.util.Debug;
  */
 public class ImageWarp {
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.omGraphics.util.ImageWarp");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.omGraphics.util.ImageWarp");
 
    /**
     * Source image pixels.
@@ -255,7 +256,7 @@ public class ImageWarp {
 
          int[] tmpPixels = new int[projWidth * projHeight];
          int numTmpPixels = tmpPixels.length;
-         logger.fine("tmpPixels[" + numTmpPixels + "]");
+         logger.debug("tmpPixels[" + numTmpPixels + "]");
          int clear = 0x00000000;
 
          Point2D ctp = new Point2D.Double();
@@ -263,8 +264,8 @@ public class ImageWarp {
          Point2D imageCoord = new Point2D.Double();
          Point2D center = p.getCenter();
 
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(projectedImageBounds.toString());
+         if (logger.isDebugEnabled()) {
+            logger.debug(projectedImageBounds.toString());
          }
 
          int minx = (int) Math.floor(projectedImageBounds.getMin().getX());
@@ -332,11 +333,11 @@ public class ImageWarp {
             }
          }
 
-         logger.fine("finished creating image");
+         logger.debug("finished creating image");
          return tmpPixels;
       }
 
-      logger.warning("problem creating image, no pixels: " + (pixels == null ? "true" : "false") + ", no projection:"
+      logger.error("problem creating image, no pixels: " + (pixels == null ? "true" : "false") + ", no projection:"
             + (p == null ? "true" : "false"));
 
       // If you get here, something's not right.
@@ -348,7 +349,7 @@ public class ImageWarp {
       // This doesn't seem to do anything but slow things down.
       // if (geoTrans.equals(LatLonGCT.INSTANCE)) {
       // // whole earth
-      // logger.fine("just using whole screen image");
+      // logger.debug("just using whole screen image");
       // return new DataBounds(0, 0, p.getWidth(), p.getHeight());
       // }
 
@@ -386,7 +387,7 @@ public class ImageWarp {
          }
 
          if (db.getWidth() <= 0 || db.getHeight() <= 0) {
-            logger.fine("dimensions of data bounds bad, returning null " + db);
+            logger.debug("dimensions of data bounds bad, returning null " + db);
             return null;
          }
 
@@ -499,10 +500,10 @@ public class ImageWarp {
       verOrigin = -upperY / ver_upp; // number of Y pixels to origin.
       horOrigin = -leftX / hor_upp; // number of X pixels to origin.
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("getting image pixels w:" + iwidth + ", h:" + iheight + ", hor upp:" + hor_upp + ", ver upp:" + ver_upp
+      if (logger.isDebugEnabled()) {
+         logger.debug("getting image pixels w:" + iwidth + ", h:" + iheight + ", hor upp:" + hor_upp + ", ver upp:" + ver_upp
                + ", verOrigin:" + verOrigin + ", horOrigin:" + horOrigin);
-         logger.fine(imageBounds.toString());
+         logger.debug(imageBounds.toString());
       }
    }
 
@@ -520,10 +521,10 @@ public class ImageWarp {
 
       sourceImageBounds = new DataBounds(leftX, worldFile.getY() + ver_upp * iheight, leftX + hor_upp * iwidth, upperY);
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("getting image pixels w:" + iwidth + ", h:" + iheight + ", hor upp:" + hor_upp + ", ver upp:" + ver_upp
+      if (logger.isDebugEnabled()) {
+         logger.debug("getting image pixels w:" + iwidth + ", h:" + iheight + ", hor upp:" + hor_upp + ", ver upp:" + ver_upp
                + ", verOrigin:" + verOrigin + ", horOrigin:" + horOrigin);
-         logger.fine(sourceImageBounds.toString());
+         logger.debug(sourceImageBounds.toString());
       }
    }
 

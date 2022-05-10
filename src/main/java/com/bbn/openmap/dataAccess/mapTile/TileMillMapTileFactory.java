@@ -30,7 +30,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 
@@ -82,7 +81,7 @@ public class TileMillMapTileFactory
     public TileMillMapTileFactory(String rootDir) {
         this.rootDir = rootDir;
         this.fileExt = ".png";
-        verbose = logger.isLoggable(Level.FINE);
+        verbose = logger.isDebugEnabled();
     }
 
     /**
@@ -93,7 +92,7 @@ public class TileMillMapTileFactory
         try {
             Class.forName(testClass);
         } catch (Exception e) {
-            logger.warning("can't locate sqlite JDBC components");
+            logger.error("can't locate sqlite JDBC components");
             return null;
         }
 
@@ -127,7 +126,7 @@ public class TileMillMapTileFactory
             rs.close();
             conn.close();
         } catch (Exception e) {
-            logger.warning("something went wrong fetching image from database: " + e.getMessage());
+            logger.error("something went wrong fetching image from database: " + e.getMessage());
             e.printStackTrace();
         }
 

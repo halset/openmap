@@ -26,18 +26,18 @@ package com.bbn.openmap.dataAccess.image.geotiff;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotiff.image.KeyRegistry;
 import org.geotiff.image.jai.GeoTIFFDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.image.ErrImageTile;
 import com.bbn.openmap.dataAccess.image.ImageTile;
 
 public class GeoTIFFModelFactory {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFModelFactory");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFModelFactory");
 
     protected GeoTIFFFile gtfFile;
 
@@ -68,7 +68,7 @@ public class GeoTIFFModelFactory {
                     + KeyRegistry.getKey(KeyRegistry.EPSG_PCS, modelID)
                     + ") not handled yet";
 
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                 logger.info(errorMessage);
             }
 
@@ -78,7 +78,7 @@ public class GeoTIFFModelFactory {
         case 2:
         case 3:
             modelID = gtfFile.getGeographicType();
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                 logger.info("GeoModel type (" + modelID + "): "
                         + KeyRegistry.getKey(KeyRegistry.EPSG_GCS, modelID));
             }
@@ -120,7 +120,7 @@ public class GeoTIFFModelFactory {
         double llat = tiePoints[4] - imageHeight * scaleMatrix[1];
         double rlon = tiePoints[3] + imageWidth * scaleMatrix[0];
 
-        if (logger.isLoggable(Level.FINE)) {
+        if (logger.isDebugEnabled()) {
             logger.info("Image should be at: " + ulat + ", " + llon
                     + " - to - " + llat + ", " + rlon);
         }

@@ -27,7 +27,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
-import java.util.logging.Level;
 
 import com.bbn.openmap.omGraphics.OMGraphic;
 import com.bbn.openmap.omGraphics.OMLine;
@@ -93,8 +92,8 @@ public class Link
     public Link(double lat1, double lon1, double lat2, double lon2, String details, Paint paint, boolean dashed, float thickness,
                 int linetype) {
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Link(" + lat1 + ", " + lon1 + ", " + lat2 + ", " + lon2 + ", " + details + ", " + paint + ", " + dashed
+        if (logger.isDebugEnabled()) {
+            logger.debug("Link(" + lat1 + ", " + lon1 + ", " + lat2 + ", " + lon2 + ", " + details + ", " + paint + ", " + dashed
                     + ", " + thickness + ", " + linetype + ")");
         }
 
@@ -128,8 +127,8 @@ public class Link
      */
     public Link(int x1, int y1, int x2, int y2, String details, Paint paint, boolean dashed, float thickness) {
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Link(" + x1 + ", " + y1 + ", " + x2 + ", " + y2 + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Link(" + x1 + ", " + y1 + ", " + x2 + ", " + y2 + ")");
         }
 
         this.x = x1;

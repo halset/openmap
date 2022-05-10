@@ -25,8 +25,9 @@ package com.bbn.openmap.dataAccess.dted;
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.io.FormatException;
 import com.bbn.openmap.util.ArgParser;
@@ -48,7 +49,7 @@ public class DTEDLocator
       extends Wanderer
       implements WandererCallback {
 
-   static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.dted.DTEDLocator");
+   static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.dted.DTEDLocator");
 
    boolean DEBUG = false;
 
@@ -64,7 +65,7 @@ public class DTEDLocator
     */
    public DTEDLocator() {
       super();
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          DEBUG = true;
       }
       setCallback(this);
@@ -97,7 +98,7 @@ public class DTEDLocator
     */
    public boolean handleDirectory(File directory) {
       if (DEBUG) {
-         logger.fine("skipping: " + directory.getAbsolutePath());
+         logger.debug("skipping: " + directory.getAbsolutePath());
       }
       // Do nothing to directories
       return true;
@@ -108,7 +109,7 @@ public class DTEDLocator
     */
    public boolean handleFile(File file) {
       if (DEBUG) {
-         logger.fine("searching finds: " + file.getAbsolutePath());
+         logger.debug("searching finds: " + file.getAbsolutePath());
       }
       filenames.add(file);
       return true;
@@ -140,7 +141,7 @@ public class DTEDLocator
     */
    public void organize() {
       if (DEBUG) {
-         logger.fine("organizing frames...");
+         logger.debug("organizing frames...");
       }
       initFileHolder();
       Iterator it = filenames.iterator();
@@ -157,7 +158,7 @@ public class DTEDLocator
             int ln = (int) (dnt.getLon() + 180);
 
             if (DEBUG) {
-               logger.fine("  placing " + filename + " at files[" + l + "][" + lt + "][" + ln + "]");
+               logger.debug("  placing " + filename + " at files[" + l + "][" + lt + "][" + ln + "]");
             }
 
             files[l][lt][ln] = file;

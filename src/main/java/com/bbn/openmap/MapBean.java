@@ -46,11 +46,12 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.OverlayLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.CenterEvent;
 import com.bbn.openmap.event.CenterListener;
@@ -128,7 +129,7 @@ public class MapBean
       implements ComponentListener, ContainerListener, ProjectionListener, PanListener, ZoomListener, LayerListener,
       CenterListener, SoloMapComponent {
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.MapBean");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.MapBean");
 
    public static final String LayersProperty = "MapBean.layers";
 
@@ -244,7 +245,7 @@ public class MapBean
    }
 
    public MapBean(boolean useThreadedNotification) {
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          debugmsg("MapBean()");
       }
       if (!suppressCopyright) {
@@ -280,8 +281,8 @@ public class MapBean
 
       setPreferredSize(new Dimension(projection.getWidth(), projection.getHeight()));
 
-      DEBUG_TIMESTAMP = logger.isLoggable(Level.FINER);
-      DEBUG_THREAD = logger.isLoggable(Level.FINER);
+      DEBUG_TIMESTAMP = logger.isDebugEnabled();
+      DEBUG_THREAD = logger.isDebugEnabled();
    }
 
    /**
@@ -398,8 +399,8 @@ public class MapBean
     * @param e ComponentEvent
     */
    public void componentResized(ComponentEvent e) {
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("Size changed: " + getWidth() + " x " + getHeight());
+      if (logger.isDebugEnabled()) {
+         logger.debug("Size changed: " + getWidth() + " x " + getHeight());
       }
       projection.setWidth(getWidth());
       projection.setHeight(getHeight());
@@ -451,8 +452,8 @@ public class MapBean
       try {
          l.projectionChanged(new ProjectionEvent(this, getProjection()));
       } catch (Exception e) {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.fine("ProjectionListener not handling projection well: " + l.getClass().getName() + " : "
+         if (logger.isDebugEnabled()) {
+            logger.debug("ProjectionListener not handling projection well: " + l.getClass().getName() + " : "
                   + e.getClass().getName() + " : " + e.getMessage());
             e.printStackTrace();
          }
@@ -481,8 +482,8 @@ public class MapBean
       // Fire the property change, so the messages get cleared out.
       // Then, if any of the layers have a problem with their new
       // projection, their messages will be displayed.
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("MapBean firing projection: " + getProjection());
+      if (logger.isDebugEnabled()) {
+         logger.debug("MapBean firing projection: " + getProjection());
       }
       try {
          firePropertyChange(ProjectionProperty, null, getProjection());
@@ -710,7 +711,7 @@ public class MapBean
     * @param evt the incoming pan event
     */
    public void pan(PanEvent evt) {
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          debugmsg("PanEvent: " + evt);
       }
       float az = evt.getAzimuth();
@@ -845,7 +846,7 @@ public class MapBean
       int ncomponents = comps.length;
       Layer[] newLayers = new Layer[ncomponents];
       System.arraycopy(comps, 0, newLayers, 0, ncomponents);
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          debugmsg("changeLayers() - firing change");
       }
       firePropertyChange(LayersProperty, currentLayers, newLayers);
@@ -899,7 +900,7 @@ public class MapBean
    }
 
    protected final void debugmsg(String msg) {
-      logger.fine(this.toString() + (DEBUG_TIMESTAMP ? (" [" + System.currentTimeMillis() + "]") : "")
+      logger.debug(this.toString() + (DEBUG_TIMESTAMP ? (" [" + System.currentTimeMillis() + "]") : "")
             + (DEBUG_THREAD ? (" [" + Thread.currentThread() + "]") : "") + ": " + msg);
    }
 
@@ -1060,7 +1061,7 @@ public class MapBean
       // layers
       // add a new set
       if (type == LayerEvent.REPLACE) {
-         if (logger.isLoggable(Level.FINE)) {
+         if (logger.isDebugEnabled()) {
             debugmsg("Replacing all layers");
          }
          removeAll();
@@ -1072,7 +1073,7 @@ public class MapBean
                continue;
             }
 
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                debugmsg("Adding layer[" + i + "]= " + layers[i].getName());
             }
             add(layers[i]);
@@ -1083,11 +1084,11 @@ public class MapBean
 
       // use LayerEvent.ADD when adding and/or reshuffling layers
       else if (type == LayerEvent.ADD) {
-         if (logger.isLoggable(Level.FINE)) {
+         if (logger.isDebugEnabled()) {
             debugmsg("Adding new layers");
          }
          for (int i = 0; i < layers.length; i++) {
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                debugmsg("Adding layer[" + i + "]= " + layers[i].getName());
             }
             add(layers[i]);
@@ -1098,11 +1099,11 @@ public class MapBean
       // use LayerEvent.REMOVE when you want to delete layers from
       // the map
       else if (type == LayerEvent.REMOVE) {
-         if (logger.isLoggable(Level.FINE)) {
+         if (logger.isDebugEnabled()) {
             debugmsg("Removing layers");
          }
          for (int i = 0; i < layers.length; i++) {
-            if (logger.isLoggable(Level.FINE)) {
+            if (logger.isDebugEnabled()) {
                debugmsg("Removing layer[" + i + "]= " + layers[i].getName());
             }
             remove(layers[i]);

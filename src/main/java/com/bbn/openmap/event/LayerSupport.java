@@ -23,8 +23,9 @@
 package com.bbn.openmap.event;
 
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Layer;
 
@@ -36,7 +37,7 @@ import com.bbn.openmap.Layer;
 public class LayerSupport
       extends ListenerSupport<LayerListener> {
 
-   static Logger logger = Logger.getLogger("com.bbn.openmap.event.LayerSupport");
+   static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.LayerSupport");
    protected boolean synchronous = true;
 
    /**
@@ -46,7 +47,7 @@ public class LayerSupport
     */
    public LayerSupport(Object sourceBean) {
       super(sourceBean);
-      logger.fine("LayerSupport created");
+      logger.debug("LayerSupport created");
    }
 
    /**
@@ -58,8 +59,8 @@ public class LayerSupport
     */
    public void fireLayer(int type, Layer[] layers) {
 
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("calling setLayers on " + size() + " objects");
+      if (logger.isDebugEnabled()) {
+         logger.debug("calling setLayers on " + size() + " objects");
       }
 
       if (isEmpty())
@@ -151,7 +152,7 @@ public class LayerSupport
       }
 
       public void doIt(int eventType, Layer[] layers) {
-         logger.fine("firing LayerEvent on LayerListeners");
+         logger.debug("firing LayerEvent on LayerListeners");
          fireLayer(eventType, layers);
       }
    }

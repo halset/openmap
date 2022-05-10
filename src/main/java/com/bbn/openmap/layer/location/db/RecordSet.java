@@ -26,8 +26,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The RecordSet object handles all the generic database retrieval for a SQL
@@ -44,7 +45,7 @@ import java.util.logging.Logger;
  */
 public class RecordSet {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.layer.location.db.RecordSet");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.location.db.RecordSet");
 
     /** Connection object that will be used to retrieve data. */
     protected Connection connection = null;
@@ -90,8 +91,8 @@ public class RecordSet {
         if (queryString != null && connection != null) {
             try {
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("RecordSet calling database with query => " + queryString);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("RecordSet calling database with query => " + queryString);
                 }
 
                 stmt = connection.createStatement();
@@ -100,7 +101,7 @@ public class RecordSet {
                 throw new SQLException(queryString + " | " + sqlE.getMessage());
             }
         } else {
-            logger.warning("Database parameters faulty!\n  query => " + queryString + "\n  connection => " + connection);
+            logger.error("Database parameters faulty!\n  query => " + queryString + "\n  connection => " + connection);
         }
     }
 

@@ -34,8 +34,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.ProjectionEvent;
 import com.bbn.openmap.event.ProjectionListener;
@@ -66,7 +67,7 @@ import com.bbn.openmap.util.PropUtils;
 public class MultiRoadLayer extends MultiShapeLayer implements RoadServices,
         ProjectionListener, LayerView {
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     RoadFinder helper;
 
     /**
@@ -180,7 +181,7 @@ public class MultiRoadLayer extends MultiShapeLayer implements RoadServices,
         Set seen = new HashSet();
 
         if (list != null) {
-            if (logger.isLoggable(Level.INFO))
+            if (logger.isInfoEnabled())
                 logger.info("size is " + list.size());
 
             for (int i = 0; i < list.size(); i++) {
@@ -190,38 +191,38 @@ public class MultiRoadLayer extends MultiShapeLayer implements RoadServices,
 
                 seen.add(graphic);
 
-                if (logger.isLoggable(Level.INFO))
+                if (logger.isInfoEnabled())
                     logger.info(i + " - " + graphic);
 
                 if (graphic instanceof OMGraphicList) {
-                    if (logger.isLoggable(Level.INFO))
+                    if (logger.isInfoEnabled())
                         logger.info("size of " + graphic + " is "
                                 + ((OMGraphicList) graphic).size());
 
                     for (Iterator iter = ((OMGraphicList) graphic).iterator(); iter.hasNext();) {
                         Object inner = iter.next();
                         if (inner instanceof OMGraphicList) {
-                            if (logger.isLoggable(Level.INFO))
+                            if (logger.isInfoEnabled())
                                 logger.info("size of " + inner + " is "
                                         + ((OMGraphicList) inner).size());
 
                             for (Iterator iter2 = ((OMGraphicList) inner).iterator(); iter2.hasNext();) {
                                 Object inner2 = iter2.next();
 
-                                if (logger.isLoggable(Level.INFO))
+                                if (logger.isInfoEnabled())
                                     logger.info("1) adding - " + inner2);
 
                                 out.add(inner2);
                             }
                         } else {
-                            if (logger.isLoggable(Level.INFO))
+                            if (logger.isInfoEnabled())
                                 logger.info("2) adding - " + inner);
 
                             out.add(inner);
                         }
                     }
                 } else {
-                    if (logger.isLoggable(Level.INFO))
+                    if (logger.isInfoEnabled())
                         logger.info("3) adding " + graphic);
 
                     out.add(graphic);
@@ -237,7 +238,7 @@ public class MultiRoadLayer extends MultiShapeLayer implements RoadServices,
      * intersections, roads).
      */
     public void setExtraGraphics(List toDraw) {
-        if (logger.isLoggable(Level.INFO)) {
+        if (logger.isInfoEnabled()) {
             logger.info("setting to draw " + toDraw.size() + " new graphics.");
         }
 
@@ -256,7 +257,7 @@ public class MultiRoadLayer extends MultiShapeLayer implements RoadServices,
             graphics = new OMGraphicList(toDraw);
             graphics.generate(getProjection(), true);//all new
                                                      // graphics
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isInfoEnabled()) {
                 logger.info("rendering toDraw " + toDraw.size() + " items");
             }
             graphics.render(g);

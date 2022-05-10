@@ -16,7 +16,6 @@ package com.bbn.openmap.maptileservlet;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import com.bbn.openmap.dataAccess.mapTile.StandardMapTileFactory;
 import com.bbn.openmap.image.PNGImageIOFormatter;
@@ -74,8 +73,8 @@ public class StandardMapTileSet
       }
 
       String filePath = rootDir + pathInfo;
-      if (logger.isLoggable(Level.FINE)) {
-         logger.fine("looking for " + filePath);
+      if (logger.isDebugEnabled()) {
+         logger.debug("looking for " + filePath);
       }
 
       try {

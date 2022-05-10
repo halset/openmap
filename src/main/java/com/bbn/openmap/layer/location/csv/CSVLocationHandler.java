@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -230,8 +229,8 @@ public class CSVLocationHandler
 
         csvHasHeader = PropUtils.booleanFromProperties(properties, prefix + csvHeaderProperty, false);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLocationHandler indexes:\n  latIndex = " + latIndex + "\n  lonIndex = " + lonIndex + "\n  nameIndex = "
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLocationHandler indexes:\n  latIndex = " + latIndex + "\n  lonIndex = " + lonIndex + "\n  nameIndex = "
                     + nameIndex + "\n  has header = " + csvHasHeader);
         }
     }
@@ -309,13 +308,13 @@ public class CSVLocationHandler
 
     protected boolean checkIndexSettings() {
         if (latIndex == -1 || lonIndex == -1) {
-            logger.warning("CSVLocationHandler: createData(): Index properties for Lat/Lon/Name are not set properly! lat index:"
+            logger.error("CSVLocationHandler: createData(): Index properties for Lat/Lon/Name are not set properly! lat index:"
                     + latIndex + ", lon index:" + lonIndex);
             return false;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLocationHandler: Reading File:" + locationFile + " NameIndex: " + nameIndex + " latIndex: " + latIndex
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLocationHandler: Reading File:" + locationFile + " NameIndex: " + nameIndex + " latIndex: " + latIndex
                     + " lonIndex: " + lonIndex + " iconIndex: " + iconIndex + " eastIsNeg: " + eastIsNeg);
         }
 
@@ -359,8 +358,8 @@ public class CSVLocationHandler
                 while (!csvt.isEOF(token)) {
                     int i = 0;
 
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("CSVLocationHandler| Starting a line | have" + (readHeader ? " " : "n't ") + "read header");
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("CSVLocationHandler| Starting a line | have" + (readHeader ? " " : "n't ") + "read header");
                     }
 
                     while (!csvt.isNewline(token) && !csvt.isEOF(token)) {
@@ -387,8 +386,8 @@ public class CSVLocationHandler
                     token = csvt.token();
                 }
             } else {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("couldn't figure out file: " + locationFile);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("couldn't figure out file: " + locationFile);
                 }
             }
         } catch (java.io.IOException ioe) {
@@ -398,17 +397,17 @@ public class CSVLocationHandler
         } catch (NumberFormatException nfe) {
             throw new com.bbn.openmap.util.HandleError(nfe);
         } catch (ClassCastException cce) {
-            logger.warning("Problem reading entries in " + locationFile + ", check your index settings, first column = 0.");
+            logger.error("Problem reading entries in " + locationFile + ", check your index settings, first column = 0.");
             throw new com.bbn.openmap.util.HandleError(cce);
         } catch (NullPointerException npe) {
-            logger.warning("Problem reading location file, check " + locationFile);
+            logger.error("Problem reading location file, check " + locationFile);
             throw new com.bbn.openmap.util.HandleError(npe);
         } catch (java.security.AccessControlException ace) {
             throw new com.bbn.openmap.util.HandleError(ace);
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("CSVLocationHandler | Finished File:" + locationFile + ", read " + lineCount + " locations");
+        if (logger.isDebugEnabled()) {
+            logger.debug("CSVLocationHandler | Finished File:" + locationFile + ", read " + lineCount + " locations");
         }
 
         try {
@@ -420,7 +419,7 @@ public class CSVLocationHandler
         }
 
         if (lineCount == 0 && readHeader) {
-            logger.fine("CSVLocationHandler has read file, but didn't find any data.\n  Check file for a header line, and make sure that the\n  properties (csvFileHasHeader) is set properly for this CSVLocationHandler. Trying again without header...");
+            logger.debug("CSVLocationHandler has read file, but didn't find any data.\n  Check file for a header line, and make sure that the\n  properties (csvFileHasHeader) is set properly for this CSVLocationHandler. Trying again without header...");
             csvHasHeader = !csvHasHeader;
             return createData();
         }
@@ -462,7 +461,7 @@ public class CSVLocationHandler
             loc.setDetails(loc.getDetails() + " icon: " + iconURL);
         }
 
-        logger.fine("CSVLocationHandler " + loc.getDetails());
+        logger.debug("CSVLocationHandler " + loc.getDetails());
 
         return loc;
     }
@@ -492,7 +491,7 @@ public class CSVLocationHandler
             } catch (java.io.IOException ioe) {
                 return null;
             } catch (java.util.NoSuchElementException nsee) {
-                logger.fine("CSVLocationHandler: readCSVLineFromFile: oops");
+                logger.debug("CSVLocationHandler: readCSVLineFromFile: oops");
             }
         }
         return retPaths;
@@ -517,13 +516,13 @@ public class CSVLocationHandler
 
         // IF the quadtree has not been set up yet, do it!
         if (quadtree == null) {
-            logger.fine("CSVLocationHandler: Figuring out the locations and names! (This is a one-time operation!)");
+            logger.debug("CSVLocationHandler: Figuring out the locations and names! (This is a one-time operation!)");
             quadtree = createData();
         }
 
         if (quadtree != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("CSVLocationHandler|CSVLocationHandler.get() ul.lon = " + nwLon + " lr.lon = " + seLon + " delta = "
+            if (logger.isDebugEnabled()) {
+                logger.debug("CSVLocationHandler|CSVLocationHandler.get() ul.lon = " + nwLon + " lr.lon = " + seLon + " delta = "
                         + (seLon - nwLon));
             }
 
@@ -603,15 +602,15 @@ public class CSVLocationHandler
         if (cmd == showLocationsCommand) {
             JCheckBox locationCheck = (JCheckBox) e.getSource();
             setShowLocations(locationCheck.isSelected());
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("CSVLocationHandler::actionPerformed showLocations is " + isShowLocations());
+            if (logger.isDebugEnabled()) {
+                logger.debug("CSVLocationHandler::actionPerformed showLocations is " + isShowLocations());
             }
             getLayer().repaint();
         } else if (cmd == showNamesCommand) {
             JCheckBox namesCheck = (JCheckBox) e.getSource();
             setShowNames(namesCheck.isSelected());
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("CSVLocationHandler::actionPerformed showNames is " + isShowNames());
+            if (logger.isDebugEnabled()) {
+                logger.debug("CSVLocationHandler::actionPerformed showNames is " + isShowNames());
             }
 
             LocationLayer ll = getLayer();
@@ -625,13 +624,13 @@ public class CSVLocationHandler
             setForceGlobal(forceGlobalCheck.isSelected());
             getLayer().repaint();
         } else if (cmd == readDataCommand) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Re-reading Locations file");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Re-reading Locations file");
             }
             quadtree = null;
             getLayer().doPrepare();
         } else {
-            logger.warning("Unknown action command \"" + cmd + "\" in LocationLayer.actionPerformed().");
+            logger.error("Unknown action command \"" + cmd + "\" in LocationLayer.actionPerformed().");
         }
     }
 

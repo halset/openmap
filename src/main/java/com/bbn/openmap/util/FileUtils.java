@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -46,11 +44,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bbn.openmap.Environment;
 
 public class FileUtils {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.util.FileUtils");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.FileUtils");
 
     public static String getFilePathToSaveFromUser(String title) {
         JFileChooser chooser = getChooser(title);
@@ -174,7 +175,7 @@ public class FileUtils {
             writeZipEntry(toBeZipped, zoStream, toBeZipped.getParent().length() + 1);
             zoStream.close();
         } catch (SecurityException se) {
-            logger.warning("Security Exception caught while creating " + zipFileName);
+            logger.error("Security Exception caught while creating " + zipFileName);
         }
     }
 
@@ -207,7 +208,7 @@ public class FileUtils {
             }
             zoStream.close();
         } catch (SecurityException se) {
-            logger.warning("Security Exception caught while creating " + zipFileName);
+            logger.error("Security Exception caught while creating " + zipFileName);
         }
     }
 
@@ -233,8 +234,8 @@ public class FileUtils {
             }
         } else {
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(toBeZipped + ", " + toBeZipped.getAbsolutePath().substring(prefixTrimLength) + ")");
+            if (logger.isDebugEnabled()) {
+                logger.debug(toBeZipped + ", " + toBeZipped.getAbsolutePath().substring(prefixTrimLength) + ")");
             }
 
             writeZipEntry(toBeZipped, zoStream, prefixTrimLength < 0 ? toBeZipped.getName()
@@ -290,8 +291,8 @@ public class FileUtils {
 
                     in = new BufferedInputStream(zipurl.openStream());
 
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine(" unzipping " + zipFileName);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(" unzipping " + zipFileName);
                     }
                     ZipInputStream zin = new ZipInputStream(in);
                     ZipEntry e;
@@ -301,24 +302,24 @@ public class FileUtils {
                         if (e.isDirectory()) {
                             new File(toDir, e.getName()).mkdirs();
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.fine(" unzipping " + e.getName());
+                            if (logger.isDebugEnabled()) {
+                                logger.debug(" unzipping " + e.getName());
                             }
                             unzip(zin, new File(toDir, e.getName()));
                         }
                     }
                     zin.close();
                     if (deleteAfter) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.fine("unzipping complete, deleting zip file");
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("unzipping complete, deleting zip file");
                         }
 
                         File file = new File(zipurl.getFile());
                         if (file.exists()) {
                             file.delete();
                         }
-                    } else if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("unzipping complete, leaving zip file");
+                    } else if (logger.isDebugEnabled()) {
+                        logger.debug("unzipping complete, leaving zip file");
                     }
                     return;
                 }

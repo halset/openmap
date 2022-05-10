@@ -48,8 +48,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -67,6 +65,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.event.OMEvent;
@@ -111,7 +112,7 @@ public class EventListPresenter extends AbstractEventPresenter implements
         MouseListener, MouseMotionListener, TimeBoundsListener,
         TimeEventListener {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.event.EventListPresenter");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.event.EventListPresenter");
 
     protected LinkedList<OMEventHandler> eventHandlers;
     protected LinkedList macroFilters;
@@ -189,8 +190,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
     }
 
     public void addEventHandler(OMEventHandler aeh) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("adding " + aeh.getClass().getName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("adding " + aeh.getClass().getName());
         }
         eventHandlers.add(aeh);
         retrieveFiltersFromEventHandlers();
@@ -198,8 +199,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
     }
 
     public void removeEventHandler(OMEventHandler aeh) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("removing " + aeh.getClass().getName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("removing " + aeh.getClass().getName());
         }
         eventHandlers.remove(aeh);
         retrieveFiltersFromEventHandlers();
@@ -207,8 +208,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
     }
 
     public void clearEventHandlers() {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("clearing event handlers");
+        if (logger.isDebugEnabled()) {
+            logger.debug("clearing event handlers");
         }
         eventHandlers.clear();
         retrieveFiltersFromEventHandlers();
@@ -224,8 +225,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
      */
     public void rebuildEventList(boolean resetSelected) {
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("rebuilding list");
+        if (logger.isDebugEnabled()) {
+            logger.debug("rebuilding list");
         }
         // If allEvents isn't recreated here, weird things start happening with
         // selection. I seems that this gets the entire event list reset for the
@@ -246,8 +247,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
     public synchronized Iterator<OMEvent> getAllEvents() {
 
         if (allEvents == null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("fetching all events from event handlers");
+            if (logger.isDebugEnabled()) {
+                logger.debug("fetching all events from event handlers");
             }
 
             allEvents = new TreeSet<OMEvent>(new OMEventComparator());
@@ -283,8 +284,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
      */
     public synchronized Iterator<OMEvent> getActiveEvents() {
         if (activeEvents == null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("building list of active events");
+            if (logger.isDebugEnabled()) {
+                logger.debug("building list of active events");
             }
 
             activeEvents = new TreeSet<OMEvent>(new OMEventComparator());
@@ -292,8 +293,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
             for (Iterator<OMEventHandler> it = eventHandlers.iterator(); it.hasNext();) {
                 OMEventHandler aeh = (OMEventHandler) it.next();
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("getting filtered list from ("
+                if (logger.isDebugEnabled()) {
+                    logger.debug("getting filtered list from ("
                             + aeh.getClass().getName() + ")");
                 }
 
@@ -305,21 +306,21 @@ public class EventListPresenter extends AbstractEventPresenter implements
 
                 List<OMEvent> eventList = aeh.getEventList(activeFilters);
                 if (eventList != null) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("list from " + aeh.getClass().getName()
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("list from " + aeh.getClass().getName()
                                 + "has (" + eventList.size() + ") events");
                     }
                     for (Iterator<OMEvent> it2 = eventList.iterator(); it2.hasNext();) {
-                        if (logger.isLoggable(Level.FINER)) {
-                            logger.finer("adding OM event");
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("adding OM event");
                         }
 
                         OMEvent me = it2.next();
                         if (me != null) {
                             activeEvents.add(me);
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.fine("The " + aeh.getClass().getName()
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("The " + aeh.getClass().getName()
                                         + " is providing null events.");
                             }
                         }
@@ -327,14 +328,14 @@ public class EventListPresenter extends AbstractEventPresenter implements
                 }
             }
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer("--------");
+            if (logger.isDebugEnabled()) {
+                logger.debug("--------");
                 for (Iterator<OMEvent> it = activeEvents.iterator(); it.hasNext();) {
                     OMEvent eve = (OMEvent) it.next();
-                    logger.finer(eve.getTimeStamp() + " " + eve);
+                    logger.debug(eve.getTimeStamp() + " " + eve);
                 }
 
-                logger.finer("--------");
+                logger.debug("--------");
             }
         }
 
@@ -353,8 +354,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
      */
     protected synchronized void initInterface(Iterator<OMEvent> it,
                                               boolean setSelected) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("initing interface");
+        if (logger.isDebugEnabled()) {
+            logger.debug("initing interface");
         }
 
         DefaultListModel listModel = new DefaultListModel();
@@ -362,8 +363,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
         int selectedIndex = -1;
         int curIndex = 0;
         while (it.hasNext()) {
-            // if (logger.isLoggable(Level.FINER)) {
-            // logger.finer("adding event to list model");
+            // if (logger.isDebugEnabled()) {
+            // logger.debug("adding event to list model");
             // }
             OMEvent curEvent = it.next();
             listModel.addElement(curEvent);
@@ -373,8 +374,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
             curIndex++;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("added " + curIndex + " events to list");
+        if (logger.isDebugEnabled()) {
+            logger.debug("added " + curIndex + " events to list");
         }
 
         // This code below will cause the first visible event to be marked as
@@ -387,8 +388,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
         // }
 
         if (displayList == null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Creating gui components");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Creating gui components");
             }
             JPanel wrapper = new JPanel();
             GridBagLayout gridbag = new GridBagLayout();
@@ -445,8 +446,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
             add(wrapper, BorderLayout.CENTER);
             validate();
             repaint();
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Done creating gui components");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Done creating gui components");
             }
         } else {
             setListModel(listModel);
@@ -454,8 +455,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
             displayList.repaint();
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("done initing");
+        if (logger.isDebugEnabled()) {
+            logger.debug("done initing");
         }
 
         if (selectedIndex >= 0 && setSelected) {
@@ -550,12 +551,12 @@ public class EventListPresenter extends AbstractEventPresenter implements
                 filterSubPanel.add(jcb);
             }
         } catch (ConcurrentModificationException cme) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("ConcurrentModificationException caught while rebuilding the event list");
+            if (logger.isDebugEnabled()) {
+                logger.debug("ConcurrentModificationException caught while rebuilding the event list");
             }
         } catch (ArrayIndexOutOfBoundsException aioobe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("ArrayIndexOutOfBoundsException caught while rebuilding the event list: "
+            if (logger.isDebugEnabled()) {
+                logger.debug("ArrayIndexOutOfBoundsException caught while rebuilding the event list: "
                         + aioobe.getMessage());
             }
         }
@@ -637,8 +638,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
      * they have, and rebuild interface.
      */
     public void resetFilters(Boolean enabled) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("enabled = " + enabled);
+        if (logger.isDebugEnabled()) {
+            logger.debug("enabled = " + enabled);
         }
         Set keys = filters.keySet();
         for (Iterator it = keys.iterator(); it.hasNext();) {
@@ -697,8 +698,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
         for (Iterator<OMEventHandler> it = eventHandlers.iterator(); it.hasNext();) {
 
             OMEventHandler meh = it.next();
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Checking out OM event handler "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Checking out OM event handler "
                         + meh.getClass().getName());
             }
             // While we're checking out the OMEventHandler, might
@@ -985,12 +986,12 @@ public class EventListPresenter extends AbstractEventPresenter implements
             boolean rebuildFilters = ((Boolean) evt.getNewValue()).booleanValue();
 
             if (rebuildFilters) {
-                logger.fine(eventPropertyName
+                logger.debug(eventPropertyName
                         + " rebuilding filters and updating interface (list rebuild to follow)");
                 retrieveFiltersFromEventHandlers();
                 updateInterface();
             } else {
-                logger.fine(eventPropertyName
+                logger.debug(eventPropertyName
                         + " clearing active filters and rebuilding list");
                 activeFilters = null;
                 rebuildEventList();
@@ -1149,8 +1150,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
 
             index = e.getY() / (int) height;
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("For " + e.getY() + ", the first vis: "
+            if (logger.isDebugEnabled()) {
+                logger.debug("For " + e.getY() + ", the first vis: "
                         + displayList.getFirstVisibleIndex() + ", heights are "
                         + height + ", so index of click is " + index);
             }
@@ -1214,8 +1215,8 @@ public class EventListPresenter extends AbstractEventPresenter implements
             } else if (iEvent.getAttribute(OMEvent.ATT_KEY_SELECTED) == OMEvent.ATT_VAL_SELECTED_END_RANGE) {
                 inRange = false;
             } else if (inRange) {
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("setting " + iEvent.getClass().getName() + " "
+                if (logger.isDebugEnabled()) {
+                    logger.debug("setting " + iEvent.getClass().getName() + " "
                             + key + ", " + value);
                 }
 

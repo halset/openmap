@@ -37,8 +37,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -111,7 +112,7 @@ import com.bbn.openmap.util.PropUtils;
 public class VPFAutoFeatureGraphicWarehouse
         implements VPFFeatureWarehouse, PropertyConsumer {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.layer.vpf.VPFAutoFeatureGraphicWarehouse");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.vpf.VPFAutoFeatureGraphicWarehouse");
 
     public final static String CGM_DIR_PROPERTY = "cgmDirectory";
     public final static String SYMBOL_LOOKUP_FILE_PROPERTY = "faccLookupFile";
@@ -259,7 +260,7 @@ public class VPFAutoFeatureGraphicWarehouse
                     conditions = row.get(3).toString();
 
                 } catch (ArrayIndexOutOfBoundsException aioobe) {
-                    logger.warning("Bad entry in priority file: " + lineCheck + "," + type + "," + facc + "," + conditions);
+                    logger.error("Bad entry in priority file: " + lineCheck + "," + type + "," + facc + "," + conditions);
                     continue;
                 }
 
@@ -330,7 +331,7 @@ public class VPFAutoFeatureGraphicWarehouse
                 int numArgs = row.size();
                 String facc = row.get(0).toString();
                 if (numArgs != 7) {
-                    logger.warning("Problem with facc entry, not correct number of args in csv file:" + facc);
+                    logger.error("Problem with facc entry, not correct number of args in csv file:" + facc);
                     continue;
                 }
 
@@ -362,8 +363,8 @@ public class VPFAutoFeatureGraphicWarehouse
                         // happened to the data files. But that might be
                         // intentional,
                         // to keep some feature types off the map.
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.fine("didn't find matching PriorityHolder for " + facc + "|" + type + "|" + symbolCode + "|"
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("didn't find matching PriorityHolder for " + facc + "|" + type + "|" + symbolCode + "|"
                                     + conditions);
                         }
                     }
@@ -373,16 +374,16 @@ public class VPFAutoFeatureGraphicWarehouse
                     // the
                     // debug facc, of course other things will complain.
                     if (debugFacc == null) {
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.fine("can't find faccLookup for " + facc + " for" + type + "|" + symbolCode + "|" + conditions);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("can't find faccLookup for " + facc + " for" + type + "|" + symbolCode + "|" + conditions);
                         }
                     }
                 }
 
             }
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("matched up " + foundRecords + " of " + numSymbols + " symbols, " + numPriorities + " priority entries");
+            if (logger.isDebugEnabled()) {
+                logger.debug("matched up " + foundRecords + " of " + numSymbols + " symbols, " + numPriorities + " priority entries");
             }
 
         } catch (MalformedURLException e) {
@@ -394,7 +395,7 @@ public class VPFAutoFeatureGraphicWarehouse
 
     public static char getType(String type) {
         if (type == null) {
-            logger.warning("unknown type!");
+            logger.error("unknown type!");
         } else {
             switch (type.charAt(0)) {
                 case 'P':
@@ -569,16 +570,16 @@ public class VPFAutoFeatureGraphicWarehouse
                 continue;
             }
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("reading library: " + libraryName);
+            if (logger.isDebugEnabled()) {
+                logger.debug("reading library: " + libraryName);
 
             }
 
             CoverageAttributeTable cat = lst.getCAT(libraryName);
 
             if (cat == null) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("no CoverageAttributeTable for " + libraryName + ", skipping...");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("no CoverageAttributeTable for " + libraryName + ", skipping...");
                 }
                 continue;
             }
@@ -596,14 +597,14 @@ public class VPFAutoFeatureGraphicWarehouse
                 }).getBoundingCircle();
 
                 if (!screenBounds.intersects(catCircle)) {
-                    logger.fine("CoverageAttributeTable for " + libraryName + " not on map, skipping...");
+                    logger.debug("CoverageAttributeTable for " + libraryName + " not on map, skipping...");
                     continue;
                 }
             }
 
             for (String covname : cat.getCoverageNames()) {
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("for coverage: " + covname + ", coverage topology level: " + cat.getCoverageTopologyLevel(covname));
+                if (logger.isDebugEnabled()) {
+                    logger.debug("for coverage: " + covname + ", coverage topology level: " + cat.getCoverageTopologyLevel(covname));
                 }
 
                 CoverageTable coverageTable = cat.getCoverageTable(covname);
@@ -619,8 +620,8 @@ public class VPFAutoFeatureGraphicWarehouse
         for (FeaturePriorityHolder ph : priorities) {
             OMGraphicList list = ph.getList();
             if (list != null) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Adding features from " + ph.toString() + ": " + list.size() + " features");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Adding features from " + ph.toString() + ": " + list.size() + " features");
                 }
                 list.generate(proj);
                 omgList.addAll(list);
@@ -634,7 +635,7 @@ public class VPFAutoFeatureGraphicWarehouse
             }
         }
 
-        logger.fine("returning from prepare ************");
+        logger.debug("returning from prepare ************");
 
         return omgList;
     }
@@ -940,8 +941,8 @@ public class VPFAutoFeatureGraphicWarehouse
 
         public OMGraphicList getList() {
             if (debugFacc != null && list != null) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(list.getDescription());
+                if (logger.isDebugEnabled()) {
+                    logger.debug(list.getDescription());
                 }
             }
             return list;
@@ -1049,7 +1050,7 @@ public class VPFAutoFeatureGraphicWarehouse
                         }
 
                         if (cgmTitle == null) {
-                            logger.fine("no title for " + toString());
+                            logger.debug("no title for " + toString());
                         } else {
 
                             cgmDisplay = new CGMDisplay[cgmTitle.length];
@@ -1067,7 +1068,7 @@ public class VPFAutoFeatureGraphicWarehouse
                             }
                         }
                     } catch (IOException ioe) {
-                        logger.fine("Couldn't load CGM files: " + cgmTitle[0] + "; first of " + cgmTitle.length);
+                        logger.debug("Couldn't load CGM files: " + cgmTitle[0] + "; first of " + cgmTitle.length);
                     }
                 }
 

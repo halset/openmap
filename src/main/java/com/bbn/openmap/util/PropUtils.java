@@ -40,10 +40,11 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -52,7 +53,7 @@ import com.bbn.openmap.PropertyConsumer;
 
 public class PropUtils {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.util.PropUtils");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.PropUtils");
 
     /**
      * Parse a list of marker names from a space separated list within a String.
@@ -79,12 +80,12 @@ public class PropUtils {
         Vector<String> vector = null;
 
         if (markerList == null) {
-            logger.fine("marker list null!");
+            logger.debug("marker list null!");
             return new Vector<String>(0);
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("parsing marker list |" + markerList + "|");
+        if (logger.isDebugEnabled()) {
+            logger.debug("parsing marker list |" + markerList + "|");
         }
 
         // First, get rid of the quotation marks;
@@ -195,17 +196,17 @@ public class PropUtils {
         try {
             InputStream propsStream = new FileInputStream(propsFile);
             props.load(propsStream);
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Found " + propsFile);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Found " + propsFile);
             }
             return true;
 
         } catch (java.io.FileNotFoundException e) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("File not found -  \"" + propsFile + "\"");
+            if (logger.isDebugEnabled()) {
+                logger.debug("File not found -  \"" + propsFile + "\"");
             }
         } catch (java.io.IOException e) {
-            logger.warning("Caught IO Exception reading \"" + propsFile + "\"");
+            logger.error("Caught IO Exception reading \"" + propsFile + "\"");
             e.printStackTrace();
         } catch (java.security.AccessControlException ace) {
         }
@@ -225,8 +226,8 @@ public class PropUtils {
             properties.load(propsIn);
             return true;
         } catch (java.io.IOException e) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.warning("Caught IOException loading properties from InputStream.");
+            if (logger.isDebugEnabled()) {
+                logger.error("Caught IOException loading properties from InputStream.");
             }
             return false;
         }
@@ -724,29 +725,29 @@ public class PropUtils {
     public static URL getResourceOrFileOrURL(Class<? extends Object> askingClass, String name)
             throws java.net.MalformedURLException {
 
-        boolean DEBUG = logger.isLoggable(Level.FINE);
+        boolean DEBUG = logger.isDebugEnabled();
 
         if (name == null) {
             if (DEBUG)
-                logger.fine("null file name");
+                logger.debug("null file name");
             return null;
         }
 
         URL retval = null;
         if (DEBUG)
-            logger.fine("looking for " + name);
+            logger.debug("looking for " + name);
 
         if (askingClass != null) {
             // First see if we have a resource by that name
             if (DEBUG)
-                logger.fine("checking as resource");
+                logger.debug("checking as resource");
 
             retval = askingClass.getResource(name);
         }
         if (retval == null) {
             // Check the general classpath...
             if (DEBUG)
-                logger.fine("checking in general classpath");
+                logger.debug("checking in general classpath");
             retval = Thread.currentThread().getContextClassLoader().getResource(name);
         }
 
@@ -755,13 +756,13 @@ public class PropUtils {
         // // be in the openmap.jar file or in the development
         // // environment.
         // if (DEBUG)
-        // logger.fine("checking with ClassLoader");
+        // logger.debug("checking with ClassLoader");
         // retval = ClassLoader.getSystemResource("share/" + name);
         // }
 
         if (retval == null && Environment.isApplet()) {
             if (DEBUG)
-                logger.fine("checking with URLClassLoader");
+                logger.debug("checking with URLClassLoader");
             URL[] cba = new URL[1];
             cba[0] = Environment.getApplet().getCodeBase();
             URLClassLoader ucl = URLClassLoader.newInstance(cba);
@@ -771,40 +772,40 @@ public class PropUtils {
         // If there was no resource by that name available
         if (retval == null) {
             if (DEBUG)
-                logger.fine("not found as resource");
+                logger.debug("not found as resource");
 
             try {
                 java.io.File file = new java.io.File(name);
                 if (file.exists()) {
                     retval = file.toURI().toURL();
                     if (DEBUG)
-                        logger.fine("found as file :)");
+                        logger.debug("found as file :)");
                 } else {
                     // Otherwise treat it as a raw URL.
                     if (DEBUG)
-                        logger.fine("Not a file, checking as URL");
+                        logger.debug("Not a file, checking as URL");
                     retval = new URL(name);
                     java.io.InputStream is = retval.openStream();
                     is.close();
                     if (DEBUG)
-                        logger.fine("OK as URL :)");
+                        logger.debug("OK as URL :)");
                 }
             } catch (java.io.IOException ioe) {
                 retval = null;
             } catch (java.security.AccessControlException ace) {
-                logger.warning("AccessControlException trying to access " + name);
+                logger.error("AccessControlException trying to access " + name);
                 retval = null;
             } catch (Exception e) {
-                logger.warning("caught exception " + e.getMessage());
+                logger.error("caught exception " + e.getMessage());
                 retval = null;
             }
         }
 
         if (DEBUG) {
             if (retval != null) {
-                logger.fine("Resource " + name + "=" + retval.toString());
+                logger.debug("Resource " + name + "=" + retval.toString());
             } else {
-                logger.fine("Resource " + name + " can't be found...");
+                logger.debug("Resource " + name + " can't be found...");
             }
         }
 

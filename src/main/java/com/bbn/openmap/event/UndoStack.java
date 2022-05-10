@@ -26,8 +26,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EmptyStackException;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.OMComponent;
 
@@ -43,7 +44,7 @@ public class UndoStack
         extends OMComponent
         implements ActionListener {
 
-    private final static Logger logger = Logger.getLogger("com.bbn.openmap.event.UndoStack");
+    private final static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.UndoStack");
 
     public final static int DEFAULT_MAX_SIZE = 10;
     public final static int REMEMBER_ALL = -1;
@@ -95,8 +96,8 @@ public class UndoStack
             rememberLastThing(currentState);
         }
         currentState = event;
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("making (" + currentState.getDescription() + ") current state");
+        if (logger.isDebugEnabled()) {
+            logger.debug("making (" + currentState.getDescription() + ") current state");
         }
 
         // We have a new path forward, undefined, so clear out old path forward
@@ -107,8 +108,8 @@ public class UndoStack
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand().intern();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Received command: " + command);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Received command: " + command);
         }
 
         if (UndoCmd.equalsIgnoreCase(command) && undoStack != null && !undoStack.empty()) {
@@ -138,8 +139,8 @@ public class UndoStack
             undoStack.removeElementAt(0);
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("remembering (" + event.getDescription() + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("remembering (" + event.getDescription() + ")");
         }
 
         undoStack.push(event);
@@ -157,20 +158,20 @@ public class UndoStack
             }
 
             redoStack.push(currentState);
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("making last current state (" + currentState.getDescription() + ") on redo stack");
+            if (logger.isDebugEnabled()) {
+                logger.debug("making last current state (" + currentState.getDescription() + ") on redo stack");
             }
         }
 
         currentState = undoStack.pop();
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("making top undo state (" + currentState.getDescription() + ") current state");
+        if (logger.isDebugEnabled()) {
+            logger.debug("making top undo state (" + currentState.getDescription() + ") current state");
         }
 
         if (currentState != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("calling setState on " + currentState.getDescription());
+            if (logger.isDebugEnabled()) {
+                logger.debug("calling setState on " + currentState.getDescription());
             }
             currentState.setState();
         }
@@ -229,8 +230,8 @@ public class UndoStack
             UndoEvent undoEvent = getWhatWillHappenNextFromStack(undoStack);
             UndoEvent redoEvent = getWhatWillHappenNextFromStack(redoStack);
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("back enabled: " + (undoEvent != null) + ", forward enabled: " + (redoEvent != null));
+            if (logger.isDebugEnabled()) {
+                logger.debug("back enabled: " + (undoEvent != null) + ", forward enabled: " + (redoEvent != null));
             }
             triggers.fireStackStatus(undoEvent, redoEvent);
         }

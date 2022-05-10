@@ -177,7 +177,7 @@ public class ProjectionResponseLayer
             }
         }
 
-        logger.fine("created source with " + source.size() + " points");
+        logger.debug("created source with " + source.size() + " points");
 
         return source;
     }
