@@ -345,8 +345,6 @@ public class ImageServer
      */
     public byte[] createImage(Projection proj, int scaledWidth, int scaledHeight, List<String> showLayers, Paint background) {
 
-        logger.fine("using the new ProjectionPainter interface!  createImage with layer string array.");
-
         if (formatter == null) {
             logger.warning("no formatter set! Can't create image.");
             return new byte[0];
@@ -407,8 +405,6 @@ public class ImageServer
      * @return a byte[] representing the formatted image.
      */
     public byte[] createImageFromLayers(Projection proj, int scaledWidth, int scaledHeight, List<Layer> layers, Paint background) {
-
-        logger.fine("using the new ProjectionPainter interface!  createImage with layer list.");
 
         if (formatter == null) {
             logger.warning("no formatter set! Can't create image.");
@@ -504,8 +500,6 @@ public class ImageServer
      * @return a byte[] representing the formatted image.
      */
     public byte[] createImage(Projection proj, int scaledWidth, int scaledHeight, int includedLayerMask, Paint background) {
-
-        logger.info("using the new ProjectionPainter interface!  createImage with layer mask.");
 
         if (formatter == null) {
             logger.warning("no formatter set! Can't create image.");
