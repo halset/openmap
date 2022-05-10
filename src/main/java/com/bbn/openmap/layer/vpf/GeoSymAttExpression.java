@@ -8,8 +8,9 @@ package com.bbn.openmap.layer.vpf;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.io.FormatException;
 
@@ -27,7 +28,7 @@ import com.bbn.openmap.io.FormatException;
  */
 public class GeoSymAttExpression {
 
-   private static Logger logger = Logger.getLogger("com.bbn.openmap.layer.vpf.GeoSymAttExpr");
+   private static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.vpf.GeoSymAttExpr");
 
    public final static int NO_OP = 0;
    public final static int EQUALS_OP = 1;
@@ -72,9 +73,9 @@ public class GeoSymAttExpression {
       this.warehouse = warehouse;
       exp = findExpression(source);
 
-      if (logger.isLoggable(Level.FINER)) {
-         logger.finer("Parsing: " + source);
-         logger.finer(this.toString());
+      if (logger.isDebugEnabled()) {
+         logger.debug("Parsing: " + source);
+         logger.debug(this.toString());
       }
    }
 
@@ -83,21 +84,21 @@ public class GeoSymAttExpression {
       int ORIndex = source.lastIndexOf("OR");
 
       if (ANDIndex == ORIndex) {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("connector not found in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("connector not found in " + source);
          }
          // both -1;
          return null;
       }
 
       if (ANDIndex > ORIndex) {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("found AND in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("found AND in " + source);
          }
          return new Connector(AND_CONN, ANDIndex);
       } else {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("found OR in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("found OR in " + source);
          }
          return new Connector(OR_CONN, ORIndex);
       }
@@ -116,21 +117,21 @@ public class GeoSymAttExpression {
       int ORIndex = source.lastIndexOf("or");
 
       if (ANDIndex == ORIndex) {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("connector not found in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("connector not found in " + source);
          }
          // both -1;
          return null;
       }
 
       if (ANDIndex > ORIndex) {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("found and in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("found and in " + source);
          }
          return new Connector(and_CONN, ANDIndex);
       } else {
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("found or in " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("found or in " + source);
          }
          return new Connector(or_CONN, ORIndex);
       }
@@ -171,8 +172,8 @@ public class GeoSymAttExpression {
             leftSide = source.substring(0, locIndex);
          }
 
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("got left side: " + leftSide + " op: " + ops[opIndex] + " and right side: " + rightSide);
+         if (logger.isDebugEnabled()) {
+            logger.debug("got left side: " + leftSide + " op: " + ops[opIndex] + " and right side: " + rightSide);
          }
 
          /**
@@ -296,8 +297,8 @@ public class GeoSymAttExpression {
          }
 
          // OK, here we are with the base expressions...
-         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("need to break up: " + source);
+         if (logger.isDebugEnabled()) {
+            logger.debug("need to break up: " + source);
          }
 
          return findMathOp(source);
@@ -317,7 +318,7 @@ public class GeoSymAttExpression {
    public boolean evaluate(FeatureClassInfo fci, int row) {
       boolean ret = true;
       StringBuffer reasoning = null;
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          reasoning = new StringBuffer();
       }
 
@@ -326,7 +327,7 @@ public class GeoSymAttExpression {
       }
       if (reasoning != null) {
          reasoning.append("\n--------");
-         logger.fine(reasoning.toString());
+         logger.debug(reasoning.toString());
       }
       return ret;
    }
@@ -342,16 +343,16 @@ public class GeoSymAttExpression {
    public boolean evaluate(FeatureClassInfo fci, List<Object> row) {
       boolean ret = true;
       StringBuffer reasoning = null;
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          reasoning = new StringBuffer();
-         logger.fine(toString());
+         logger.debug(toString());
       }
       if (exp != null) {
          ret = exp.evaluate(fci, row, reasoning);
       }
       if (reasoning != null) {
          reasoning.append("\n--------");
-         logger.fine(reasoning.toString());
+         logger.debug(reasoning.toString());
       }
 
       return ret;
@@ -581,7 +582,7 @@ public class GeoSymAttExpression {
 
          // The columns aren't found
          if (colIndex == -1) {
-            logger.finer("col " + colName + " not found in FCI[" + fci.columnNameString() + "]");
+            logger.debug("col " + colName + " not found in FCI[" + fci.columnNameString() + "]");
             return false;
          }
 
@@ -805,7 +806,7 @@ public class GeoSymAttExpression {
 
          // The columns aren't found
          if (colIndex == -1 || otherColIndex == -1) {
-            logger.finer("col " + colName + " or " + otherColName + " not found in FCI[" + fci.columnNameString() + "]");
+            logger.debug("col " + colName + " or " + otherColName + " not found in FCI[" + fci.columnNameString() + "]");
             return false;
          }
 
@@ -832,7 +833,7 @@ public class GeoSymAttExpression {
 
          // The columns aren't found
          if (colIndex == -1 || otherColIndex == -1) {
-            logger.finer("col " + colName + " or " + otherColName + " not found in FCI[" + fci.columnNameString() + "]");
+            logger.debug("col " + colName + " or " + otherColName + " not found in FCI[" + fci.columnNameString() + "]");
             return false;
          }
 

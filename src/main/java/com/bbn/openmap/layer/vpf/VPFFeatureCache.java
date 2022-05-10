@@ -22,8 +22,6 @@
 
 package com.bbn.openmap.layer.vpf;
 
-import java.util.logging.Level;
-
 import com.bbn.openmap.omGraphics.OMGraphic;
 import com.bbn.openmap.omGraphics.OMGraphicList;
 import com.bbn.openmap.util.cacheHandler.CacheHandler;
@@ -120,7 +118,7 @@ public class VPFFeatureCache extends CacheHandler {
 
         FeatureCacheGraphicList ret = null;
         if (!exists) {
-            logger.fine("tile list didn't exist in cache, returning it to be loaded.");
+            logger.debug("tile list didn't exist in cache, returning it to be loaded.");
             ret = fcgl;
         }
         return ret;
@@ -150,8 +148,8 @@ public class VPFFeatureCache extends CacheHandler {
                 currentTile.getPath(),
                 requestor);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Loaded Cached List: "
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loaded Cached List: "
                     + createTableCacheKey(libraryName, currentFeature, currentTile.getPath())
                     + (listThatNeedsToBeLoaded == null ? ", cached"
                             : ", not cached"));

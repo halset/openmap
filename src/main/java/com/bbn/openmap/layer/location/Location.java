@@ -27,8 +27,9 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.layer.DeclutterMatrix;
 import com.bbn.openmap.omGraphics.OMGraphic;
@@ -51,7 +52,7 @@ import com.bbn.openmap.proj.Projection;
 public abstract class Location
         extends OMGraphicAdapter {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.layer.location.Location");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.location.Location");
 
     /**
      * The main latitude of object, in decimal degrees, for RENDERTYPE_LATLON
@@ -147,8 +148,8 @@ public abstract class Location
         setLocation(latitude, longitude);
         this.name = name;
 
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("Location Lat/Lon(" + latitude + ", " + longitude + ", " + name + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Location Lat/Lon(" + latitude + ", " + longitude + ", " + name + ")");
         }
 
         if (locationMarker == null) {
@@ -183,8 +184,8 @@ public abstract class Location
         setLocation(x, y);
         this.name = name;
 
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("Location XY(" + x + ", " + y + ", " + name + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Location XY(" + x + ", " + y + ", " + name + ")");
         }
 
         if (locationMarker == null) {
@@ -221,8 +222,8 @@ public abstract class Location
         setLocation(latitude, longitude, xOffset, yOffset);
         this.name = name;
 
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("Location(" + latitude + ", " + longitude + ", offset " + x + ", " + y + ", " + name + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Location(" + latitude + ", " + longitude + ", offset " + x + ", " + y + ", " + name + ")");
         }
 
         if (locationMarker == null) {
@@ -301,7 +302,7 @@ public abstract class Location
                     Point2D llp = proj.inverse(x, y);
                     setLocation((float) llp.getY(), (float) llp.getX());
                 } else {
-                    logger.fine("Location can't set lat/lon coordinates without a projection");
+                    logger.debug("Location can't set lat/lon coordinates without a projection");
                 }
                 break;
             case RENDERTYPE_OFFSET:
@@ -309,7 +310,7 @@ public abstract class Location
                     Point2D llp = proj.inverse(x, y);
                     setLocation((float) llp.getY(), (float) llp.getX(), this.xOffset, this.yOffset);
                 } else {
-                    logger.fine("Location can't set lat/lon coordinates without a projection");
+                    logger.debug("Location can't set lat/lon coordinates without a projection");
                 }
                 break;
             default:
@@ -673,8 +674,8 @@ public abstract class Location
      */
     protected void declutterLabel(DeclutterMatrix declutter, Projection proj) {
 
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("\nLocation::RepositionText => " + label.getData());
+        if (logger.isDebugEnabled()) {
+            logger.debug("\nLocation::RepositionText => " + label.getData());
         }
 
         // Right now, I think this method takes some presumptuous
@@ -730,8 +731,8 @@ public abstract class Location
             // Projected location of label on the screen
             Point2D p = label.getMapLocation();
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer("old point X Y =>" + p.getX() + " " + p.getY() + "    height = " + height + " width = " + width);
+            if (logger.isDebugEnabled()) {
+                logger.debug("old point X Y =>" + p.getX() + " " + p.getY() + "    height = " + height + " width = " + width);
             }
 
             int limit;
@@ -744,8 +745,8 @@ public abstract class Location
             // newpoint is the new place on the map to put the label
             Point2D newpoint = declutter.setNextOpen(p, width, height, limit);
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer("new point X Y =>" + newpoint.getX() + " " + newpoint.getY());
+            if (logger.isDebugEnabled()) {
+                logger.debug("new point X Y =>" + newpoint.getX() + " " + newpoint.getY());
             }
 
             label.setMapLocation(newpoint);

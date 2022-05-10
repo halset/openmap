@@ -38,8 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.Layer;
@@ -115,7 +116,7 @@ public class ImageServer
         implements
         /* ImageReadyListener, ImageReceiver, */PropertyConsumer {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.image.ImageServer");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.image.ImageServer");
 
     /** The Image formatter for the output image. */
     protected ImageFormatter formatter;
@@ -346,7 +347,7 @@ public class ImageServer
     public byte[] createImage(Projection proj, int scaledWidth, int scaledHeight, List<String> showLayers, Paint background) {
 
         if (formatter == null) {
-            logger.warning("no formatter set! Can't create image.");
+            logger.error("no formatter set! Can't create image.");
             return new byte[0];
         }
 
@@ -377,14 +378,14 @@ public class ImageServer
 
                     if (layerName.equals(prefix)) {
                         layer.renderDataForProjection(proj, graphics);
-                        if (logger.isLoggable(Level.FINE)) {
-                            logger.fine("image request adding layer graphics from : " + layer.getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("image request adding layer graphics from : " + layer.getName());
                         }
                     }
                 }
             }
-        } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine("no layers available for image");
+        } else if (logger.isDebugEnabled()) {
+            logger.debug("no layers available for image");
         }
 
         byte[] formattedImage = getFormattedImage(imageFormatter, scaledWidth, scaledHeight);
@@ -407,7 +408,7 @@ public class ImageServer
     public byte[] createImageFromLayers(Projection proj, int scaledWidth, int scaledHeight, List<Layer> layers, Paint background) {
 
         if (formatter == null) {
-            logger.warning("no formatter set! Can't create image.");
+            logger.error("no formatter set! Can't create image.");
             return new byte[0];
         }
 
@@ -427,14 +428,14 @@ public class ImageServer
                 if (layer != null) {
                     layer.renderDataForProjection(proj, graphics);
 
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("image request adding layer graphics from : " + layer.getName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("image request adding layer graphics from : " + layer.getName());
                     }
                 }
             }
 
-        } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine("no layers available for image");
+        } else if (logger.isDebugEnabled()) {
+            logger.debug("no layers available for image");
         }
 
         byte[] formattedImage = getFormattedImage(imageFormatter, scaledWidth, scaledHeight);
@@ -502,7 +503,7 @@ public class ImageServer
     public byte[] createImage(Projection proj, int scaledWidth, int scaledHeight, int includedLayerMask, Paint background) {
 
         if (formatter == null) {
-            logger.warning("no formatter set! Can't create image.");
+            logger.error("no formatter set! Can't create image.");
             return new byte[0];
         }
 
@@ -516,27 +517,27 @@ public class ImageServer
 
         ((Proj) proj).drawBackground((Graphics2D) graphics, background);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("considering " + layers.length + " for image...");
+        if (logger.isDebugEnabled()) {
+            logger.debug("considering " + layers.length + " for image...");
         }
 
         if (layers != null) {
             for (int i = layers.length - 1; i >= 0; i--) {
                 if ((includedLayerMask & (0x00000001 << i)) != 0) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("image request adding layer graphics from : " + layers[i].getName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("image request adding layer graphics from : " + layers[i].getName());
                     }
 
                     layers[i].renderDataForProjection(proj, graphics);
                 } else {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("skipping layer graphics from : " + layers[i].getName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("skipping layer graphics from : " + layers[i].getName());
                     }
                 }
             }
         } else {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("no layers available");
+            if (logger.isDebugEnabled()) {
+                logger.debug("no layers available");
             }
         }
 
@@ -558,19 +559,19 @@ public class ImageServer
         java.awt.Graphics graphics = null;
 
         if (formatter == null) {
-            logger.warning("ImageServer.createGraphics: Formatter is null, returning null graphics.");
+            logger.error("ImageServer.createGraphics: Formatter is null, returning null graphics.");
             return null;
         }
 
         graphics = formatter.getGraphics(width, height, getTransparent());
 
         if (graphics == null) {
-            logger.warning("ImageServer.createGraphics: NOT able to create Graphics!");
+            logger.error("ImageServer.createGraphics: NOT able to create Graphics!");
             return null;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("graphics is cool");
+        if (logger.isDebugEnabled()) {
+            logger.debug("graphics is cool");
         }
 
         if (doAntiAliasing && graphics instanceof java.awt.Graphics2D) {
@@ -588,8 +589,8 @@ public class ImageServer
      */
     protected byte[] getFormattedImage(ImageFormatter formatter, int scaledWidth, int scaledHeight) {
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("ready to create formatted image.");
+        if (logger.isDebugEnabled()) {
+            logger.debug("ready to create formatted image.");
         }
         byte[] formattedImage = null;
 
@@ -599,7 +600,7 @@ public class ImageServer
             formattedImage = formatter.getScaledImageBytes(scaledWidth, scaledHeight);
 
         } else {
-            logger.fine("ImageServer: using full scale image (unscaled).");
+            logger.debug("ImageServer: using full scale image (unscaled).");
             formattedImage = formatter.getImageBytes();
         }
         return formattedImage;
@@ -768,8 +769,8 @@ public class ImageServer
     protected synchronized Layer[] getMaskedLayers(int layerMask) {
         if (layerMask == 0xFFFFFFFF || layers == null) {
             // They all want to be there
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine((layers != null ? "ImageServer: image request adding all layers."
+            if (logger.isDebugEnabled()) {
+                logger.debug((layers != null ? "ImageServer: image request adding all layers."
                         : "ImageServer.getMaskedLayers() null layers"));
             }
             return layers;
@@ -780,8 +781,8 @@ public class ImageServer
             for (int i = 0; i < layers.length; i++) {
                 if ((layerMask & (0x00000001 << i)) != 0) {
                     layerVector.add(layers[i]);
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("image request adding layer: " + layers[i].getName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("image request adding layer: " + layers[i].getName());
                     }
                 }
             }
@@ -891,7 +892,7 @@ public class ImageServer
             }
 
         } else {
-            logger.fine("no formatters specified");
+            logger.debug("no formatters specified");
         }
 
         return iFormatter;
@@ -926,15 +927,15 @@ public class ImageServer
             layersValue = p.getProperty(OpenMapPrefix + ImageServerLayersProperty);
 
             if (layersValue == null) {
-                logger.warning("No property \"" + ImageServerLayersProperty + "\" found in ImageServer properties.");
+                logger.error("No property \"" + ImageServerLayersProperty + "\" found in ImageServer properties.");
                 return new Layer[0];
             }
         }
 
         Vector<String> layerNames = PropUtils.parseSpacedMarkers(layersValue);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("OpenMap.getLayers(): " + layerNames);
+        if (logger.isDebugEnabled()) {
+            logger.debug("OpenMap.getLayers(): " + layerNames);
         }
 
         int nLayerNames = layerNames.size();
@@ -953,8 +954,8 @@ public class ImageServer
                     // iLayer.setProperties(layerName, p);
 
                     layers.add(iLayer);
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("adding instantiated layer /" + layerName + "/");
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("adding instantiated layer /" + layerName + "/");
                     }
                     continue;
                 }
@@ -964,8 +965,8 @@ public class ImageServer
             String classProperty = layerName + ".class";
             String className = p.getProperty(classProperty);
             if (className == null) {
-                logger.warning("Failed to locate property \"" + classProperty + "\"");
-                logger.warning("Skipping layer \"" + layerName + "\"");
+                logger.error("Failed to locate property \"" + classProperty + "\"");
+                logger.error("Skipping layer \"" + layerName + "\"");
                 continue;
             }
 
@@ -987,8 +988,8 @@ public class ImageServer
 
                 if (instantiatedLayers != null) {
                     instantiatedLayers.put(layerName, l);
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("Saving /" + layerName + "/ to instantiated layers hashtable.");
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Saving /" + layerName + "/ to instantiated layers hashtable.");
                     }
                 }
             }
@@ -1145,8 +1146,8 @@ public class ImageServer
                                                PropUtils.intFromProperties(props, Environment.Height, MapBean.DEFAULT_HEIGHT));
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("creating image with projection " + proj);
+        if (logger.isDebugEnabled()) {
+            logger.debug("creating image with projection " + proj);
         }
 
         byte[] imageBytes = is.createImage(proj);
@@ -1254,14 +1255,14 @@ public class ImageServer
 
                 String finalOutputPath = ImageServer.createImageFile(null, props, proj, imagefile);
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Writing image file to: " + finalOutputPath);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Writing image file to: " + finalOutputPath);
                 }
 
             } catch (MalformedURLException murle) {
-                logger.warning("ImageServer can't find properties file: " + arg[0]);
+                logger.error("ImageServer can't find properties file: " + arg[0]);
             } catch (IOException ioe) {
-                logger.warning("ImageServer can't write output image: IOException");
+                logger.error("ImageServer can't write output image: IOException");
             }
         }
 

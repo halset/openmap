@@ -25,8 +25,9 @@ package com.bbn.openmap.layer.policy;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.OMComponent;
 import com.bbn.openmap.layer.OMGraphicHandlerLayer;
@@ -42,7 +43,7 @@ public class StandardRenderPolicy
       extends OMComponent
       implements RenderPolicy {
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.policy.RenderPolicy");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.policy.RenderPolicy");
 
    /**
     * Don't let this be null, nothing will happen. At all.
@@ -129,8 +130,8 @@ public class StandardRenderPolicy
             setCompositeOnGraphics((Graphics2D) g);
 
             list.render(g);
-         } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine(layer.getName() + ".paint(): " + (list == null ? "NULL list, skipping..." : " skipping due to projection."));
+         } else if (logger.isDebugEnabled()) {
+            logger.debug(layer.getName() + ".paint(): " + (list == null ? "NULL list, skipping..." : " skipping due to projection."));
          }
       } else {
          Debug.error("RenderPolicy.paint():  NULL layer, skipping...");

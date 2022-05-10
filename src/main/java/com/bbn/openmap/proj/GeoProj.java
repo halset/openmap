@@ -29,6 +29,9 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.MoreMath;
 import com.bbn.openmap.ext.jts.JTS;
@@ -36,9 +39,6 @@ import com.bbn.openmap.proj.coords.GeoCoordTransformation;
 import com.bbn.openmap.proj.coords.LatLonGCT;
 import com.bbn.openmap.proj.coords.LatLonPoint;
 import com.bbn.openmap.util.Debug;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 
 /**
  * GeoProj is the base class of all Projections that deal with coordinates on

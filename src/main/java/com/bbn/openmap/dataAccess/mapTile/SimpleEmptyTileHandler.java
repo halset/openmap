@@ -3,7 +3,9 @@ package com.bbn.openmap.dataAccess.mapTile;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.PropertyConsumer;
 import com.bbn.openmap.omGraphics.DrawingAttributes;
@@ -37,7 +39,7 @@ import com.bbn.openmap.util.PropUtils;
 public class SimpleEmptyTileHandler
         implements EmptyTileHandler, PropertyConsumer {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.mapTile.EmptyTileHandler");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.mapTile.EmptyTileHandler");
 
     public final static String BACKGROUND_PROPERTY = "background";
     public final static String NO_COVERAGE_ZOOM_PROPERTY = "noCoverageZoom";

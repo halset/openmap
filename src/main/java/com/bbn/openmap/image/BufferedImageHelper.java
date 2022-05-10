@@ -30,10 +30,11 @@ import java.awt.image.WritableRaster;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.util.ComponentFactory;
 
@@ -47,7 +48,7 @@ import com.bbn.openmap.util.ComponentFactory;
  */
 public class BufferedImageHelper {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.io.BufferedImageHelper");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.io.BufferedImageHelper");
 
     /**
      * This class has only static methods, so there is no need to construct
@@ -87,7 +88,7 @@ public class BufferedImageHelper {
      *         goes wrong.
      */
     public static BufferedImage getJAIBufferedImage(String opName, Object param) {
-        boolean DEBUG = logger.isLoggable(Level.FINE);
+        boolean DEBUG = logger.isDebugEnabled();
 
         Object jai = getJAI();
 
@@ -96,7 +97,7 @@ public class BufferedImageHelper {
         }
 
         if (DEBUG) {
-            logger.fine("Using JAI to create image from " + opName);
+            logger.debug("Using JAI to create image from " + opName);
         }
 
         try {
@@ -123,24 +124,24 @@ public class BufferedImageHelper {
 
         } catch (ClassNotFoundException cnfe) {
             if (DEBUG) {
-                logger.warning("BufferedImageHelper.getJAIBufferedImage() ClassNotFoundException error: \n" + cnfe.getMessage());
+                logger.error("BufferedImageHelper.getJAIBufferedImage() ClassNotFoundException error: \n" + cnfe.getMessage());
             }
         } catch (IllegalAccessException iae) {
             if (DEBUG) {
-                logger.warning("BufferedImageHelper.getJAIBufferedImage() IllegalAccessException error: \n" + iae.getMessage());
+                logger.error("BufferedImageHelper.getJAIBufferedImage() IllegalAccessException error: \n" + iae.getMessage());
             }
         } catch (InvocationTargetException ite) {
             if (DEBUG) {
-                logger.warning("BufferedImageHelper.getJAIBufferedImage() InvocationTargetException error: \n" + ite.getMessage());
+                logger.error("BufferedImageHelper.getJAIBufferedImage() InvocationTargetException error: \n" + ite.getMessage());
             }
         } catch (NoSuchMethodException nsme) {
             if (DEBUG) {
-                logger.warning("BufferedImageHelper.getJAIBufferedImage() NoSuchMethodException error: " + nsme.toString());
+                logger.error("BufferedImageHelper.getJAIBufferedImage() NoSuchMethodException error: " + nsme.toString());
                 nsme.printStackTrace();
             }
         } catch (SecurityException se) {
             if (DEBUG) {
-                logger.warning("BufferedImageHelper.getJAIBufferedImage() SecurityException error: \n" + se.getMessage());
+                logger.error("BufferedImageHelper.getJAIBufferedImage() SecurityException error: \n" + se.getMessage());
             }
         }
 
@@ -224,7 +225,7 @@ public class BufferedImageHelper {
             return bi;
         }
 
-        logger.fine("BufferedImageHelper.getBufferedImage(URL) can't use JAI, using ImageIcon");
+        logger.debug("BufferedImageHelper.getBufferedImage(URL) can't use JAI, using ImageIcon");
 
         // if JAI is not installed....
         ImageIcon ii = new ImageIcon(url);
@@ -289,7 +290,7 @@ public class BufferedImageHelper {
             return bi;
         }
 
-        logger.fine("BufferedImageHelper.getBufferedImage(path) can't use JAI, using ImageIcon");
+        logger.debug("BufferedImageHelper.getBufferedImage(path) can't use JAI, using ImageIcon");
 
         // if JAI is not installed....
         ImageIcon ii = new ImageIcon(path);
@@ -335,7 +336,7 @@ public class BufferedImageHelper {
             throws InterruptedException {
 
         if (w <= 0 || h <= 0) {
-            logger.fine("BufferedImageHelper.getBufferedImage() don't know h/w, using pixel grabber");
+            logger.debug("BufferedImageHelper.getBufferedImage() don't know h/w, using pixel grabber");
             return getBufferedImageFromPixelGrabber(image, x, y, w, h, imageType);
         } else {
             BufferedImage bufferedImage = new BufferedImage(w, h, imageType);
@@ -375,7 +376,7 @@ public class BufferedImageHelper {
         pg = null;
 
         BufferedImage bi = new BufferedImage(w, h, imageType);
-        logger.fine("BufferedImageHelper.getBufferedImage(): Got buffered image...");
+        logger.debug("BufferedImageHelper.getBufferedImage(): Got buffered image...");
 
         // bi.setRGB(0, 0, w, h, pixels, 0, w);
         /**
@@ -387,7 +388,7 @@ public class BufferedImageHelper {
         WritableRaster raster = (WritableRaster) bi.getRaster();
         raster.setDataElements(0, 0, w, h, pixels);
 
-        logger.fine("BufferedImageHelper.getBufferedImage(): set pixels in image...");
+        logger.debug("BufferedImageHelper.getBufferedImage(): set pixels in image...");
 
         return bi;
     }

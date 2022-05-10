@@ -42,7 +42,6 @@ import java.beans.PropertyVetoException;
 import java.beans.beancontext.BeanContext;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -159,8 +158,8 @@ public class BufferedLayer
             startupLayersListProperty.append(" ").append(lPrefix);
          }
 
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("BufferedLayer: getting properties for " + layer.getName() + " " + layer.getProperties(new Properties()));
+         if (logger.isDebugEnabled()) {
+            logger.debug("BufferedLayer: getting properties for " + layer.getName() + " " + layer.getProperties(new Properties()));
          }
 
          layer.getProperties(props);
@@ -453,8 +452,8 @@ public class BufferedLayer
 
       public void actionPerformed(ActionEvent ae) {
          layer.setVisible(((JCheckBox) ae.getSource()).isSelected());
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Turning " + layer.getName() + (((JCheckBox) ae.getSource()).isSelected() ? " on" : " off"));
+         if (logger.isDebugEnabled()) {
+            logger.debug("Turning " + layer.getName() + (((JCheckBox) ae.getSource()).isSelected() ? " on" : " off"));
          }
 
          layer.repaint();
@@ -542,8 +541,8 @@ public class BufferedLayer
        * We need the buffer to be able to be transparent.
        */
       public Image createImage(int width, int height) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("BLMapBean.createImage()");
+         if (logger.isDebugEnabled()) {
+            logger.debug("BLMapBean.createImage()");
          }
 
          if (width <= 0)
@@ -594,8 +593,8 @@ public class BufferedLayer
                gr.setClip(clip);
             }
             // gr.drawImage(drawingBuffer,0,0,null);
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine("BufferedMapBean rendering layers to buffer.");
+            if (logger.isDebugEnabled()) {
+               logger.debug("BufferedMapBean rendering layers to buffer.");
             }
 
             paintChildrenWithBorder(gr, false);
@@ -603,8 +602,8 @@ public class BufferedLayer
             // reset the clip to full map
             // gr.setClip(0, 0, w, h);
             gr.dispose();
-         } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine("BufferedMapBean rendering buffer.");
+         } else if (logger.isDebugEnabled()) {
+            logger.debug("BufferedMapBean rendering buffer.");
          }
 
          g = g.create();

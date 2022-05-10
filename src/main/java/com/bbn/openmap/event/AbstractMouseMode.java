@@ -33,11 +33,13 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.I18n;
 import com.bbn.openmap.Layer;
@@ -77,7 +79,7 @@ public class AbstractMouseMode
 
    private static final long serialVersionUID = 1L;
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.event.MapMouseMode");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.MapMouseMode");
    
    /**
     * The identifier for the mode, which is also the name that will be used in a

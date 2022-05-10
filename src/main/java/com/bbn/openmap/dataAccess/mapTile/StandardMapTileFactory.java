@@ -40,8 +40,9 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -94,8 +95,8 @@ public class StandardMapTileFactory
     extends CacheHandler
     implements MapTileFactory, PropertyConsumer {
     protected String prefix = null;
-    protected final static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.mapTile.StandardMapTileFactory");
-    protected final static Logger mapTileLogger = Logger.getLogger("MAPTILE_DEBUGGING");
+    protected final static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.mapTile.StandardMapTileFactory");
+    protected final static Logger mapTileLogger = LoggerFactory.getLogger("MAPTILE_DEBUGGING");
     public final static String ROOT_DIR_PROPERTY = "rootDir";
     public final static String FILE_EXT_PROPERTY = "fileExt";
     public final static String CACHE_SIZE_PROPERTY = "cacheSize";
@@ -146,14 +147,14 @@ public class StandardMapTileFactory
 
     public StandardMapTileFactory() {
         super(100);
-        verbose = logger.isLoggable(Level.FINE);
+        verbose = logger.isDebugEnabled();
     }
 
     public StandardMapTileFactory(Component layer, String rootDir, String tileFileExt) {
         super(100);
         setRootDir(rootDir);
         setFileExt(tileFileExt);
-        verbose = logger.isLoggable(Level.FINE);
+        verbose = logger.isDebugEnabled();
         this.repaintCallback = layer;
     }
 
@@ -184,7 +185,7 @@ public class StandardMapTileFactory
         if (key instanceof String) {
             String imagePath = (String) key;
             if (verbose) {
-                logger.fine("fetching file for cache: " + imagePath);
+                logger.debug("fetching file for cache: " + imagePath);
             }
 
             try {
@@ -199,12 +200,12 @@ public class StandardMapTileFactory
                     }
 
                 } else {
-                    logger.fine("Can't find resource located at " + imagePath);
+                    logger.debug("Can't find resource located at " + imagePath);
                 }
             } catch (MalformedURLException e) {
-                logger.fine("Can't find resource located at " + imagePath);
+                logger.debug("Can't find resource located at " + imagePath);
             } catch (InterruptedException e) {
-                logger.fine("Reading the image file was interrupted: " + imagePath);
+                logger.debug("Reading the image file was interrupted: " + imagePath);
             }
         }
         return null;
@@ -236,7 +237,7 @@ public class StandardMapTileFactory
                 raster = getTileNotMatchingProjectionType(rasterImage, x, y, zoomLevel);
             }
 
-            if (mapTileLogger.isLoggable(Level.FINE)) {
+            if (mapTileLogger.isDebugEnabled()) {
                 raster.putAttribute(OMGraphic.LABEL, new OMTextLabeler("Tile: " + zoomLevel + "|" + x + "|" + y,
                     OMText.JUSTIFY_CENTER));
                 raster.setSelected(true);
@@ -264,7 +265,7 @@ public class StandardMapTileFactory
         pnt.setLocation(x + 1, y + 1);
         Point2D tileLR = mtcTransform.tileUVToLatLon(pnt, zoomLevel);
         if (verbose) {
-            logger.fine("tile coords: " + tileUL + ", " + tileLR);
+            logger.debug("tile coords: " + tileUL + ", " + tileLR);
         }
 
         double x1 = Math.min(tileUL.getX(), tileLR.getX());
@@ -328,8 +329,8 @@ public class StandardMapTileFactory
     public Object get(Object key, int x, int y, int zoomLevel, Projection proj) {
         CacheObject ret = searchCache(key);
         if (ret != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("found tile (" + x + ", " + y + ") in cache");
+            if (logger.isDebugEnabled()) {
+                logger.debug("found tile (" + x + ", " + y + ") in cache");
             }
             return ret.obj;
         }
@@ -357,8 +358,8 @@ public class StandardMapTileFactory
     public Object getFromCache(Object key, int x, int y, int zoomLevel) {
         CacheObject ret = searchCache(key);
         if (ret != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("found tile (" + x + ", " + y + ") in cache");
+            if (logger.isDebugEnabled()) {
+                logger.debug("found tile (" + x + ", " + y + ") in cache");
             }
             return ret.obj;
         }
@@ -392,7 +393,7 @@ public class StandardMapTileFactory
                 raster = createOMGraphicFromBufferedImage(bi, x, y, zoomLevel, proj);
                 if (raster != null) {
 
-                    if (mapTileLogger.isLoggable(Level.FINE)) {
+                    if (mapTileLogger.isDebugEnabled()) {
                         Object labelObj = raster.getAttribute(OMGraphic.LABEL);
                         if (labelObj instanceof OMTextLabeler) {
                             OMTextLabeler label = (OMTextLabeler) labelObj;
@@ -404,7 +405,7 @@ public class StandardMapTileFactory
                 }
 
             } catch (InterruptedException e) {
-                if (logger.isLoggable(Level.FINE)) {
+                if (logger.isDebugEnabled()) {
                     e.printStackTrace();
                 }
             }
@@ -453,13 +454,13 @@ public class StandardMapTileFactory
     public OMGraphicList getTiles(Projection proj, int zoomLevel, OMGraphicList list) {
 
         if (fileExt == null || rootDir == null) {
-            logger.warning("No path to tile files provided (" + rootDir + "), or file extension (" + fileExt +
+            logger.error("No path to tile files provided (" + rootDir + "), or file extension (" + fileExt +
                 ") not specified");
             return list;
         }
 
         if (lastProj == null || !proj.getClass().isAssignableFrom(lastProj.getClass())) {
-            logger.fine("Clearing out cache for new projection type");
+            logger.debug("Clearing out cache for new projection type");
             clear(); // empty the cache to rebuild OMGraphics for different type
             // projection.
         }
@@ -485,7 +486,7 @@ public class StandardMapTileFactory
         if (zoomLevel < 0) {
             zoomLevel = getZoomLevelForProj(proj);
             if (verbose) {
-                logger.fine("Best zoom level calculated at: " + zoomLevel);
+                logger.debug("Best zoom level calculated at: " + zoomLevel);
             }
         }
 
@@ -507,7 +508,7 @@ public class StandardMapTileFactory
             int uvright = uvBounds[3];
 
             if (verbose) {
-                logger.fine("for " + proj + ", fetching tiles between x(" + uvleft + ", " + uvright + ") y(" + uvup +
+                logger.debug("for " + proj + ", fetching tiles between x(" + uvleft + ", " + uvright + ") y(" + uvup +
                     ", " +
                     uvbottom + ")");
             }
@@ -516,12 +517,12 @@ public class StandardMapTileFactory
             Point2D datelinePnt = proj.forward(new LatLonPoint.Double(upperLeft.getY(), 180d));
             double dlx = datelinePnt.getX();
             boolean dateline = dlx > 0 & dlx < proj.getWidth();
-            logger.fine("Long(180) located at " + dlx);
+            logger.debug("Long(180) located at " + dlx);
 
             if (!dateline) {
                 getTiles(uvleft, uvright, uvup, uvbottom, zoomLevelInfo, proj, list);
             } else {
-                logger.fine("handling DATELINE");
+                logger.debug("handling DATELINE");
                 getTiles(uvleft, (int) Math.pow(2, zoomLevel), uvup, uvbottom, zoomLevelInfo, proj, list);
                 getTiles(0, uvright, uvup, uvbottom, zoomLevelInfo, proj, list);
             }
@@ -558,13 +559,13 @@ public class StandardMapTileFactory
         Projection proj,
         OMGraphicList list) {
         if (verbose) {
-            logger.fine("for zoom level: " + zoomLevelInfo.getZoomLevel() + ", screen covers uv coords [t:" + uvup +
+            logger.debug("for zoom level: " + zoomLevelInfo.getZoomLevel() + ", screen covers uv coords [t:" + uvup +
                 ", l:" +
                 uvleft + ", b:" + uvbottom + ", r:" + uvright + "]");
         }
 
         if (zoomLevelInfo.getZoomLevel() == 0) {
-            logger.fine("got one tile, OM can't draw a single tile covering the earth. Sorry.");
+            logger.debug("got one tile, OM can't draw a single tile covering the earth. Sorry.");
         }
 
         List<LoadObj> reloads = new ArrayList<LoadObj>();
@@ -582,7 +583,7 @@ public class StandardMapTileFactory
 
                 // Try to help doing unnecessary work
                 if (Thread.currentThread().isInterrupted()) {
-                    logger.fine("Detected interruption in standard loop, thread " + Thread.currentThread().getName());
+                    logger.debug("Detected interruption in standard loop, thread " + Thread.currentThread().getName());
                     return;
                 }
 
@@ -607,7 +608,7 @@ public class StandardMapTileFactory
 
                 if (tileGraphic != null/* && rightOMGraphicType */) {
 
-                    if (mapTileLogger.isLoggable(Level.FINE)) {
+                    if (mapTileLogger.isDebugEnabled()) {
                         tileGraphic.putAttribute(OMGraphic.LABEL, new OMTextLabeler("Tile: " + zoomLevel + "|" + x + "|" +
                             y,
                             OMText.JUSTIFY_CENTER));
@@ -624,7 +625,7 @@ public class StandardMapTileFactory
         }
 
         if (verbose) {
-            logger.fine("found " + list.size() + " frames in cache, loading " + reloads.size() + " others now...");
+            logger.debug("found " + list.size() + " frames in cache, loading " + reloads.size() + " others now...");
         }
 
         if (repaintCallback != null) {
@@ -640,7 +641,7 @@ public class StandardMapTileFactory
         }
 
         if (verbose) {
-            logger.fine("finished loading " + reloads.size() + " frames from source for screen" +
+            logger.debug("finished loading " + reloads.size() + " frames from source for screen" +
                 (doExtraTiles ? ", moving to off-screen frames..." : ""));
         }
 
@@ -717,7 +718,7 @@ public class StandardMapTileFactory
         }
 
         if (verbose) {
-            logger.fine("finished loading all tiles (" + list.size() + ")");
+            logger.debug("finished loading all tiles (" + list.size() + ")");
         }
     }
 
@@ -757,7 +758,7 @@ public class StandardMapTileFactory
                 raster.generate(proj);
                 list.add(raster);
 
-                if (logger.isLoggable(Level.FINE)) {
+                if (logger.isDebugEnabled()) {
                     raster.putAttribute(OMGraphic.TOOLTIP, imagePath);
                 }
 
@@ -1020,10 +1021,10 @@ public class StandardMapTileFactory
                         }
 
                         if (jarFileFound) {
-                            logger.fine("adding " + jarName + " to classpath");
+                            logger.debug("adding " + jarName + " to classpath");
                             ClasspathHacker.addFile(jarName);
                         } else {
-                            logger.fine("can't find " + jarName + ", not adding to classpath");
+                            logger.debug("can't find " + jarName + ", not adding to classpath");
                         }
 
                         // JarFile jarFile = new JarFile(jarName);
@@ -1037,7 +1038,7 @@ public class StandardMapTileFactory
                         // }
 
                     } catch (IOException ioe) {
-                        logger.warning("couldn't add map data jar file: " + jarName);
+                        logger.error("couldn't add map data jar file: " + jarName);
                     }
 
                 }
@@ -1062,10 +1063,10 @@ public class StandardMapTileFactory
                         // set, file ext, transform.
                         configureFromProperties(tileProps.toURI().toURL().openStream(), rootDirectory);
                     } catch (MalformedURLException murle) {
-                        logger.warning("tile file for " + rootDirectory + " couldn't be read: " + tileProps.
+                        logger.error("tile file for " + rootDirectory + " couldn't be read: " + tileProps.
                             getAbsolutePath());
                     } catch (IOException ioe) {
-                        logger.warning("tile file for " + rootDirectory + " couldn't be read");
+                        logger.error("tile file for " + rootDirectory + " couldn't be read");
                     }
                 }
 

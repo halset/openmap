@@ -31,7 +31,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.ProjectionEvent;
 import com.bbn.openmap.event.ProjectionListener;
@@ -59,7 +61,7 @@ import com.bbn.openmap.util.PropUtils;
 public class VPFRoadLayer extends VPFLayer implements ProjectionListener,
         RoadServices, LayerView {
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     RoadFinder helper;
 
     /**

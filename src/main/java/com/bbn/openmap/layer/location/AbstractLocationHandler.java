@@ -20,10 +20,12 @@ package com.bbn.openmap.layer.location;
 /*  Java Core  */
 import java.awt.Color;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -52,7 +54,7 @@ import com.bbn.openmap.util.PropUtils;
  */
 public abstract class AbstractLocationHandler implements LocationHandler {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.layer.location.LocationHandler");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.location.LocationHandler");
     
     /** The parent layer. */
     protected LocationLayer zLayer;

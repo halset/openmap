@@ -26,7 +26,9 @@ import java.awt.geom.Point2D;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.shape.EsriGraphic;
 import com.bbn.openmap.dataAccess.shape.EsriGraphicList;
@@ -47,7 +49,7 @@ import com.bbn.openmap.proj.coords.LatLonPoint;
  */
 public class ShpOutputStream {
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.shape.output.ShpOutputStream");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.shape.output.ShpOutputStream");
    public final static int ESRI_RECORD_HEADER_LENGTH = 4; // length in 16-bit
                                                           // words
    /**

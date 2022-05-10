@@ -23,8 +23,9 @@
 package com.bbn.openmap.event;
 
 import java.util.ListIterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.proj.Projection;
 
@@ -37,7 +38,7 @@ import com.bbn.openmap.proj.Projection;
 public class ProjectionSupport
       extends ListenerSupport<ProjectionListener> {
 
-   static Logger logger = Logger.getLogger("com.bbn.openmap.event.ProjectionSupport");
+   static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.ProjectionSupport");
    private static final long serialVersionUID = 1L;
    protected ProjectionChangeNotifier pcNotifier;
    protected boolean useNotifier;
@@ -177,7 +178,7 @@ public class ProjectionSupport
                      try {
                         listener.projectionChanged(projEvent);
                      } catch (Exception e) {
-                        if (logger.isLoggable(Level.FINE)) {
+                        if (logger.isDebugEnabled()) {
                            logger.info("ProjectionListener not handling projection well: " + listener.getClass().getName() + " : "
                                  + e.getClass().getName() + " : " + e.getMessage());
                            e.printStackTrace();
@@ -186,7 +187,7 @@ public class ProjectionSupport
                   }
 
                } catch (Exception e) {
-                  logger.fine("caught exception: " + e.getClass().getName() + " : " + e.getMessage());
+                  logger.debug("caught exception: " + e.getClass().getName() + " : " + e.getMessage());
                }
 
                // notification is complete
@@ -205,7 +206,7 @@ public class ProjectionSupport
             }
          }
 
-         logger.fine("Projection notifier thread " + getName() + " done running");
+         logger.debug("Projection notifier thread " + getName() + " done running");
       }
    }
 

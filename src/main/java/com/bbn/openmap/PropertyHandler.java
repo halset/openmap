@@ -39,8 +39,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.ProgressEvent;
 import com.bbn.openmap.event.ProgressListener;
@@ -104,7 +105,7 @@ public class PropertyHandler
         extends MapHandlerChild
         implements SoloMapComponent {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.PropertyHandler");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.PropertyHandler");
 
     /**
      * All components can have access to an I18n object, which is provided by
@@ -261,7 +262,7 @@ public class PropertyHandler
     }
 
     public PropertyHandler(Builder builder) {
-        DEBUG = logger.isLoggable(Level.FINE);
+        DEBUG = logger.isDebugEnabled();
 
         setPropertyPrefix(builder.propertyPrefix);
         setUpdateProgress(builder.update);
@@ -318,7 +319,7 @@ public class PropertyHandler
             updateProgress = true;
         }
 
-        logger.fine("***** Searching for properties ****");
+        logger.debug("***** Searching for properties ****");
 
         String propertyPrefix = PropUtils.getScopedPropertyPrefix(getPropertyPrefix());
 
@@ -326,7 +327,7 @@ public class PropertyHandler
         // only in same package as this class) or wherever this
         // object's class file lives.
         if (DEBUG) {
-            logger.fine("Looking for " + propsFileName + " in Resources");
+            logger.debug("Looking for " + propsFileName + " in Resources");
         }
 
         InputStream propsIn = getClass().getResourceAsStream(propsFileName);
@@ -344,11 +345,11 @@ public class PropertyHandler
             propsIn = ClassLoader.getSystemResourceAsStream(propsFileName);
 
             if (propsIn != null && DEBUG) {
-                logger.fine("Loading properties from System Resources: " + propsFileName);
+                logger.debug("Loading properties from System Resources: " + propsFileName);
             }
         } else {
             if (DEBUG) {
-                logger.fine("Loading properties from file " + propsFileName + " from package of class " + getClass());
+                logger.debug("Loading properties from file " + propsFileName + " from package of class " + getClass());
             }
         }
 
@@ -359,7 +360,7 @@ public class PropertyHandler
         }
 
         if (!foundProperties && (Environment.isApplet() || DEBUG)) {
-            logger.fine("Unable to locate as resource: " + propsFileName);
+            logger.debug("Unable to locate as resource: " + propsFileName);
         }
 
         // Seems like we can kick out here in event of Applet...
@@ -401,7 +402,7 @@ public class PropertyHandler
 
         // in OpenMap config directory
         if (DEBUG) {
-            logger.fine("PropertyHandler: Looking for " + propsFileName + " in configuration directory: "
+            logger.debug("PropertyHandler: Looking for " + propsFileName + " in configuration directory: "
                     + (openmapConfigDirectory == null ? "not set" : openmapConfigDirectory));
         }
 
@@ -426,14 +427,14 @@ public class PropertyHandler
         // in user's home directory, most precedence.
         String userHomeDirectory = systemProperties.getProperty("user.home");
         if (DEBUG) {
-            logger.fine("Looking for " + propsFileName + " in user's home directory: " + userHomeDirectory);
+            logger.debug("Looking for " + propsFileName + " in user's home directory: " + userHomeDirectory);
         }
 
         // We want foundProperties to reflect if properties have ever
         // been found.
         foundProperties |= PropUtils.loadProperties(tmpProperties, userHomeDirectory, propsFileName);
         if (DEBUG) {
-            logger.fine("***** Done with property search ****");
+            logger.debug("***** Done with property search ****");
         }
 
         if (!foundProperties && !Environment.isApplet()) {
@@ -475,7 +476,7 @@ public class PropertyHandler
 
         boolean tryHomeDirectory = false;
         if (DEBUG) {
-            logger.fine("Looking for localized file: " + localizedPropertyFile);
+            logger.debug("Looking for localized file: " + localizedPropertyFile);
         }
 
         try {
@@ -484,12 +485,12 @@ public class PropertyHandler
                 tryHomeDirectory = true;
             } else {
                 if (DEBUG) {
-                    logger.fine("Found localized properties in classpath");
+                    logger.debug("Found localized properties in classpath");
                 }
                 props = fetchProperties(propsURL);
             }
         } catch (MalformedURLException murle) {
-            logger.warning("PropertyHandler can't find localized property file: " + localizedPropertyFile);
+            logger.error("PropertyHandler can't find localized property file: " + localizedPropertyFile);
             tryHomeDirectory = true;
         }
 
@@ -499,7 +500,7 @@ public class PropertyHandler
                 props = null;
             } else {
                 if (DEBUG) {
-                    logger.fine("Found localized properties in home directory");
+                    logger.debug("Found localized properties in home directory");
                 }
             }
         }
@@ -539,7 +540,7 @@ public class PropertyHandler
         merge(props, "loaded", howString);
 
         if (DEBUG) {
-            logger.fine("loaded properties");
+            logger.debug("loaded properties");
         }
     }
 
@@ -562,8 +563,8 @@ public class PropertyHandler
         int size = includes.size();
         if (size > 0) {
 
-            if (logger.isLoggable(Level.FINER)) {
-                logger.finer("handling include files: " + includes);
+            if (logger.isDebugEnabled()) {
+                logger.debug("handling include files: " + includes);
             }
 
             for (int i = 0; i < size; i++) {
@@ -571,12 +572,12 @@ public class PropertyHandler
                 String includeProperty = includeName + ".URL";
 
                 String include = props.getProperty(includeProperty);
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("checking " + includeProperty + ", getting: " + include);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("checking " + includeProperty + ", getting: " + include);
                 }
 
                 if (include == null) {
-                    logger.warning("PropertyHandler.getIncludeProperties(): Failed to locate include file \"" + includeName
+                    logger.error("PropertyHandler.getIncludeProperties(): Failed to locate include file \"" + includeName
                             + "\" with URL \"" + includeProperty + "\"\n  Skipping include file \"" + include + "\"");
                     continue;
                 }
@@ -586,14 +587,14 @@ public class PropertyHandler
                     URL tmpInclude = PropUtils.getResourceOrFileOrURL(null, include);
 
                     if (tmpInclude == null) {
-                        logger.fine("Can't locate URL trying to find included properties: " + include);
+                        logger.debug("Can't locate URL trying to find included properties: " + include);
                         continue;
                     }
 
                     InputStream is = tmpInclude.openStream();
                     tmpProps.load(is);
                     if (DEBUG) {
-                        logger.fine("PropertyHandler.getIncludeProperties(): located include properties file URL: " + include);
+                        logger.debug("PropertyHandler.getIncludeProperties(): located include properties file URL: " + include);
                     }
                     // Include properties noted in resources
                     // properties - a little recursive action,
@@ -604,13 +605,13 @@ public class PropertyHandler
                     merge(tmpProps, newProps, "include file properties", include);
 
                 } catch (MalformedURLException e) {
-                    logger.warning("malformed URL for include file: |" + include + "| for " + includeName);
+                    logger.error("malformed URL for include file: |" + include + "| for " + includeName);
                 } catch (IOException ioe) {
-                    logger.warning("IOException processing " + include + "| for " + includeName);
+                    logger.error("IOException processing " + include + "| for " + includeName);
                 }
             }
         } else {
-            logger.fine("no include files found.");
+            logger.debug("no include files found.");
         }
         return newProps;
     }
@@ -675,7 +676,7 @@ public class PropertyHandler
             PropUtils.copyProperties(from, to);
         } else {
             if (what != null && DEBUG) {
-                logger.fine("no " + what + " found" + (where == null ? "." : (" in " + where)));
+                logger.debug("no " + what + " found" + (where == null ? "." : (" in " + where)));
             }
         }
     }
@@ -762,7 +763,7 @@ public class PropertyHandler
         int i; // default counter
 
         if (mapHandler == null) {
-            logger.fine("no MapHandler to use to handle created components, skipping creation.");
+            logger.debug("no MapHandler to use to handle created components, skipping creation.");
             return;
         }
 
@@ -789,7 +790,7 @@ public class PropertyHandler
         for (String debugMarker : debugList) {
             Debug.put(debugMarker);
             if (DEBUG) {
-                logger.fine("adding " + debugMarker + " to Debug list.");
+                logger.debug("adding " + debugMarker + " to Debug list.");
             }
         }
 
@@ -797,8 +798,8 @@ public class PropertyHandler
         String componentProperty = propPrefix + PropertyHandler.componentProperty;
         Vector<String> componentList = PropUtils.parseSpacedMarkers(properties.getProperty(componentProperty));
 
-        if (logger.isLoggable(Level.FINER)) {
-            logger.finer("creating components from " + componentList);
+        if (logger.isDebugEnabled()) {
+            logger.debug("creating components from " + componentList);
         }
 
         if (updateProgress) {
@@ -815,7 +816,7 @@ public class PropertyHandler
             Object obj = (Object) components.elementAt(i);
             try {
                 if (obj instanceof String) {
-                    logger.warning("finding out that the " + obj + " wasn't created");
+                    logger.error("finding out that the " + obj + " wasn't created");
                     continue;
                 }
 
@@ -832,7 +833,7 @@ public class PropertyHandler
                 addUsedPrefix(markerName);
 
             } catch (MultipleSoloMapComponentException msmce) {
-                logger.warning("PropertyHandler.createComponents(): " + "tried to add multiple components of the same "
+                logger.error("PropertyHandler.createComponents(): " + "tried to add multiple components of the same "
                         + "type when only one is allowed! - " + msmce);
             }
         }
@@ -884,14 +885,14 @@ public class PropertyHandler
         // and if the class is a PropertyConsumer, get its properties
         // too.
         if (mapHandler == null) {
-            logger.warning("can't create properties with null MapHandler");
+            logger.error("can't create properties with null MapHandler");
             return null;
         }
 
         Iterator it = mapHandler.iterator();
         Object someObj;
 
-        logger.fine("Looking for objects in MapHandler");
+        logger.debug("Looking for objects in MapHandler");
 
         MapBean mapBean = null;
         LayerHandler layerHandler = null;
@@ -901,7 +902,7 @@ public class PropertyHandler
 
         while (it.hasNext()) {
             someObj = it.next();
-            logger.fine("found " + someObj.getClass().getName());
+            logger.debug("found " + someObj.getClass().getName());
 
             if (someObj instanceof MapBean) {
                 mapBean = (MapBean) someObj;
@@ -928,7 +929,7 @@ public class PropertyHandler
         // if the MapBean and/or the LayerHandler are null, what's the
         // point?
         if (mapBean == null || layerHandler == null) {
-            logger.warning("no MapBean(" + mapBean + ") or LayerHandler(" + layerHandler + ") to use to write properties");
+            logger.error("no MapBean(" + mapBean + ") or LayerHandler(" + layerHandler + ") to use to write properties");
             return null;
         }
 
@@ -942,7 +943,7 @@ public class PropertyHandler
         printComponentProperties(otherComponents, propertyHandler, ps, createdProperties);
         printLayerProperties(layerHandler, propertyHandler, ps, createdProperties);
 
-        if (logger.isLoggable(Level.FINE) && createdProperties != null) {
+        if (logger.isDebugEnabled() && createdProperties != null) {
             System.out.println(createdProperties);
         }
 
@@ -1071,7 +1072,7 @@ public class PropertyHandler
             someObj = comps.nextElement();
 
             if (someObj instanceof PropertyConsumer) {
-                logger.fine("Getting Property Info for" + someObj.getClass().getName());
+                logger.debug("Getting Property Info for" + someObj.getClass().getName());
 
                 PropertyConsumer pc = (PropertyConsumer) someObj;
                 componentProperties.clear();
@@ -1272,7 +1273,7 @@ public class PropertyHandler
             layerHandler.removeAll();
             layerHandler.init(Environment.OpenMapPrefix, props);
         } else {
-            logger.warning("Can't load new layers - can't find LayerHandler");
+            logger.error("Can't load new layers - can't find LayerHandler");
         }
 
         if (mapBean != null) {
@@ -1280,7 +1281,7 @@ public class PropertyHandler
                                                                                                      mapBean.getWidth(),
                                                                                                      mapBean.getHeight()));
         } else {
-            logger.warning("Can't load new projection - can't find MapBean");
+            logger.error("Can't load new projection - can't find MapBean");
         }
 
         // if (id != null) {
@@ -1519,8 +1520,8 @@ public class PropertyHandler
      *         an error.
      */
     public static Properties fetchProperties(URL propsURL) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("checking (" + propsURL + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("checking (" + propsURL + ")");
         }
         Properties p = new Properties();
         if (propsURL != null) {
@@ -1529,7 +1530,7 @@ public class PropertyHandler
                 p.load(is);
                 is.close();
             } catch (IOException e) {
-                logger.warning("Exception reading map properties at " + propsURL + ": " + e);
+                logger.error("Exception reading map properties at " + propsURL + ": " + e);
             }
         }
         return p;

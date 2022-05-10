@@ -29,7 +29,6 @@ import java.awt.RenderingHints.Key;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import com.bbn.openmap.layer.OMGraphicHandlerLayer;
 import com.bbn.openmap.util.PropUtils;
@@ -161,8 +160,8 @@ public class RenderingHintsRenderPolicy extends StandardRenderPolicy {
         String renderingHintsString = props.getProperty(prefix
                 + RenderingHintsProperty);
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("RHRP: decoding rendering hints: "
+        if (logger.isDebugEnabled()) {
+            logger.debug("RHRP: decoding rendering hints: "
                     + renderingHintsString);
         }
 
@@ -188,21 +187,21 @@ public class RenderingHintsRenderPolicy extends StandardRenderPolicy {
                         }
 
                         if (key != null && value != null) {
-                            put(key, value);                            if (logger.isLoggable(Level.FINE)) {
-                                logger.fine("RHRP+++ adding "
+                            put(key, value);                            if (logger.isDebugEnabled()) {
+                                logger.debug("RHRP+++ adding "
                                         + renderingHintKeyString + " | "
                                         + renderingHintValueString);
                             }
                         } else {
-                            if (logger.isLoggable(Level.FINE)) {
-                                logger.fine("RHRP--- NOT adding "
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("RHRP--- NOT adding "
                                         + renderingHintKeyString + " (" + key
                                         + ") | " + renderingHintValueString
                                         + " (" + value + ")");
                             }
                         }
-                    } else if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("RHRP--- NOT adding "
+                    } else if (logger.isDebugEnabled()) {
+                        logger.debug("RHRP--- NOT adding "
                                 + renderingHintKeyString);
                     }
                 }

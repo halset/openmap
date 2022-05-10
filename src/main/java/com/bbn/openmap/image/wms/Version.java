@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;

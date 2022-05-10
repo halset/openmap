@@ -48,8 +48,6 @@ import java.net.URL;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -64,6 +62,9 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -128,7 +129,7 @@ import com.bbn.openmap.util.propertyEditor.OptionPropertyEditor;
 public class DrawingAttributes
         implements ActionListener, Serializable, Cloneable, PropertyConsumer, PropertyChangeListener, ShapeRenderer {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.omGraphics.DrawingAttributes");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.omGraphics.DrawingAttributes");
 
     /**
      * 
@@ -580,8 +581,8 @@ public class DrawingAttributes
 
                     return new TexturePaint(bi, new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
                 } catch (InterruptedException ie) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.warning("DrawingAttributes: Interrupted Exception scaling texture paint");
+                    if (logger.isDebugEnabled()) {
+                        logger.error("DrawingAttributes: Interrupted Exception scaling texture paint");
                     }
                 }
             }
@@ -1073,8 +1074,8 @@ public class DrawingAttributes
 
             lineButton.setIcon(getDrawingAttributesIcon(this, icon_width, icon_height, true));
         } else {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("unrecognized command > " + command);
+            if (logger.isDebugEnabled()) {
+                logger.debug("unrecognized command > " + command);
             }
         }
     }
@@ -1108,8 +1109,8 @@ public class DrawingAttributes
      * gets the color and line toolbar and embeds it into a JPanel.
      */
     public Component getGUI() {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("DrawingAttributes: creating palette.");
+        if (logger.isDebugEnabled()) {
+            logger.debug("DrawingAttributes: creating palette.");
         }
 
         return getColorAndLineGUI();
@@ -1126,7 +1127,7 @@ public class DrawingAttributes
         if (palette == null || toolbar == null) {
             palette = new JPanel();
 
-            if (logger.isLoggable(Level.FINER)) {
+            if (logger.isDebugEnabled()) {
                 palette.setBorder(BorderFactory.createLineBorder(Color.red));
             }
 
@@ -1508,19 +1509,19 @@ public class DrawingAttributes
                 while (t.hasMoreTokens()) {
                     String segment = t.nextToken();
                     lineDash[dashCount++] = Float.parseFloat(segment);
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("read " + segment);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("read " + segment);
                     }
                 }
 
             } catch (NoSuchElementException nsee) {
-                logger.fine("DrawingAttributes.init: dash pattern attributes wrong - should be dashPattern=(number pixels on) (number pixels off)");
+                logger.debug("DrawingAttributes.init: dash pattern attributes wrong - should be dashPattern=(number pixels on) (number pixels off)");
                 lineDash = null;
             } catch (NumberFormatException nfe) {
-                logger.fine("DrawingAttributes.init: Number format exception for dashPattern");
+                logger.debug("DrawingAttributes.init: Number format exception for dashPattern");
                 lineDash = null;
             } catch (NullPointerException npe) {
-                logger.fine("DrawingAttributes.init: Caught null pointer exception - probably resulting from non-float number format exception for dashPattern");
+                logger.debug("DrawingAttributes.init: Caught null pointer exception - probably resulting from non-float number format exception for dashPattern");
                 lineDash = null;
             }
 
@@ -1547,7 +1548,7 @@ public class DrawingAttributes
                 try {
                     dashPhase = Float.valueOf(dPhase).floatValue();
                 } catch (NumberFormatException nfe) {
-                    logger.fine("DrawingAttributes.init: Number format exception for dashPhase");
+                    logger.debug("DrawingAttributes.init: Number format exception for dashPhase");
                     dashPhase = defaultDashPhase;
                 }
             } else {
@@ -1603,10 +1604,10 @@ public class DrawingAttributes
                     fillPattern = new TexturePaint(bi, new Rectangle(0, 0, bi.getWidth(), bi.getHeight()));
                 }
             } catch (MalformedURLException murle) {
-                logger.fine("DrawingAttributes.init: bad texture URL - \n     " + realPrefix + fillPatternProperty);
+                logger.debug("DrawingAttributes.init: bad texture URL - \n     " + realPrefix + fillPatternProperty);
                 fillPattern = null;
             } catch (InterruptedException ie) {
-                logger.fine("DrawingAttributes.init: bad problems getting texture URL - \n" + ie);
+                logger.debug("DrawingAttributes.init: bad problems getting texture URL - \n" + ie);
                 fillPattern = null;
             }
         }

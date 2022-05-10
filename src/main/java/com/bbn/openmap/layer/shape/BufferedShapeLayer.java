@@ -27,7 +27,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import com.bbn.openmap.io.FormatException;
 import com.bbn.openmap.layer.shape.SpatialIndex.Entry;
@@ -103,10 +102,10 @@ public class BufferedShapeLayer extends ShapeLayer {
                 bufferedList = getWholePlanet();
             }
         } catch (FormatException fe) {
-            logger.warning(fe.getMessage());
+            logger.error(fe.getMessage());
             return list;
         } catch (IOException ioe) {
-            logger.warning(ioe.getMessage());
+            logger.error(ioe.getMessage());
             return list;
         }
 
@@ -124,8 +123,8 @@ public class BufferedShapeLayer extends ShapeLayer {
         // ulLon >= lrLon, but we need to be careful of the check for
         // equality because of floating point arguments...
         if (ProjMath.isCrossingDateline(ulLon, lrLon, proj.getScale())) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(getName() + ": Dateline is on screen");
+            if (logger.isDebugEnabled()) {
+                logger.debug(getName() + ": Dateline is on screen");
             }
 
             double ymin = Math.min(ulLat, lrLat);

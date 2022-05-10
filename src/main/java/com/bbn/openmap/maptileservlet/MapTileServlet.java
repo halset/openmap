@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -19,6 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.util.ComponentFactory;
 import com.bbn.openmap.util.PropUtils;
@@ -76,9 +77,9 @@ public class MapTileServlet
                   }
                }
             } catch (MalformedURLException murle) {
-               logger.warning("MalformedURLException reading " + desc);
+               logger.error("MalformedURLException reading " + desc);
             } catch (IOException ioe) {
-               logger.warning("IOException reading " + desc);
+               logger.error("IOException reading " + desc);
             }
          }
       }
@@ -104,7 +105,7 @@ public class MapTileServlet
             }
 
          } catch (Exception e) {
-            getLogger().severe("Problem creating " + className + ", " + e.getMessage());
+            getLogger().error("Problem creating " + className + ", " + e.getMessage());
          }
       }
 
@@ -121,8 +122,8 @@ public class MapTileServlet
 
       String pathInfo = req.getPathInfo();
       Logger logger = getLogger();
-      if (logger.isLoggable(Level.FINE)) {
-         getLogger().fine("received: " + pathInfo);
+      if (logger.isDebugEnabled()) {
+         getLogger().debug("received: " + pathInfo);
       }
 
       MapTileSet mts = getMapTileSetForRequest(pathInfo);
@@ -135,8 +136,8 @@ public class MapTileServlet
             out.write(imageData, 0, imageData.length);
             osw.flush();
          } catch (Exception e) {
-            if (logger.isLoggable(Level.FINE)) {
-               getLogger().fine("Tile not found: " + pathInfo);
+            if (logger.isDebugEnabled()) {
+               getLogger().debug("Tile not found: " + pathInfo);
             }
             HttpConnection.writeHttpResponse(out, HttpConnection.CONTENT_PLAIN, "Problem loading " + pathInfo);
          }
@@ -169,7 +170,7 @@ public class MapTileServlet
       /**
        * The logger for this class
        */
-      private static final Logger LOGGER = Logger.getLogger(MapTileServlet.class.getName());
+      private static final Logger LOGGER = LoggerFactory.getLogger(MapTileServlet.class.getName());
 
       /**
        * Prevent instantiation

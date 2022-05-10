@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 
 import com.bbn.openmap.layer.OMGraphicHandlerLayer;
 import com.bbn.openmap.omGraphics.OMGraphicList;
@@ -103,14 +102,14 @@ public class BufferedImageRenderPolicy
 
             return list;
         } else {
-            logger.warning("NULL layer, can't do anything.");
+            logger.error("NULL layer, can't do anything.");
         }
         return null;
     }
 
     public void paint(Graphics g) {
         if (layer == null) {
-            logger.warning("NULL layer, skipping...");
+            logger.error("NULL layer, skipping...");
             return;
         }
 
@@ -153,8 +152,8 @@ public class BufferedImageRenderPolicy
             }
             setCompositeOnGraphics(g2);
             bufferedImage.render(g2);
-        } else if (logger.isLoggable(Level.FINE)) {
-            logger.fine(layer.getName() + ".paint(): " + (list == null ? "NULL list, skipping..." : " skipping due to projection."));
+        } else if (logger.isDebugEnabled()) {
+            logger.debug(layer.getName() + ".paint(): " + (list == null ? "NULL list, skipping..." : " skipping due to projection."));
         }
 
         g2.dispose();

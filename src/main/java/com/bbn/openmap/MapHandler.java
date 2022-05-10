@@ -29,8 +29,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The MapHandler is an extension of the BeanContextServicesSupport, with the
@@ -71,7 +72,7 @@ public class MapHandler
 
    private static final long serialVersionUID = 1L;
 
-   public static Logger logger = Logger.getLogger("com.bbn.openmap.MapHandler");
+   public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.MapHandler");
 
    protected SoloMapComponentPolicy policy;
    protected boolean DEBUG = false;
@@ -79,7 +80,7 @@ public class MapHandler
    protected Vector<Object> addLaterVector = null;
 
    public MapHandler() {
-      DEBUG = logger.isLoggable(Level.FINE);
+      DEBUG = logger.isDebugEnabled();
    }
 
    /**
@@ -114,7 +115,7 @@ public class MapHandler
          addLaterVector = new Vector<Object>();
       }
       if (DEBUG) {
-         logger.fine("=== Adding " + obj.getClass().getName() + " to list for later addition");
+         logger.debug("=== Adding " + obj.getClass().getName() + " to list for later addition");
       }
       addLaterVector.add(obj);
    }
@@ -134,7 +135,7 @@ public class MapHandler
          while (it.hasNext()) {
             Object obj = it.next();
             if (DEBUG) {
-               logger.fine("+++ Adding " + obj.getClass().getName() + " to MapHandler from later list.");
+               logger.debug("+++ Adding " + obj.getClass().getName() + " to MapHandler from later list.");
             }
             add(obj);
          }
@@ -167,7 +168,7 @@ public class MapHandler
             try {
                passedSoloMapComponentTest = getPolicy().canAdd(this, obj);
             } catch (MultipleSoloMapComponentException msmce) {
-               logger.fine(msmce.getMessage());
+               logger.debug(msmce.getMessage());
                return false;
             }
          }
@@ -176,7 +177,7 @@ public class MapHandler
 
             if (isAddInProgress()) {
                if (DEBUG) {
-                  logger.fine("MapHandler: Attempting to add while add in progress, adding [" + obj.getClass().getName()
+                  logger.debug("MapHandler: Attempting to add while add in progress, adding [" + obj.getClass().getName()
                         + "]object to list");
                }
                addLater(obj);
@@ -192,7 +193,7 @@ public class MapHandler
       } catch (java.util.ConcurrentModificationException cme) {
          if (obj != null) {
             logger
-                  .warning("MapHandler caught ConcurrentModificationException when adding ["
+                  .error("MapHandler caught ConcurrentModificationException when adding ["
                         + obj.getClass().getName()
                         + "]. The addition of this component to the MapHandler is causing some other component to attempt to be added as well, and the coping mechanism in the MapHandler is not handling it well.");
             if (DEBUG) {

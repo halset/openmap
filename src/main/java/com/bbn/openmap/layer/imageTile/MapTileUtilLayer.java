@@ -16,7 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -28,6 +27,9 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.layer.OMGraphicHandlerLayer;
 import com.bbn.openmap.omGraphics.OMGraphicList;
@@ -52,7 +54,7 @@ public class MapTileUtilLayer
       extends OMGraphicHandlerLayer
       implements ListSelectionListener {
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.layer.imageTile.MapTileUtilLayer");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.imageTile.MapTileUtilLayer");
    protected GeoCoordTransformation coordTransform = LatLonGCT.INSTANCE;
    protected String tileRootDir;
    protected HashMap<String, BufferedImage> images;

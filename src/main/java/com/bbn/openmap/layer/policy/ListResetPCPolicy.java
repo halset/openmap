@@ -22,8 +22,8 @@
 
 package com.bbn.openmap.layer.policy;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.LayerStatusEvent;
 import com.bbn.openmap.event.ProjectionEvent;
@@ -40,7 +40,7 @@ import com.bbn.openmap.proj.Projection;
 public class ListResetPCPolicy
       implements ProjectionChangePolicy {
 
-   protected Logger logger = Logger.getLogger("com.bbn.openmap.layer.policy.ProjectionChangePolicy");
+   protected Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.policy.ProjectionChangePolicy");
 
    /**
     * Don't let this be null.
@@ -74,8 +74,8 @@ public class ListResetPCPolicy
          // proj will be null if the projection hasn't changed, a
          // signal that work does not need to be done.
          if (proj != null) {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine(getLayer().getName() + ": projectionChanged with NEW projection, resetting list.");
+            if (logger.isDebugEnabled()) {
+               logger.debug(getLayer().getName() + ": projectionChanged with NEW projection, resetting list.");
             }
             layer.setList(null);
             // Check to see if the projection is worth reacting to.
@@ -83,8 +83,8 @@ public class ListResetPCPolicy
                layer.doPrepare();
             }
          } else {
-            if (logger.isLoggable(Level.FINE)) {
-               logger.fine(getLayer().getName() + ": projectionChanged with OLD projection, repainting.");
+            if (logger.isDebugEnabled()) {
+               logger.debug(getLayer().getName() + ": projectionChanged with OLD projection, repainting.");
             }
             if (!layer.isWorking()) {
                // This repaint may look redundant, but it handles
@@ -101,7 +101,7 @@ public class ListResetPCPolicy
             }
          }
       } else {
-         logger.warning("NULL layer, can't do anything.");
+         logger.error("NULL layer, can't do anything.");
       }
    }
 

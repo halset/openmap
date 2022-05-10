@@ -27,7 +27,9 @@ import java.awt.geom.Point2D;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.util.Attributable;
 
@@ -39,7 +41,7 @@ import com.bbn.openmap.util.Attributable;
  */
 public class OMEvent implements Attributable {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.event.OMEvent");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.event.OMEvent");
 
     public final static String ATT_KEY_DETAILED_INFORMATION = "DETAILS";
     public final static String ATT_KEY_SELECTED = "SELECTED";

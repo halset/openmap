@@ -8,7 +8,6 @@ package com.bbn.openmap.dataAccess.cgm;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * A color table for indexed colors.
@@ -28,7 +27,7 @@ public class ColorTable
 
       startingIndex = args[0];
 
-      logger.fine("starting table index: " + startingIndex);
+      logger.debug("starting table index: " + startingIndex);
 
       // Assuming RGB!
       // Subtracting one because the first argument is starting index.
@@ -40,7 +39,7 @@ public class ColorTable
             int g = args[i + 1];
             int b = args[i + 2];
 
-            logger.fine("Color[" + index + "] r: " + r + ", g: " + g + ", b: " + b);
+            logger.debug("Color[" + index + "] r: " + r + ", g: " + g + ", b: " + b);
 
             colors[index] = new Color(r, g, b);
          }
@@ -65,7 +64,7 @@ public class ColorTable
 
    public void paint(CGMDisplay d) {
 
-      if (logger.isLoggable(Level.FINE)) {
+      if (logger.isDebugEnabled()) {
          int dim = 30;
          int x = 0;
          int y = 0;

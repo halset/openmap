@@ -36,8 +36,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -45,6 +43,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MapHandler;
 import com.bbn.openmap.gui.MapPanelChild;
@@ -69,7 +70,7 @@ import com.bbn.openmap.util.PropUtils;
  */
 public class EventPanel extends OMComponentPanel implements MapPanelChild {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.event.EventPanel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.event.EventPanel");
 
     public final static String SHOW_ALL_EVENTS_STRING = " Show All Events ";
     public final static String HIDE_ALL_EVENTS_STRING = " Hide All Events ";
@@ -104,7 +105,7 @@ public class EventPanel extends OMComponentPanel implements MapPanelChild {
     }
 
     public void addEventPresenter(EventPresenter ep) {
-        logger.fine("adding " + ep.getClass().getName());
+        logger.debug("adding " + ep.getClass().getName());
         eventPresenters.add(ep);
         initInterface();
     }
@@ -142,7 +143,7 @@ public class EventPanel extends OMComponentPanel implements MapPanelChild {
      * EventPresenter).
      */
     public void initInterface() {
-        logger.fine("rebuilding interface");
+        logger.debug("rebuilding interface");
         removeAll();
 
         int numPresenters = eventPresenters.size();
@@ -174,8 +175,8 @@ public class EventPanel extends OMComponentPanel implements MapPanelChild {
             for (Iterator<EventPresenter> it = eventPresenters.iterator(); it.hasNext();) {
                 eventPresenter = it.next();
                 String name = eventPresenter.getName();
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("\tEventPanel: adding presenter (" + name
+                if (logger.isDebugEnabled()) {
+                    logger.debug("\tEventPanel: adding presenter (" + name
                             + ") to tabbed pane");
                 }
                 presenterComponent = eventPresenter.getComponent();
@@ -195,7 +196,7 @@ public class EventPanel extends OMComponentPanel implements MapPanelChild {
 
         revalidate();
 
-        logger.fine("--- EventPanel: Done");
+        logger.debug("--- EventPanel: Done");
 
     }
 

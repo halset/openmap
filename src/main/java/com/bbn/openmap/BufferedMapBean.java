@@ -29,7 +29,6 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 
 /**
  * The BufferedMapBean extends the MapBean by adding (you guessed it) buffering.
@@ -91,8 +90,8 @@ public class BufferedMapBean
       }
 
       if (bad) {
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("component resizing is not valid for buffer.");
+         if (logger.isDebugEnabled()) {
+            logger.debug("component resizing is not valid for buffer.");
          }
          drawingBuffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
       }
@@ -149,8 +148,8 @@ public class BufferedMapBean
             gr.setClip(clip);
          }
          // gr.drawImage(drawingBuffer,0,0,null);
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("BufferedMapBean rendering layers to buffer.");
+         if (logger.isDebugEnabled()) {
+            logger.debug("BufferedMapBean rendering layers to buffer.");
          }
 
          paintChildrenWithBorder(gr, false);
@@ -158,8 +157,8 @@ public class BufferedMapBean
          // reset the clip to full map
          // gr.setClip(0, 0, w, h);
          gr.dispose();
-      } else if (logger.isLoggable(Level.FINE)) {
-         logger.fine("BufferedMapBean rendering buffer.");
+      } else if (logger.isDebugEnabled()) {
+         logger.debug("BufferedMapBean rendering buffer.");
       }
 
       g = g.create();

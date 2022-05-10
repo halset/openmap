@@ -27,7 +27,9 @@ package com.bbn.openmap.layer;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.omGraphics.DrawingAttributes;
 import com.bbn.openmap.omGraphics.OMGraphic;
@@ -62,7 +64,7 @@ import com.bbn.openmap.util.PropUtils;
  */
 public class AOILayer extends OMGraphicHandlerLayer {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.AOILayer");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.AOILayer");
 
     public final static String AOIProperty = "aoi";
     public final static String AOICoordsProperty = "coords";
@@ -98,7 +100,7 @@ public class AOILayer extends OMGraphicHandlerLayer {
                 try {
                     coords[coordCount++] = Double.parseDouble(cit.next());
                 } catch (NumberFormatException nfe) {
-                    logger.warning("can't parse coords for " + aoi + ": "
+                    logger.error("can't parse coords for " + aoi + ": "
                             + coordV);
                     break;
                 }

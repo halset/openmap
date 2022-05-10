@@ -28,7 +28,9 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.proj.GreatCircle;
 import com.bbn.openmap.proj.coords.LatLonPoint;
@@ -44,7 +46,7 @@ public class Route implements Cloneable, Serializable {
     private boolean startWithFirstIntersection;
 //    private boolean endWithFirstIntersection;
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     static class NodeInfo {
         Intersection intersection;

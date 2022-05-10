@@ -47,8 +47,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -66,6 +64,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -134,7 +135,7 @@ public class ImageTileLayer extends OMGraphicHandlerLayer {
     */
    private static final long serialVersionUID = 1L;
 
-   public static Logger logger = Logger
+   public static Logger logger = LoggerFactory
             .getLogger("com.bbn.openmap.layer.imageTile.ImageTileLayer");
 
     public final static String ImageFilePathProperty = "imageFilePath";
@@ -224,7 +225,7 @@ public class ImageTileLayer extends OMGraphicHandlerLayer {
             imageReaderLoaders.add(idl);
         } else {
             logger
-                    .warning("ImageTileLayer needs JAI installed in order to use GeoTIFF Image Reader.");
+                    .error("ImageTileLayer needs JAI installed in order to use GeoTIFF Image Reader.");
         }
 
         idl = (ImageReaderLoader) ComponentFactory
@@ -233,7 +234,7 @@ public class ImageTileLayer extends OMGraphicHandlerLayer {
             imageReaderLoaders.add(idl);
         } else {
             logger
-                    .warning("ImageTileLayer needs JAI installed in order to use World File Image Reader.");
+                    .error("ImageTileLayer needs JAI installed in order to use World File Image Reader.");
         }
     }
 
@@ -447,11 +448,11 @@ public class ImageTileLayer extends OMGraphicHandlerLayer {
                         }
 
                     } else {
-                        logger.warning("ImageReaders not configured in "
+                        logger.error("ImageReaders not configured in "
                                 + getName() + " ImageTileLayer.");
                     }
                 } else {
-                    logger.warning("Can't get URL from " + filePath);
+                    logger.error("Can't get URL from " + filePath);
                 }
 
             } catch (MalformedURLException murle) {
@@ -810,8 +811,8 @@ public class ImageTileLayer extends OMGraphicHandlerLayer {
                     Proj proj = (Proj) mapBean.getProjection();
                     float scale = proj.getScale(anchor1, anchor2, proj
                             .forward(anchor1), proj.forward(anchor2));
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("Images cover " + anchor1 + " to "
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Images cover " + anchor1 + " to "
                                 + anchor2 + ", scale adjusted to " + scale);
                     }
 

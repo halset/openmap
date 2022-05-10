@@ -5,10 +5,11 @@
  */
 package com.bbn.openmap.ext.jts;
 
-import com.bbn.openmap.util.DeepCopyUtil;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
+
+import com.bbn.openmap.util.DeepCopyUtil;
 
 class XYCoordinateSequence
       implements CoordinateSequence {

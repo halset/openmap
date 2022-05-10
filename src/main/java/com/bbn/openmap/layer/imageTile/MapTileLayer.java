@@ -26,7 +26,9 @@ package com.bbn.openmap.layer.imageTile;
 
 import java.awt.Container;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.PropertyConsumer;
 import com.bbn.openmap.dataAccess.mapTile.MapTileFactory;
@@ -102,7 +104,7 @@ public class MapTileLayer
 
     private static final long serialVersionUID = 1L;
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.layer.imageTile.TileLayer");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.imageTile.TileLayer");
 
     /**
      * Property that sets the class name of the MapTileFactory to use for this
@@ -230,7 +232,7 @@ public class MapTileLayer
     }
 
     public void setTileFactory(MapTileFactory tileFactory) {
-        logger.fine("setting tile factory to: " + tileFactory.getClass().getName());
+        logger.debug("setting tile factory to: " + tileFactory.getClass().getName());
         // This allows for general faster response, but causes the map to jump
         // around a little bit when used with the BufferedImageRenderPolicy and
         // when the projection changes occur rapidly, like when zooming and

@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.proj.coords.LatLonPoint;
 import com.bbn.openmap.util.FileUtils;
@@ -24,7 +25,7 @@ import com.bbn.openmap.util.FileUtils;
  */
 public class MapTileUtil {
 
-    static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.mapTile");
+    static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.mapTile");
 
     public final static String SOURCE_PROPERTY = "source";
     public final static String BOUNDS_PROPERTY = "bounds";
@@ -160,7 +161,7 @@ public class MapTileUtil {
             try {
                 zoomLevels[zoom] = true;
             } catch (ArrayIndexOutOfBoundsException aioobe) {
-                logger.warning("zoom level invalid, ignoring: " + zoom);
+                logger.error("zoom level invalid, ignoring: " + zoom);
             }
             return this;
         }
@@ -262,7 +263,7 @@ public class MapTileUtil {
             if (source != null && destination != null) {
                 new MapTileUtil(this).grabTiles(this);
             } else {
-                logger.warning("Need a source and destination for tile locations");
+                logger.error("Need a source and destination for tile locations");
             }
         }
 
@@ -318,7 +319,7 @@ public class MapTileUtil {
                 logger.info("Created " + getDestination() + " with " + fileCount + " files.");
 
             } else {
-                logger.warning("Need a source and destination for tile locations");
+                logger.error("Need a source and destination for tile locations");
             }
         }
 
@@ -378,7 +379,7 @@ public class MapTileUtil {
             if (source != null && destination != null) {
                 new MapTileUtil(this).grabTiles(this);
             } else {
-                logger.warning("Need a source and destination for tile locations");
+                logger.error("Need a source and destination for tile locations");
             }
         }
 
@@ -406,12 +407,12 @@ public class MapTileUtil {
                 url = new java.net.URL(imagePath);
                 java.net.HttpURLConnection urlc = (java.net.HttpURLConnection) url.openConnection();
 
-                if (logger.isLoggable(Level.FINER)) {
-                    logger.finer("url content type: " + urlc.getContentType());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("url content type: " + urlc.getContentType());
                 }
 
                 if (urlc == null) {
-                    logger.warning("unable to connect to " + imagePath);
+                    logger.error("unable to connect to " + imagePath);
                     return;
                 }
 
@@ -448,9 +449,9 @@ public class MapTileUtil {
 
                 } // end if image
             } catch (java.net.MalformedURLException murle) {
-                logger.warning("WebImagePlugIn: URL \"" + imagePath + "\" is malformed.");
+                logger.error("WebImagePlugIn: URL \"" + imagePath + "\" is malformed.");
             } catch (java.io.IOException ioe) {
-                logger.warning("Couldn't connect to " + imagePath + "Connection Problem");
+                logger.error("Couldn't connect to " + imagePath + "Connection Problem");
             }
 
         }

@@ -25,8 +25,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.io.BinaryFile;
 import com.bbn.openmap.io.FormatException;
@@ -43,7 +44,7 @@ import com.bbn.openmap.util.Debug;
  */
 public class CoverageTable {
 
-   protected final static Logger logger = Logger.getLogger("com.bbn.openmap.layer.vpf.CoverageTable");
+   protected final static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.vpf.CoverageTable");
 
    /** our coverage type - such as "po", "bnd", "hydro" */
    final public String covtype;
@@ -744,8 +745,8 @@ public class CoverageTable {
          }
 
          fci.checkInit();
-         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(" for " + featureName + ": " + fci.getDescription());
+         if (logger.isDebugEnabled()) {
+            logger.debug(" for " + featureName + ": " + fci.getDescription());
          }
 
          /**
@@ -802,8 +803,8 @@ public class CoverageTable {
                    */
                   if (ph.matches(facc, fci, fcirow)) {
                      foundMatch = true;
-                     if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("+++ MATCH FOUND for " + facc + " tileid:" + fcirow.get(tileIDIndex) + ", primID:"
+                     if (logger.isDebugEnabled()) {
+                        logger.debug("+++ MATCH FOUND for " + facc + " tileid:" + fcirow.get(tileIDIndex) + ", primID:"
                               + fcirow.get(primitiveIDIndex));
                      }
 
@@ -812,8 +813,8 @@ public class CoverageTable {
                      // Use the CoverageTable to create it via the
                      // warehouse,
 
-                     if (logger.isLoggable(Level.FINER)) {
-                        logger.finer("CoverageTable new feature " + fcirow);
+                     if (logger.isDebugEnabled()) {
+                        logger.debug("CoverageTable new feature " + fcirow);
                      }
 
                      int tileID = fciTilingAdapter.getTileId(fcirow);
@@ -823,15 +824,15 @@ public class CoverageTable {
                      if (tileID != oldTileID) {
                         tables.close();
 
-                        if (logger.isLoggable(Level.FINER)) {
-                           logger.finer("opening new tile (" + tileID + ")");
+                        if (logger.isDebugEnabled()) {
+                           logger.debug("opening new tile (" + tileID + ")");
                         }
 
                         currentTile = (tileID == -1) ? new TileDirectory() : cat.getTileWithID(tileID);
 
                         if (currentTile == null) {
-                           if (logger.isLoggable(Level.FINE)) {
-                              logger.warning("VPFLayer|CoverageTable.drawFeatures: null tile from bogus ID (" + tileID + ") from "
+                           if (logger.isDebugEnabled()) {
+                              logger.error("VPFLayer|CoverageTable.drawFeatures: null tile from bogus ID (" + tileID + ") from "
                                     + fci.filename + ", skipping...");
                            }
                            continue;
@@ -916,13 +917,13 @@ public class CoverageTable {
                }
 
                if (!foundMatch) {
-                  if (logger.isLoggable(Level.FINE)) {
-                     logger.fine("--- NO MATCH FOUND for " + facc + ", type:" + featureType + ", tileid:" + fcirow.get(tileIDIndex)
+                  if (logger.isDebugEnabled()) {
+                     logger.debug("--- NO MATCH FOUND for " + facc + ", type:" + featureType + ", tileid:" + fcirow.get(tileIDIndex)
                            + ", primID:" + fcirow.get(primitiveIDIndex));
                   }
                }
             } else if (warehouse.debugFacc == null) {
-               if (logger.isLoggable(Level.FINE)) {
+               if (logger.isDebugEnabled()) {
                   logger.info("didn't find facc list for: " + facc);
                }
             }
@@ -1105,7 +1106,7 @@ class TableHolder {
          cnt = new NodeTable(coverageTable, tile, false);
       }
 
-      if (CoverageTable.logger.isLoggable(Level.FINE)) {
+      if (CoverageTable.logger.isDebugEnabled()) {
          int activeTableCount = 0;
          if (edg != null)
             activeTableCount++;
@@ -1118,7 +1119,7 @@ class TableHolder {
          if (cnt != null)
             activeTableCount++;
          if (activeTableCount > 1) {
-            CoverageTable.logger.warning("TableHolder has more than one feature type");
+            CoverageTable.logger.error("TableHolder has more than one feature type");
          }
       }
 

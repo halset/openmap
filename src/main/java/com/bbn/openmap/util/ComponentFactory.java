@@ -26,8 +26,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.BasicI18n;
 import com.bbn.openmap.PropertyConsumer;
@@ -47,7 +48,7 @@ import com.bbn.openmap.event.ProgressSupport;
  */
 public class ComponentFactory {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.util.ComponentFactory");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.ComponentFactory");
 
     /**
      * The property to use for the class name of new objects - ".class". Expects
@@ -252,7 +253,7 @@ public class ComponentFactory {
             String className = properties.getProperty(classProperty);
 
             if (className == null) {
-                logger.warning("Failed to locate property \"" + componentName + "\" with class \"" + classProperty
+                logger.error("Failed to locate property \"" + componentName + "\" with class \"" + classProperty
                         + "\"\n  Skipping component \"" + componentName + "\"");
                 if (matchInOutVectorSize) {
                     vector.add(componentName);
@@ -268,8 +269,8 @@ public class ComponentFactory {
 
             if (component != null) {
                 vector.add(component);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("ComponentFactory: [" + className + "(" + i + ")] created");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("ComponentFactory: [" + className + "(" + i + ")] created");
                 }
             } else {
                 if (matchInOutVectorSize) {
@@ -412,9 +413,9 @@ public class ComponentFactory {
         boolean DEBUG = false;
         try {
 
-            if (logger.isLoggable(Level.FINER)) {
+            if (logger.isDebugEnabled()) {
                 DEBUG = true;
-                logger.finer("creating: " + className);
+                logger.debug("creating: " + className);
             }
 
             // Apparently, this fails in certain cases where OpenMap is being
@@ -432,7 +433,7 @@ public class ComponentFactory {
             Class<?> newObjClass = Class.forName(className.trim(), true, cl);
 
             if (DEBUG)
-                logger.finer(" - got class for " + className);
+                logger.debug(" - got class for " + className);
 
             if (argClasses == null) {
                 if (constructorArgs != null && constructorArgs.length > 0) {
@@ -458,7 +459,7 @@ public class ComponentFactory {
                             sb.append(", ");
                     }
                 }
-                logger.finer(" - created class arguments [" + sb.toString() + "]");
+                logger.debug(" - created class arguments [" + sb.toString() + "]");
             }
 
             Constructor<?> constructor = null;
@@ -468,12 +469,12 @@ public class ComponentFactory {
                 constructor = newObjClass.getConstructor(argClasses);
 
                 if (DEBUG)
-                    logger.finer(" - got constructor");
+                    logger.debug(" - got constructor");
 
                 // Create component
                 obj = constructor.newInstance(constructorArgs);
                 if (DEBUG)
-                    logger.finer(" - got object");
+                    logger.debug(" - got object");
 
             } catch (NoSuchMethodException nsmei) {
                 /*
@@ -482,12 +483,12 @@ public class ComponentFactory {
                  */
                 obj = createWithSubclassConstructorArgs(newObjClass, argClasses, constructorArgs);
                 if (DEBUG && obj != null)
-                    logger.finer(" - got object on try #2");
+                    logger.debug(" - got object on try #2");
             }
 
             if (obj instanceof PropertyConsumer && properties != null) {
                 if (DEBUG) {
-                    logger.finer("  setting properties with prefix \"" + prefix + "\"");
+                    logger.debug("  setting properties with prefix \"" + prefix + "\"");
                 }
                 ((PropertyConsumer) obj).setProperties(prefix, properties);
 
@@ -502,7 +503,7 @@ public class ComponentFactory {
                 }
 
                 if (DEBUG)
-                    logger.finer(" - set properties");
+                    logger.debug(" - set properties");
             }
             return obj;
 
@@ -532,13 +533,13 @@ public class ComponentFactory {
             errorMessage = "ClassNotFoundException: " + cnfe.getMessage();
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Failed to create \"" + className
+        if (logger.isDebugEnabled()) {
+            logger.debug("Failed to create \"" + className
                     + (prefix != null ? "\" using component marker name \"" + prefix + "\"" : "") + " - error message: "
                     + errorMessage);
 
             if (exceptionCaught != null) {
-                logger.log(Level.WARNING, "Exception reported is as follows:", exceptionCaught);
+                logger.error("Exception reported is as follows:", exceptionCaught);
             }
         }
 
@@ -562,7 +563,7 @@ public class ComponentFactory {
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException {
 
-        boolean DEBUG = logger.isLoggable(Level.FINER);
+        boolean DEBUG = logger.isDebugEnabled();
 
         int numArgClasses = 0;
 
@@ -574,7 +575,7 @@ public class ComponentFactory {
         int numConstructors = constructors.length;
 
         if (DEBUG) {
-            logger.finer(" - searching " + numConstructors + " possible constructor" + (numConstructors == 1 ? "" : "s"));
+            logger.debug(" - searching " + numConstructors + " possible constructor" + (numConstructors == 1 ? "" : "s"));
         }
 
         for (int i = 0; i < numConstructors; i++) {
@@ -586,7 +587,7 @@ public class ComponentFactory {
             // First, check the number of arguments for a match
             if (numArgs != numArgClasses) {
                 if (DEBUG) {
-                    logger.finer(" - constructor " + i + " with " + numArgs + " arguments not a match");
+                    logger.debug(" - constructor " + i + " with " + numArgs + " arguments not a match");
                 }
 
                 continue; // Nope, not it.
@@ -597,7 +598,7 @@ public class ComponentFactory {
             // compiler happy.
             if (numArgs == 0 || argClasses == null) {
                 if (DEBUG) {
-                    logger.finer(" - constructor " + i + " with no arguments is a match");
+                    logger.debug(" - constructor " + i + " with no arguments is a match");
                 }
                 return constructor;
             }
@@ -608,7 +609,7 @@ public class ComponentFactory {
             for (int j = 0; j < numArgs; j++) {
                 if (arguments[j] == argClasses[j]) {
                     if (DEBUG) {
-                        logger.finer(" - direct arg class match, arg " + j);
+                        logger.debug(" - direct arg class match, arg " + j);
                     }
                     good = true; // Maintain true...
                 } else if (arguments[j].isAssignableFrom(argClasses[j])) {
@@ -621,7 +622,7 @@ public class ComponentFactory {
                     // Is this even necessary? Don't think so...
                     argClasses[j] = argClasses[j].getSuperclass();
                     if (DEBUG) {
-                        logger.finer(" - superclass arg class match, arg " + j + " reassigning to " + argClasses[j].toString());
+                        logger.debug(" - superclass arg class match, arg " + j + " reassigning to " + argClasses[j].toString());
                     }
                     good = true; // Maintain true...
                     // } else if (constructorArgs[j] instanceof
@@ -633,7 +634,7 @@ public class ComponentFactory {
 
                 } else {
                     if (DEBUG) {
-                        logger.finer(" - arg class mismatch on arg " + j + ", bailing (" + arguments[j].getName() + " vs. "
+                        logger.debug(" - arg class mismatch on arg " + j + ", bailing (" + arguments[j].getName() + " vs. "
                                 + argClasses[j].getName() + ")");
                     }
                     good = false; // Punch with false
@@ -643,11 +644,11 @@ public class ComponentFactory {
 
             if (good) {
                 if (DEBUG) {
-                    logger.finer(" - creating object");
+                    logger.debug(" - creating object");
                 }
                 Object obj = constructor.newInstance(constructorArgs);
                 if (DEBUG) {
-                    logger.finer(" - created object");
+                    logger.debug(" - created object");
                 }
                 return obj;
             }

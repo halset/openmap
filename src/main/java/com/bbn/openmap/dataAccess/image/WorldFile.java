@@ -32,8 +32,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A world file is a small text file that describes the geographic location of
@@ -58,7 +59,7 @@ import java.util.logging.Logger;
  */
 public class WorldFile {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.image.WorldFile");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.image.WorldFile");
 
     /**
      * The dimension of a pixel in map units in the x direction.
@@ -117,7 +118,7 @@ public class WorldFile {
         x = Double.parseDouble(br.readLine());
         y = Double.parseDouble(br.readLine());
 
-        logger.fine(this.toString());
+        logger.debug(this.toString());
     }
     
     public void write(OutputStream os) throws IOException {
@@ -159,9 +160,9 @@ public class WorldFile {
                 extension = startingString.substring(extensionIndex);
                 worldFileNameBase = startingString.substring(0, extensionIndex);
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("base name for image: " + worldFileNameBase);
-                    logger.fine("image extension: " + extension);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("base name for image: " + worldFileNameBase);
+                    logger.debug("image extension: " + extension);
                 }
 
                 // Try adding w to extension and seeing if that file is there.
@@ -193,7 +194,7 @@ public class WorldFile {
                 double y = wf.getY();
 
                 if (x < -180 || x > 180 || y > 90 || y < -90) {
-                    logger.warning("Looks like an unsupported projection: "
+                    logger.error("Looks like an unsupported projection: "
                             + wf.toString());
                     wf = new ErrWorldFile("World File (" + worldFileNameBase
                             + extension
@@ -212,13 +213,13 @@ public class WorldFile {
 
     protected static InputStream checkValidityAndGetStream(String wfURLString) {
         try {
-            logger.fine("checking for world file: " + wfURLString);
+            logger.debug("checking for world file: " + wfURLString);
             URL wfURL = new URL(wfURLString);
             return wfURL.openStream();
         } catch (MalformedURLException murle) {
-            logger.fine("MalformedURLException for " + wfURLString);
+            logger.debug("MalformedURLException for " + wfURLString);
         } catch (IOException ioe) {
-            logger.fine("IOException for " + wfURLString);
+            logger.debug("IOException for " + wfURLString);
         }
         return null;
 

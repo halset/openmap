@@ -2,8 +2,9 @@ package com.bbn.openmap.omGraphics.util;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.MoreMath;
 import com.bbn.openmap.geo.Geo;
@@ -57,7 +58,7 @@ import com.bbn.openmap.proj.Length;
 public class RibbonMaker {
 
     protected GeoArray geoCoords;
-    private static final Logger logger = Logger.getLogger("com.bbn.openmap.omGraphics.util.RibbonMaker");
+    private static final Logger logger = LoggerFactory.getLogger("com.bbn.openmap.omGraphics.util.RibbonMaker");
     protected final static int STRAIGHT = 0;
     protected final static int BENDS_LEFT = -1;
     protected final static int BENDS_RIGHT = 1;
@@ -553,8 +554,8 @@ public class RibbonMaker {
             radAngle2 += MoreMath.TWO_PI_D;
         }
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(new StringBuilder("Making arg starting at ").append(Length.DECIMAL_DEGREE.fromRadians(radAngle1))
+        if (logger.isDebugEnabled()) {
+            logger.debug(new StringBuilder("Making arg starting at ").append(Length.DECIMAL_DEGREE.fromRadians(radAngle1))
                                                                     .append(", ")
                                                                     .append(Length.DECIMAL_DEGREE.fromRadians(radAngle2 - radAngle1))
                                                                     .toString());

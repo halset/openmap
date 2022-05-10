@@ -30,8 +30,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.proj.Ellipsoid;
 import com.bbn.openmap.util.ArgParser;
@@ -136,7 +137,7 @@ public class MGRSPoint
    public final static int Z = 'Z';
 
    protected boolean DEBUG = false;
-   protected final static Logger logger = Logger.getLogger("com.bbn.openmap.proj.coords.MGRSPoint");
+   protected final static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.proj.coords.MGRSPoint");
 
    /** The String holding the MGRS coordinate value. */
    protected String mgrs;
@@ -155,7 +156,7 @@ public class MGRSPoint
     * values in.
     */
    public MGRSPoint() {
-      DEBUG = logger.isLoggable(Level.FINE);
+      DEBUG = logger.isDebugEnabled();
    }
 
    /**
@@ -476,17 +477,17 @@ public class MGRSPoint
 
       if (sep > 0) {
          if (DEBUG)
-            logger.fine(" calculating e/n from " + mgrs.substring(i));
+            logger.debug(" calculating e/n from " + mgrs.substring(i));
          float accuracyBonus = 100000f / (float) Math.pow(10, sep);
          if (DEBUG)
-            logger.fine(" calculated accuracy bonus as  " + accuracyBonus);
+            logger.debug(" calculated accuracy bonus as  " + accuracyBonus);
          String sepEastingString = mgrsString.substring(i, i + sep);
          if (DEBUG)
-            logger.fine(" parsed easting as " + sepEastingString);
+            logger.debug(" parsed easting as " + sepEastingString);
          sepEasting = Float.parseFloat(sepEastingString) * accuracyBonus;
          String sepNorthingString = mgrsString.substring(i + sep);
          if (DEBUG)
-            logger.fine(" parsed northing as " + sepNorthingString);
+            logger.debug(" parsed northing as " + sepNorthingString);
          sepNorthing = Float.parseFloat(sepNorthingString) * accuracyBonus;
       }
 
@@ -494,7 +495,7 @@ public class MGRSPoint
       northing = sepNorthing + north100k;
 
       if (DEBUG) {
-         logger.fine("Decoded " + mgrsString + " as zone number: " + zone_number + ", zone letter: " + zone_letter + ", easting: "
+         logger.debug("Decoded " + mgrsString + " as zone number: " + zone_number + ", zone letter: " + zone_letter + ", easting: "
                + easting + ", northing: " + northing + ", 100k: " + hunK);
       }
    }
@@ -527,7 +528,7 @@ public class MGRSPoint
          StringBuffer snorthing = new StringBuffer(Integer.toString((int) northing));
 
          if (DEBUG) {
-            logger.fine(" Resolving MGRS from easting: " + seasting + " derived from " + easting + ", and northing: " + snorthing
+            logger.debug(" Resolving MGRS from easting: " + seasting + " derived from " + easting + ", and northing: " + snorthing
                   + " derived from " + northing);
          }
 
@@ -548,7 +549,7 @@ public class MGRSPoint
          }
 
          if (DEBUG) {
-            logger.fine(" -- modified easting: " + seasting + " and northing: " + snorthing);
+            logger.debug(" -- modified easting: " + seasting + " and northing: " + snorthing);
          }
 
          try {
@@ -652,7 +653,7 @@ public class MGRSPoint
       }
 
       if (DEBUG) {
-         logger.fine("Easting value for " + (char) e + " from set: " + set + ", col: " + curCol + " is " + eastingValue);
+         logger.debug("Easting value for " + (char) e + " from set: " + set + ", col: " + curCol + " is " + eastingValue);
       }
       return eastingValue;
    }
@@ -703,7 +704,7 @@ public class MGRSPoint
       }
 
       if (DEBUG) {
-         logger.fine("Northing value for " + (char) n + " from set: " + set + ", row: " + curRow + " is " + northingValue);
+         logger.debug("Northing value for " + (char) n + " from set: " + set + ", row: " + curRow + " is " + northingValue);
       }
 
       return northingValue;
@@ -960,7 +961,7 @@ public class MGRSPoint
                   outStr2.append(record).append(" to UTM: ").append(mgrsp.zone_number).append(" ").append(mgrsp.easting)
                          .append(" ").append(mgrsp.northing).append("\n");
                } catch (NumberFormatException nfe) {
-                  logger.warning(nfe.getMessage());
+                  logger.error(nfe.getMessage());
                }
 
             } else if (inType.equalsIgnoreCase("UTM")) {

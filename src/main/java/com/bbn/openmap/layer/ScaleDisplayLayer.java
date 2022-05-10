@@ -28,11 +28,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.omGraphics.DrawingAttributes;
 import com.bbn.openmap.omGraphics.OMColor;
@@ -81,7 +83,7 @@ public class ScaleDisplayLayer
       setUnitOfMeasure(Length.KM.toString());
    }
 
-   protected Logger logger = Logger.getLogger("com.bbn.openmap.layer.ScaleDisplayLayer");
+   protected Logger logger = LoggerFactory.getLogger("com.bbn.openmap.layer.ScaleDisplayLayer");
 
    // Color variables for different line types
    protected java.awt.Color lineColor = null;
@@ -290,7 +292,7 @@ public class ScaleDisplayLayer
 
       if (palette == null) {
 
-         logger.fine("creating palette.");
+         logger.debug("creating palette.");
 
          palette = new JPanel();
          uomButtonGroup = new ButtonGroup();

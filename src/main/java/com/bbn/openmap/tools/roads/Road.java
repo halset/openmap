@@ -26,7 +26,9 @@ package com.bbn.openmap.tools.roads;
 
 import java.awt.Point;
 import java.io.Serializable;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.omGraphics.OMGraphicList;
 import com.bbn.openmap.proj.GreatCircle;
@@ -34,7 +36,7 @@ import com.bbn.openmap.proj.coords.LatLonPoint;
 
 public class Road
       implements RoadObject, Serializable {
-   Logger logger = Logger.getLogger(this.getClass().getName());
+   Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
    /**
     * The points along the road. The first and last points are always
@@ -112,7 +114,7 @@ public class Road
    public float getLengthInKilometers() {
       float kilometers = 0.0f;
       LatLonPoint prevPoint = points[0].getLocation();
-      // logger.warning ("" + this + " pt 0 " + points[0] + " pt 1 "
+      // logger.error ("" + this + " pt 0 " + points[0] + " pt 1 "
       // + points[1] + " getSecondInter " + getSecondIntersection
       // ());
       for (int i = 1; i < points.length; i++) {
@@ -266,11 +268,11 @@ public class Road
 
    public void setIntersections(Intersection from, Intersection to) {
       if (from == null) {
-         logger.warning("from is null.");
+         logger.error("from is null.");
          Thread.dumpStack();
       }
       if (to == null) {
-         logger.warning("to is null.");
+         logger.error("to is null.");
          Thread.dumpStack();
       }
 
@@ -289,7 +291,7 @@ public class Road
       points[points.length - 1] = oldPoints[oldPoints.length - 1];
 
       if (points[points.length - 1] == null) {
-         logger.warning("to is null.");
+         logger.error("to is null.");
          Thread.dumpStack();
       }
 
@@ -303,7 +305,7 @@ public class Road
    public void checkPoints() {
       for (int i = 0; i < points.length; i++) {
          if (points[i] == null) {
-            logger.warning("found null point at " + i);
+            logger.error("found null point at " + i);
             Thread.dumpStack();
          }
       }
@@ -321,7 +323,7 @@ public class Road
       System.arraycopy(oldPoints, 0, points, 0, ix);
       points[ix] = wp;
       if (wp == null) {
-         logger.warning("wp is null.");
+         logger.error("wp is null.");
          Thread.dumpStack();
       }
       checkPoints();

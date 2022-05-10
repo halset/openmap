@@ -5,11 +5,7 @@
  */
 package com.bbn.openmap.image.wms;
 
-import java.io.IOException;
 import java.util.Properties;
-
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import com.bbn.openmap.image.PNG8ImageFormatter;
 import com.bbn.openmap.image.WMTConstants;

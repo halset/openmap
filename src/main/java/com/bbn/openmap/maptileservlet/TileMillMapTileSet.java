@@ -9,9 +9,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.mapTile.TileMillMapTileFactory;
 import com.bbn.openmap.image.BufferedImageHelper;
@@ -49,7 +51,7 @@ public class TileMillMapTileSet extends StandardMapTileSet {
       try {
          Class.forName(TileMillMapTileFactory.DEFAULT_TEST_CLASS);
       } catch (Exception e) {
-         getLogger().warning("can't locate sqlite JDBC components");
+         getLogger().error("can't locate sqlite JDBC components");
          return null;
       }
 
@@ -80,7 +82,7 @@ public class TileMillMapTileSet extends StandardMapTileSet {
          rs.close();
          conn.close();
       } catch (Exception e) {
-         getLogger().warning("something went wrong fetching image from database: " + e.getMessage());
+         getLogger().error("something went wrong fetching image from database: " + e.getMessage());
          e.printStackTrace();
       }
 
@@ -95,7 +97,7 @@ public class TileMillMapTileSet extends StandardMapTileSet {
       /**
        * The logger for this class
        */
-      private static final Logger LOGGER = Logger.getLogger(MapTileSet.class.getName());
+      private static final Logger LOGGER = LoggerFactory.getLogger(MapTileSet.class.getName());
 
       /**
        * Prevent instantiation

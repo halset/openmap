@@ -30,10 +30,12 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.BufferedMapBean;
 import com.bbn.openmap.MapBean;
@@ -68,7 +70,7 @@ public class DistQuickTool
       implements Tool, PropertyChangeListener {
 
    private static final long serialVersionUID = 1L;
-   protected Logger logger = Logger.getLogger("com.bbn.openmap.gui.DistQuickTool");
+   protected Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.DistQuickTool");
 
    protected MouseMode mouseMode = null;
    protected JButton launchButton = null;

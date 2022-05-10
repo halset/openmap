@@ -40,7 +40,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Useful class for dynamically changing the classpath, adding classes during
@@ -50,7 +52,7 @@ import java.util.logging.Logger;
  */
 public class ClasspathHacker {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.util.ClasspathHacker");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.ClasspathHacker");
 
     /**
      * Parameters of the method to add an URL to the System classes.
@@ -109,9 +111,9 @@ public class ClasspathHacker {
                 method.invoke(sysloader, new Object[] {
                     u
                 });
-                logger.fine("loaded jar file");
+                logger.debug("loaded jar file");
             } else {
-                logger.fine("jar file already loaded, skipping");
+                logger.debug("jar file already loaded, skipping");
             }
         } catch (Throwable t) {
             t.printStackTrace();

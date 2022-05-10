@@ -28,11 +28,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileCacheImageInputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.image.BufferedImageHelper;
 import com.bbn.openmap.omGraphics.OMRaster;
@@ -42,7 +43,7 @@ import com.bbn.openmap.util.PropUtils;
 
 public class WorldFileImageReader implements ImageReader {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.image.WorldFileImageReader");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.image.WorldFileImageReader");
     protected WorldFile worldFile;
     protected URL fileURL;
 
@@ -94,7 +95,7 @@ public class WorldFileImageReader implements ImageReader {
                     double llat = ulat + worldFile.getYDim() * bi.getHeight();
                     double rlon = llon + worldFile.getXDim() * bi.getWidth();
 
-                    if (logger.isLoggable(Level.FINE)) {
+                    if (logger.isDebugEnabled()) {
                         logger.info("Image should be at: " + ulat + ", " + llon
                                 + " - to - " + llat + ", " + rlon);
                     }
@@ -106,8 +107,8 @@ public class WorldFileImageReader implements ImageReader {
             }
 
         } catch (NullPointerException npe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Problem creating image (NullPointerException) from "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Problem creating image (NullPointerException) from "
                         + fileURL);
                 npe.printStackTrace();
             }

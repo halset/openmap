@@ -27,10 +27,11 @@ package com.bbn.openmap.dataAccess.shape;
 import java.awt.geom.Point2D;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.shape.input.LittleEndianInputStream;
 import com.bbn.openmap.io.BinaryFile;
@@ -55,7 +56,7 @@ import com.bbn.openmap.util.DataBounds;
 public class EsriGraphicFactory
         implements ShapeConstants {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.shape.EsriGraphicFactory");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.shape.EsriGraphicFactory");
 
     protected int lineType = OMGraphic.LINETYPE_STRAIGHT;
     protected GeoCoordTransformation dataTransformation = null;
@@ -100,10 +101,10 @@ public class EsriGraphicFactory
                                          Projection mapProj, OMGraphicList list)
             throws IOException, FormatException {
         shp.seek(0);
-        verbose = logger.isLoggable(Level.FINER);
+        verbose = logger.isDebugEnabled();
         Header header = new Header(shp, dataTransformation);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(header.toString());
+        if (logger.isDebugEnabled()) {
+            logger.debug(header.toString());
         }
         if (list == null) {
             list = createEsriGraphicList(header.shapeType);
@@ -112,12 +113,12 @@ public class EsriGraphicFactory
         // BAJ 20070604 Stop here for empty shape files
         if (header.fileLength == offset) {
             if (verbose) {
-                logger.finer("Header file length doesn't == 100: " + header.fileLength);
+                logger.debug("Header file length doesn't == 100: " + header.fileLength);
             }
             return list;
         }
         // Put a flag in here to force the file to be read until EOF
-        boolean ignoreFileLength = logger.isLoggable(Level.FINE);
+        boolean ignoreFileLength = logger.isDebugEnabled();
 
         EsriGraphicFactory.ReadByteTracker byteTracker = new EsriGraphicFactory.ReadByteTracker();
         try {
@@ -130,7 +131,7 @@ public class EsriGraphicFactory
                 try {
                     eg = makeEsriGraphicFromRecord(offset, shp, drawingAttributes, pointRepresentation, byteTracker);
                 } catch (EOFException eof) {
-                    logger.fine("File length (" + header.fileLength + " bytes) is incorrect, file was read as much as possible ("
+                    logger.debug("File length (" + header.fileLength + " bytes) is incorrect, file was read as much as possible ("
                             + offset + " bytes).");
                     eg = null;
                     break;
@@ -166,9 +167,9 @@ public class EsriGraphicFactory
                                          Object pointRepresentation, Projection mapProj, OMGraphicList list)
             throws IOException, FormatException {
         Header header = new Header(iStream, dataTransformation);
-        verbose = logger.isLoggable(Level.FINER);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(header.toString());
+        verbose = logger.isDebugEnabled();
+        if (logger.isDebugEnabled()) {
+            logger.debug(header.toString());
         }
         if (list == null) {
             list = createEsriGraphicList(header.shapeType);
@@ -182,7 +183,7 @@ public class EsriGraphicFactory
             return list;
         }
         // Put a flag in here to force the file to be read until EOF
-        boolean ignoreFileLength = logger.isLoggable(Level.FINE);
+        boolean ignoreFileLength = logger.isDebugEnabled();
 
         EsriGraphicFactory.ReadByteTracker byteTracker = new EsriGraphicFactory.ReadByteTracker();
         try {
@@ -195,7 +196,7 @@ public class EsriGraphicFactory
                 try {
                     eg = makeEsriGraphicFromRecord(offset, iStream, drawingAttributes, pointRepresentation, byteTracker);
                 } catch (EOFException eof) {
-                    logger.fine("File length (" + header.fileLength + " bytes) is incorrect, file was read as much as possible ("
+                    logger.debug("File length (" + header.fileLength + " bytes) is incorrect, file was read as much as possible ("
                             + offset + " bytes).");
                     eg = null;
                     break;

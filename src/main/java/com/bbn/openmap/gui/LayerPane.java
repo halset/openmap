@@ -33,8 +33,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -45,6 +43,9 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.Environment;
 import com.bbn.openmap.I18n;
@@ -60,7 +61,7 @@ import com.bbn.openmap.LayerHandler;
 public class LayerPane extends JPanel implements Serializable, ActionListener,
         ComponentListener {
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.LayerPane");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.LayerPane");
 
     protected transient AbstractButton onoffButton;
     protected transient AbstractButton paletteButton;
@@ -341,8 +342,8 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
         String command = select ? LayersPanel.LayerSelectedCmd
                 : LayersPanel.LayerDeselectedCmd;
 
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("LayerPane for " + getLayer().getName() + " " + command
+        if (logger.isDebugEnabled()) {
+            logger.debug("LayerPane for " + getLayer().getName() + " " + command
                     + ", firing event");
         }
 
@@ -396,12 +397,12 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
             layerName.doClick();
             // layer is selected, add it to or remove it from map
             if (layerHandler != null) {
-                logger.fine("LayerPane|actionPerformed calling layerHandler.turnLayerOn()");
+                logger.debug("LayerPane|actionPerformed calling layerHandler.turnLayerOn()");
                 layerHandler.turnLayerOn(onoffButton.isSelected(), layer);
             }
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Layer "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Layer "
                         + layer.getName()
                         + (layer.isVisible() ? " is visible."
                                 : " is NOT visible"));
@@ -425,8 +426,8 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
      * Invoked when component has been shown.
      */
     public void componentShown(ComponentEvent e) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("layer pane for " + layer.getName()
+        if (logger.isDebugEnabled()) {
+            logger.debug("layer pane for " + layer.getName()
                     + " receiving componentShown event");
         }
 
@@ -435,8 +436,8 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
         } else if (comp == layer) {
             if (isLayerOn() != true) {
                 setLayerOn(true);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("layer " + layer.getName() + " is now visible.");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("layer " + layer.getName() + " is now visible.");
                 }
             }
         } else if (comp == layer.getPalette()) {
@@ -448,8 +449,8 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
      * Invoked when component has been hidden.
      */
     public void componentHidden(ComponentEvent e) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("layer pane for " + layer.getName()
+        if (logger.isDebugEnabled()) {
+            logger.debug("layer pane for " + layer.getName()
                     + " receiving componentHidden event");
         }
         Component comp = e.getComponent();
@@ -457,15 +458,15 @@ public class LayerPane extends JPanel implements Serializable, ActionListener,
         if (comp == layer) {
             if (isLayerOn() != false) {
                 setLayerOn(false);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("layer " + layer.getName() + " is now hidden.");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("layer " + layer.getName() + " is now hidden.");
                 }
             }
         } else if (comp == layer.getPalette()) {
             setPaletteOn(false);
         } else if (comp == null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("layer " + layer.getName() + " is now hidden.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer " + layer.getName() + " is now hidden.");
             }
         }
     }

@@ -14,7 +14,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -32,6 +31,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.I18n;
 import com.bbn.openmap.Layer;
@@ -54,7 +56,7 @@ import com.bbn.openmap.proj.Projection;
 public class ZoomLevelMakerFace
         extends OMComponentPanel {
 
-    protected static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.mapTile.ZoomLevelMakerFace");
+    protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.mapTile.ZoomLevelMakerFace");
 
     private static final long serialVersionUID = 1L;
     protected ZoomLevelMaker zfi;

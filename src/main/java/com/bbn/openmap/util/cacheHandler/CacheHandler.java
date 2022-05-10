@@ -24,8 +24,8 @@
 
 package com.bbn.openmap.util.cacheHandler;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base cache support object. Based on the
@@ -38,7 +38,7 @@ public abstract class CacheHandler {
     protected CacheObject[] objs;
     protected int logicalClock;
 
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.util.cacheHandler.CacheHandler");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.util.cacheHandler.CacheHandler");
 
     public static int DEFAULT_MAX_CACHE_SIZE = 25;
 
@@ -159,8 +159,8 @@ public abstract class CacheHandler {
                 if (i == 0) {
                     // there is nothing in the cache.
                     objs[0] = newObj;
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("was empty - added " + newObj.id);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("was empty - added " + newObj.id);
                     }
 
                     return;
@@ -175,8 +175,8 @@ public abstract class CacheHandler {
                 // We are at the index of the last taken spot, and the
                 // next place is available.
                 objs[i + 1] = newObj;
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("had room - added " + newObj.id + " to the "
+                if (logger.isDebugEnabled()) {
+                    logger.debug("had room - added " + newObj.id + " to the "
                             + i + " spot.");
                 }
                 return;
@@ -196,8 +196,8 @@ public abstract class CacheHandler {
         }
 
         if (LUIndex != -1) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Tossing " + objs[LUIndex].id
+            if (logger.isDebugEnabled()) {
+                logger.debug("Tossing " + objs[LUIndex].id
                         + " from cache[" + LUIndex + "] to add " + newObj.id);
             }
             objs[LUIndex] = newObj;

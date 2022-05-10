@@ -25,9 +25,11 @@ package com.bbn.openmap.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.LayoutManager;
-import java.util.logging.Logger;
 
 import javax.swing.JSplitPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.util.Debug;
 
@@ -38,7 +40,7 @@ import com.bbn.openmap.util.Debug;
  * BorderLayout.SOUTH, BorderLayout.EAST, BorderLayout.WEST).
  */
 public class HotwashPanel extends OMComponentPanel {
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.gui.HotwashPanel");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.gui.HotwashPanel");
     protected JSplitPane leftSlider;
     protected JSplitPane rightSlider;
     protected JSplitPane bottomSlider;
@@ -130,7 +132,7 @@ public class HotwashPanel extends OMComponentPanel {
 
             if (makeMyChild) {
 
-                logger.fine("HotwashPanel: adding "
+                logger.debug("HotwashPanel: adding "
                         + someObj.getClass().getName() + " to "
                         + ((MapPanelChild) someObj).getPreferredLocation());
 

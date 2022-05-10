@@ -26,13 +26,15 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CGM
       implements Cloneable {
    protected Vector<Command> commandList;
 
-   protected static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.cgm.CGM");
+   protected static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.cgm.CGM");
 
    public CGM() {
 
@@ -100,7 +102,7 @@ public class CGM
          } else if (c instanceof ColorTable) {
             ct = (ColorTable) c;
          } else if (c instanceof ColorModel) {
-            logger.fine("Not handling other colormodels than rgb (indexed and direct)");
+            logger.debug("Not handling other colormodels than rgb (indexed and direct)");
          }
       }
 

@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -284,8 +283,8 @@ public class DBLocationHandler
 
                 LocationData ld = new LocationData(locationdataRS);
 
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("DBLocationHandler:  location information:\n" + ld);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("DBLocationHandler:  location information:\n" + ld);
                 }
 
                 bytearr = gifdataRS.getRawData(ld.getGraphicName());
@@ -314,10 +313,10 @@ public class DBLocationHandler
             connection.close();
 
         } catch (SQLException sqlE) {
-            logger.warning("DBLocationHandler:SQL Exception: " + sqlE.getMessage());
+            logger.error("DBLocationHandler:SQL Exception: " + sqlE.getMessage());
             sqlE.printStackTrace();
         } catch (ClassNotFoundException cnfE) {
-            logger.warning("DBLocationHandler: Class not found Exception: " + cnfE);
+            logger.error("DBLocationHandler: Class not found Exception: " + cnfE);
         }
 
         return qt;
@@ -362,13 +361,13 @@ public class DBLocationHandler
 
         // IF the quadtree has not been set up yet, do it!
         if (quadtree == null) {
-            logger.fine("DBLocationHandler: Figuring out the locations and names! (This is a one-time operation!)");
+            logger.debug("DBLocationHandler: Figuring out the locations and names! (This is a one-time operation!)");
             quadtree = createData();
         }
 
         if (quadtree != null) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("DBLocationHandler|DBLocationHandler.get() ul.lon = " + nwLon + " lr.lon = " + seLon + " delta = "
+            if (logger.isDebugEnabled()) {
+                logger.debug("DBLocationHandler|DBLocationHandler.get() ul.lon = " + nwLon + " lr.lon = " + seLon + " delta = "
                         + (seLon - nwLon));
             }
 
@@ -441,23 +440,23 @@ public class DBLocationHandler
         if (cmd == showLocationsCommand) {
             JCheckBox locationCheck = (JCheckBox) e.getSource();
             setShowLocations(locationCheck.isSelected());
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("DBLocationHandler::actionPerformed showLocations is " + isShowLocations());
+            if (logger.isDebugEnabled()) {
+                logger.debug("DBLocationHandler::actionPerformed showLocations is " + isShowLocations());
             }
             getLayer().repaint();
         } else if (cmd == showNamesCommand) {
             JCheckBox namesCheck = (JCheckBox) e.getSource();
             setShowNames(namesCheck.isSelected());
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("DBLocationHandler::actionPerformed showNames is " + isShowNames());
+            if (logger.isDebugEnabled()) {
+                logger.debug("DBLocationHandler::actionPerformed showNames is " + isShowNames());
             }
             getLayer().repaint();
         } else if (cmd == readDataCommand) {
-            logger.fine("DBLocationHandler: Re-reading Locations file");
+            logger.debug("DBLocationHandler: Re-reading Locations file");
             quadtree = null;
             getLayer().doPrepare();
         } else {
-            logger.warning("DBLocationHandler: Unknown action command \"" + cmd + "\" in actionPerformed().");
+            logger.error("DBLocationHandler: Unknown action command \"" + cmd + "\" in actionPerformed().");
         }
     }
 

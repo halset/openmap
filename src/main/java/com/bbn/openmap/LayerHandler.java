@@ -28,8 +28,9 @@ import java.beans.beancontext.BeanContext;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.event.LayerEvent;
 import com.bbn.openmap.event.LayerListener;
@@ -99,8 +100,7 @@ import com.bbn.openmap.util.PropUtils;
 public class LayerHandler extends OMComponent implements SoloMapComponent,
         Serializable {
 
-    public static Logger logger = Logger
-            .getLogger("com.bbn.openmap.LayerHandler");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.LayerHandler");
 
     /**
      * Property for space separated layers. If a prefix is needed, just use the
@@ -252,10 +252,10 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
             props.load(in);
             init(getLayers(prefix, props));
         } catch (java.net.MalformedURLException murle) {
-            logger.warning("LayerHandler.init(URL): " + url
+            logger.error("LayerHandler.init(URL): " + url
                     + " is not a valid URL");
         } catch (java.io.IOException e) {
-            logger.warning("LayerHandler.init(URL): Caught an IOException");
+            logger.error("LayerHandler.init(URL): Caught an IOException");
         }
     }
 
@@ -353,7 +353,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
      * @return Layer[]
      */
     protected Layer[] getLayers(String prefix, Properties p) {
-        logger.fine("Getting new layers from properties...");
+        logger.debug("Getting new layers from properties...");
 
         prefix = PropUtils.getScopedPropertyPrefix(prefix);
 
@@ -388,8 +388,8 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
                     + "\" found in properties.");
             return new Layer[0];
         } else {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Layer markers found = " + layersValue);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Layer markers found = " + layersValue);
             }
         }
 
@@ -472,8 +472,8 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
 
             layers.addElement(l);
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("layer " + l.getName()
+            if (logger.isDebugEnabled()) {
+                logger.debug("layer " + l.getName()
                         + (l.isVisible() ? " is visible" : " is not visible"));
             }
         }
@@ -499,7 +499,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
      *            interested in providing layer controls.
      */
     public void addLayerListener(LayerListener ll) {
-        logger.fine("adding layer listener");
+        logger.debug("adding layer listener");
         listeners.add(ll);
         // Usually, the listeners are interested in one type of event
         // or the other. So fire both, and let the listener hash it
@@ -546,7 +546,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
     public synchronized void setLayers(Layer[] layers) {
         allLayers = organizeBackgroundLayers(layers);
 
-        logger.fine("setting layers: " + layers);
+        logger.debug("setting layers: " + layers);
 
         // The setLayers needs to push a new runnable into a fifo
         // stack. A copy of the layers should be made, and then passed
@@ -672,7 +672,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
             }
         }
 
-        logger.fine("providing map layers: " + cake);
+        logger.debug("providing map layers: " + cake);
 
         return cake;
     }
@@ -853,7 +853,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
             }
         } else {
             if (layer != null) {
-                logger.warning("received command to remove " + layer.getName()
+                logger.error("received command to remove " + layer.getName()
                         + ", which has been designated as *NOT* removeable");
                 throw new com.bbn.openmap.util.HandleError(
                         "LayerHandler commanded to delete a layer ("
@@ -943,7 +943,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
         Layer rLayer = currentLayers[index];
 
         if (!rLayer.isRemovable()) {
-            logger.warning("received command to remove " + rLayer.getName()
+            logger.error("received command to remove " + rLayer.getName()
                     + ", which has been designated as *NOT* removeable");
             return;
         }
@@ -1013,8 +1013,8 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
     public boolean turnLayerOn(boolean setting, Layer layer) {
 
         if ((setting && !layer.isVisible()) || (!setting && layer.isVisible())) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("turning " + layer.getName()
+            if (logger.isDebugEnabled()) {
+                logger.debug("turning " + layer.getName()
                         + (setting ? " on" : " off"));
             }
 
@@ -1043,13 +1043,13 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
     public void findAndInit(Object someObj) {
 
         if (someObj instanceof LayerListener) {
-            logger.fine("LayerHandler found a LayerListener.");
+            logger.debug("LayerHandler found a LayerListener.");
             addLayerListener((LayerListener) someObj);
         }
 
         if (someObj instanceof Layer) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("LayerHandler found a Layer |"
+            if (logger.isDebugEnabled()) {
+                logger.debug("LayerHandler found a Layer |"
                         + ((Layer) someObj).getName() + "|");
             }
             if (!hasLayer((Layer) someObj)) {
@@ -1084,7 +1084,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
     public void findAndUndo(Object someObj) {
 
         if (someObj instanceof LayerListener) {
-            logger.fine("LayerListener object is being removed");
+            logger.debug("LayerListener object is being removed");
             removeLayerListener((LayerListener) someObj);
         }
 
@@ -1157,7 +1157,7 @@ public class LayerHandler extends OMComponent implements SoloMapComponent,
      */
     public void setBeanContext(BeanContext in_bc) throws PropertyVetoException {
         if (in_bc != null) {
-            logger.fine("setting bean context");
+            logger.debug("setting bean context");
             in_bc.addBeanContextMembershipListener(this);
             beanContextChildSupport.setBeanContext(in_bc);
 

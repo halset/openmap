@@ -28,8 +28,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.image.ImageReader;
 import com.bbn.openmap.dataAccess.image.ImageTile;
@@ -40,14 +41,14 @@ import com.bbn.openmap.dataAccess.image.ImageTile;
  * @author dietrick
  */
 public class GeoTIFFImageReader implements ImageReader {
-    public static Logger logger = Logger.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFImageDecoder");
+    public static Logger logger = LoggerFactory.getLogger("com.bbn.openmap.dataAccess.image.geotiff.GeoTIFFImageDecoder");
     GeoTIFFFile gtfFile;
 
     public GeoTIFFImageReader(URL fileURL) {
         try {
             gtfFile = new GeoTIFFFile(fileURL);
         } catch (IllegalArgumentException iae) {
-            logger.warning("Problem creating GeoTIFF from " + fileURL);
+            logger.error("Problem creating GeoTIFF from " + fileURL);
             iae.printStackTrace();
         } catch (MalformedURLException murle) {
 
@@ -60,14 +61,14 @@ public class GeoTIFFImageReader implements ImageReader {
         try {
             return gtfFile.getImageTile(this, cache);
         } catch (NullPointerException npe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Problem creating GeoTIFF image (NullPointerException) from "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Problem creating GeoTIFF image (NullPointerException) from "
                         + gtfFile);
                 npe.printStackTrace();
             }
         } catch (IOException ioe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Problem creating GeoTIFF image (IOException) from "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Problem creating GeoTIFF image (IOException) from "
                         + gtfFile);
                 ioe.printStackTrace();
             }
@@ -84,14 +85,14 @@ public class GeoTIFFImageReader implements ImageReader {
         try {
             return gtfFile.getBufferedImage();
         } catch (NullPointerException npe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Problem retrieving BufferedImage (NullPointerException) from "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Problem retrieving BufferedImage (NullPointerException) from "
                         + gtfFile);
                 npe.printStackTrace();
             }
         } catch (IOException ioe) {
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Problem retrieving BufferedImage (IOException) from "
+            if (logger.isDebugEnabled()) {
+                logger.debug("Problem retrieving BufferedImage (IOException) from "
                         + gtfFile);
                 ioe.printStackTrace();
             }

@@ -5,8 +5,6 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.bbn.openmap.util.http.IHttpResponse;
-
 /**
  * A version of {@link IHttpResponse} that does not do any sending before the
  * {@link #flush()} method are called.
