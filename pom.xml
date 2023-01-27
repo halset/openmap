@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>openmap</groupId>
   <artifactId>openmap</artifactId>
-  <version>6.0.10</version>
+  <version>6.0.12</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
