@@ -29,12 +29,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-
-import com.bbn.openmap.Environment;
 import com.bbn.openmap.MoreMath;
-import com.bbn.openmap.ext.jts.JTS;
 import com.bbn.openmap.proj.coords.GeoCoordTransformation;
 import com.bbn.openmap.proj.coords.LatLonGCT;
 import com.bbn.openmap.proj.coords.LatLonPoint;
@@ -1389,14 +1384,7 @@ public abstract class GeoProj
      * @see LineType#GreatCircle
      */
     public ArrayList<float[]> forwardPoly(float[] rawllpts, int ltype, int nsegs, boolean isFilled) {
-        ArrayList<float[]> stuff = _forwardPoly(rawllpts, ltype, nsegs, isFilled);
-        // @HACK: workaround XWindows bug. clip to a boundary.
-        if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
-            GeometryFactory gf = new GeometryFactory();
-            Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
-            JTS.clipUnsafe(gf, clip, stuff);
-        }
-        return stuff;
+        return _forwardPoly(rawllpts, ltype, nsegs, isFilled);
     }
 
     /**
@@ -1417,14 +1405,7 @@ public abstract class GeoProj
      * @see LineType#GreatCircle
      */
     public ArrayList<float[]> forwardPoly(double[] rawllpts, int ltype, int nsegs, boolean isFilled) {
-        ArrayList<float[]> stuff = _forwardPoly(rawllpts, ltype, nsegs, isFilled);
-        // @HACK: workaround XWindows bug. clip to a boundary.
-        if (Environment.doingXWindowsWorkaround && (scale <= XSCALE_THRESHOLD)) {
-            GeometryFactory gf = new GeometryFactory();
-            Geometry clip = JTS.createRectangle(gf, -XTHRESHOLD, -XTHRESHOLD, XTHRESHOLD, XTHRESHOLD);
-            JTS.clipUnsafe(gf, clip, stuff);
-        }
-        return stuff;
+        return _forwardPoly(rawllpts, ltype, nsegs, isFilled);
     }
     
     /**

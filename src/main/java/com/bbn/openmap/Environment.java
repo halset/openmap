@@ -146,10 +146,6 @@ public class Environment extends Properties {
     public static transient final String BackgroundColor = OpenMapPrefix
             + ".BackgroundColor";
     public static transient final String DebugList = OpenMapPrefix + ".Debug";
-    // default to false
-    private static transient boolean isXWindows = false;
-    // Will do it if isXWindows
-    public static transient boolean doingXWindowsWorkaround = false;
     public final static transient String title = "$$Title=" + MapBean.title;
     public final static transient String version = "$$Version="
             + MapBean.version;
@@ -376,56 +372,6 @@ public class Environment extends Properties {
                 + "_" + Environment.get("os.name") + "_"
                 + ((addr != null) ? addr.getHostName() : "nohost") + "_"
                 + timestamp() + "_");
-
-        // determine window system (for HACKing around
-        // Java-under-XWindows
-        // polygon wraparound bug.
-        String osname = Environment.get("os.name");
-
-        if (osname == null) {
-            isXWindows = false;
-            doingXWindowsWorkaround = false;
-            Debug.message("env", "Environment: is applet, Web Start.");
-            return;
-        }
-
-        if (osname.equalsIgnoreCase("solaris")
-                || osname.equalsIgnoreCase("SunOS")) {
-            isXWindows = true;
-            doingXWindowsWorkaround = true;
-            Debug.message("env", "Environment: is X Windows!");
-        } else if (osname.equalsIgnoreCase("linux")) {
-            isXWindows = true;
-            doingXWindowsWorkaround = true;
-            Debug.message("env", "Environment: is X Windows!");
-        } else if (osname.startsWith("Windows")) {
-            isXWindows = false;
-            doingXWindowsWorkaround = false;
-            isXWindows = true;
-            doingXWindowsWorkaround = true;
-            Debug.message("env", "Environment: is MS Windows!");
-        } else if (osname.equalsIgnoreCase("Mac OS")) {
-            isXWindows = false;
-            doingXWindowsWorkaround = false;
-            Debug.message("env", "Environment: is Mac OS!");
-        } else if (osname.equalsIgnoreCase("Mac OS X")) {
-            isXWindows = true;
-            doingXWindowsWorkaround = true;
-            // isXWindows = false;
-            // doingXWindowsWorkaround = false;
-            com.bbn.openmap.omGraphics.DrawingAttributes.alwaysSetTextToBlack = true;
-            Debug.message("env", "Environment: Excellent! Mac OS X!");
-        } else {
-            System.err.println("Environment.initRuntimeProperties(): "
-                    + "running on unknown/untested OS: " + osname);
-        }
-
-        // should have initialized user properties already
-        if (Environment.get(OpenMapPrefix + ".noXWindowsWorkaround") != null) {
-            Debug.message("env", "Environment.initRuntimeProperties(): "
-                    + "not working around XWindows clipping bug.");
-            doingXWindowsWorkaround = false;
-        }
     }
 
     /**
@@ -711,20 +657,6 @@ public class Environment extends Properties {
                 + calendar.get(Calendar.DAY_OF_MONTH)
                 + calendar.get(Calendar.HOUR) + calendar.get(Calendar.MINUTE)
                 + calendar.get(Calendar.SECOND);
-    }
-
-    /**
-     * Check if this is an XWindows-based VM.
-     * <p>
-     * Note: this only returns a valid result if the Environment has been
-     * initialized.
-     * <p>
-     * 
-     * @return boolean
-     * 
-     */
-    public final static boolean isXWindowSystem() {
-        return isXWindows;
     }
 
     /**
